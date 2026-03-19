@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'Druk';
+    src: url('./assets/font/druk/Druk-Heavy-Trial.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Druk';
+    src: url('./assets/font/druk/Druk-Bold-Trial.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Druk';
+    src: url('./assets/font/druk/Druk-Medium-Trial.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro';
+    src: url('./assets/font/sf-pro-display/SFPRODISPLAYREGULAR.OTF') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro';
+    src: url('./assets/font/sf-pro-display/SFPRODISPLAYMEDIUM.OTF') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro';
+    src: url('./assets/font/sf-pro-display/SFPRODISPLAYBOLD.OTF') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@theme inline {
+    --color-primary: var(--color-primary);
+    --color-primary-hover: var(--color-primary-hover);
+    --color-linear-gradient: var(--color-linear-gradient);
+    --color-background: var(--color-background);
+    --color-surface: var(--color-surface);
+    --color-surface-hover: var(--color-surface-hover);
+    --color-text-primary: var(--color-text-primary);
+    --color-text-secondary: var(--color-text-secondary);
+    --color-border: var(--color-border);
+    --font-druk: var(--font-druk);
+    --font-sf-pro: var(--font-sf-pro);
+}
+
+:root {
+    --color-primary: #A6FD7A;
+    --color-primary-hover: #b4ff8c;
+    --color-linear-gradient: linear-gradient(to right, #A6FD7A, #E7F586);
+    --color-background: #161616;
+    --color-surface: #202020;
+    --color-surface-hover: #2a2a2a;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #b9b9b9;
+    --color-border: #333333;
+    --font-druk: 'Druk', sans-serif;
+    --font-sf-pro: 'SF Pro', sans-serif;
+}
+
+/* Mode light */
+[data-theme="twitter-light"] {
+    --color-primary: #A6FD7A;
+    --color-background: #ffffff;
+    --color-text: #161616;
+}
+
+/* Thème alternatif */
+[data-theme="twitter-violet"] {
+
+    --color-primary: #A6FD7A;
+    --color-text: #ffffff;
+    --color-background: #261E2F;
+}
