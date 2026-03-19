@@ -25,6 +25,8 @@ class UserController extends AbstractController
                 'username' => $user->getUsername(),
                 'name' => $user->getName(),
                 'avatar' => $user->getAvatar(),
+                'isVerified' => $user->isVerified(),
+                'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
             ];
         }
 
@@ -46,6 +48,8 @@ class UserController extends AbstractController
             'username' => $user->getUsername(),
             'name' => $user->getName(),
             'avatar' => $user->getAvatar(),
+            'isVerified' => $user->isVerified(),
+            'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
         ]);
     }
 
@@ -53,7 +57,7 @@ class UserController extends AbstractController
     #[Route('/api/users/{username}', methods: ['GET'])]
     public function showByUsername(UserRepository $userRepository, string $username): Response
     {
-        $user = $userRepository->findOneById(['username' => $username]);
+        $user = $userRepository->findOneBy(['username' => $username]);
 
         if (!$user) {
             throw $this->createNotFoundException('The user does not exist');
@@ -64,6 +68,8 @@ class UserController extends AbstractController
             'username' => $user->getUsername(),
             'name' => $user->getName(),
             'avatar' => $user->getAvatar(),
+            'isVerified' => $user->isVerified(),
+            'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
         ]);
     }
 
@@ -81,6 +87,8 @@ class UserController extends AbstractController
             'username' => $user->getUsername(),
             'name' => $user->getName(),
             'avatar' => $user->getAvatar(),
+            'isVerified' => $user->isVerified(),
+            'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
         ]);
     }
 }

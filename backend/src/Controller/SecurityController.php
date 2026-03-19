@@ -17,14 +17,23 @@ class SecurityController extends AbstractController
     #[Route('/api/login', name: 'user_login', methods: ['POST'])]
     public function login(Request $request, UserPasswordHasherInterface $passwordEncoder, UserRepository $userRepository): Response
     {
-        $data = json_decode($request->getContent(), true);
-        $username = $data['username'] ?? '';
-        $password = $data['password'] ?? '';
+        $identifier = $request->request->get('username') ?? $request->request->get('email') ?? '';
+        $password = $request->request->get('password', '');
 
-        $user = $userRepository->findOneBy(['username' => $username]);
+        if (empty($identifier)) return $this->json(['message' => 'Identifier (username or email) is required'], Response::HTTP_BAD_REQUEST);
+        if (empty($password)) return $this->json(['message' => 'Password is required'], Response::HTTP_BAD_REQUEST);
 
-        if (!$user || !$passwordEncoder->isPasswordValid($user, $password)) {
-            return $this->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
+        $user = $userRepository->findOneBy(['username' => $identifier]);
+        if (!$user) {
+            $user = $userRepository->findOneBy(['email' => $identifier]);
+        }
+
+        if (!$user) {
+            return $this->json(['message' => 'User not found'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if (!$passwordEncoder->isPasswordValid($user, $password)) {
+            return $this->json(['message' => 'Invalid password'], Response::HTTP_UNAUTHORIZED);
         }
 
         return $this->json([
@@ -35,6 +44,8 @@ class SecurityController extends AbstractController
                 'username' => $user->getUsername(),
                 'name' => $user->getName(),
                 'avatar' => $user->getAvatar(),
+                'isVerified' => $user->isVerified(),
+                'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
             ]
         ]);
     }
@@ -67,11 +78,17 @@ class SecurityController extends AbstractController
             $uploadsDirectory = $this->getParameter('kernel.project_dir') . '/public/uploads/avatars';
             $newFilename = uniqid() . '.' . $uploadedFile->guessExtension();
 
+            if (!is_dir($uploadsDirectory)) {
+                mkdir($uploadsDirectory, 0777, true);
+                chmod($this->getParameter('kernel.project_dir') . '/public/uploads', 0777);
+                chmod($uploadsDirectory, 0777);
+            }
+
             try {
                 $uploadedFile->move($uploadsDirectory, $newFilename);
                 $avatar = $newFilename;
             } catch (\Exception $e) {
-                return $this->json(['message' => 'Failed to upload avatar'], Response::HTTP_INTERNAL_SERVER_ERROR);
+                return $this->json(['message' => 'Failed to upload avatar: ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -96,6 +113,8 @@ class SecurityController extends AbstractController
                 'username' => $user->getUsername(),
                 'name' => $user->getName(),
                 'avatar' => $user->getAvatar(),
+                'isVerified' => $user->isVerified(),
+                'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
             ]
         ], 201);
     }
