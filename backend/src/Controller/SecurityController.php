@@ -21,7 +21,7 @@ class SecurityController extends AbstractController
         $username = $data['username'] ?? '';
         $password = $data['password'] ?? '';
 
-        $user = $userRepository->findOneById(['username' => $username]);
+        $user = $userRepository->findOneBy(['username' => $username]);
 
         if (!$user || !$passwordEncoder->isPasswordValid($user, $password)) {
             return $this->json(['message' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
@@ -54,11 +54,11 @@ class SecurityController extends AbstractController
         if (empty($name)) return $this->json(['message' => 'Name is required'], Response::HTTP_BAD_REQUEST);
         if (empty($email)) return $this->json(['message' => 'Email is required'], Response::HTTP_BAD_REQUEST);
 
-        if ($userRepository->findOneById(['email' => $email])) {
+        if ($userRepository->findOneBy(['email' => $email])) {
             return $this->json(['message' => 'Email already exists'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($userRepository->findOneById(['username' => $username])) {
+        if ($userRepository->findOneBy(['username' => $username])) {
             return $this->json(['message' => 'Username already exists'], Response::HTTP_BAD_REQUEST);
         }
 
