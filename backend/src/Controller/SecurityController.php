@@ -10,12 +10,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Entity\User;
+use App\Service\UserService;
 
 class SecurityController extends AbstractController
 {
     #[Route('/api/login', name: 'user_login', methods: ['POST'])]
-    public function login(Request $request, UserPasswordHasherInterface $passwordEncoder, UserRepository $userRepository): Response
+    public function login(#[CurrentUser] ?User $user, Request $request, UserPasswordHasherInterface $passwordEncoder, UserRepository $userRepository, UserService $userService): Response
     {
         $identifier = $request->request->get('username') ?? $request->request->get('email') ?? '';
         $password = $request->request->get('password', '');
@@ -36,9 +38,12 @@ class SecurityController extends AbstractController
             return $this->json(['message' => 'Invalid password'], Response::HTTP_UNAUTHORIZED);
         }
 
+        $token = $userService->generateTokenForUser($user);
+
         return $this->json([
             'status' => 'success',
             'message' => 'Logged in',
+            'token' => $token,
             'user' => [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),
@@ -51,7 +56,7 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/register', name: 'user_register', methods: ['POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $passwordEncoder, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    public function register(Request $request, UserPasswordHasherInterface $passwordEncoder, EntityManagerInterface $entityManager, UserRepository $userRepository, UserService $userService): Response
     {
         
         $username = $request->request->get('username', '');
@@ -105,9 +110,12 @@ class SecurityController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
+        $token = $userService->generateTokenForUser($user);
+
         return $this->json([
             'status' => 'success',
             'message' => 'User created',
+            'token' => $token,
             'user' => [
                 'id' => $user->getId(),
                 'username' => $user->getUsername(),

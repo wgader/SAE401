@@ -189,4 +189,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?ApiToken $apiToken = null;
+
+    public function getApiToken(): ?ApiToken
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(?ApiToken $apiToken): static
+    {
+        // on retire le token si il existe
+        if ($apiToken === null && $this->apiToken !== null) {
+            $this->apiToken->setUser(null);
+        }
+
+        // on ajoute le token si il n'existe pas
+        if ($apiToken !== null && $apiToken->getUser() !== $this) {
+            $apiToken->setUser($this);
+        }
+
+        $this->apiToken = $apiToken;
+
+        return $this;
+    }
+
 }
