@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Api;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,21 +10,28 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use App\Entity\User;
 use App\Service\UserService;
 
 class SecurityController extends AbstractController
 {
     #[Route('/api/login', name: 'user_login', methods: ['POST'])]
-    public function login(#[CurrentUser] ?User $user, Request $request, UserPasswordHasherInterface $passwordEncoder, UserRepository $userRepository, UserService $userService): Response
+    public function login(Request $request, UserPasswordHasherInterface $passwordEncoder, UserRepository $userRepository, UserService $userService): Response
     {
-        $identifier = $request->request->get('username') ?? $request->request->get('email') ?? '';
-        $password = $request->request->get('password', '');
+        // On gère le format JSON (Postman raw) et Form-Data
+        $data = json_decode($request->getContent(), true);
+        if ($data) {
+            $identifier = $data['username'] ?? $data['email'] ?? '';
+            $password = $data['password'] ?? '';
+        } else {
+            $identifier = $request->request->get('username') ?? $request->request->get('email') ?? '';
+            $password = $request->request->get('password', '');
+        }
 
         if (empty($identifier)) return $this->json(['message' => 'Identifier (username or email) is required'], Response::HTTP_BAD_REQUEST);
         if (empty($password)) return $this->json(['message' => 'Password is required'], Response::HTTP_BAD_REQUEST);
 
+        // Recherche par pseudo, puis par email
         $user = $userRepository->findOneBy(['username' => $identifier]);
         if (!$user) {
             $user = $userRepository->findOneBy(['email' => $identifier]);
@@ -38,6 +45,7 @@ class SecurityController extends AbstractController
             return $this->json(['message' => 'Invalid password'], Response::HTTP_UNAUTHORIZED);
         }
 
+        // On génère le token une fois qu'on est sûr que tout est bon
         $token = $userService->generateTokenForUser($user);
 
         return $this->json([
@@ -55,10 +63,9 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/register', name: 'user_register', methods: ['POST'])]
+    #[Route('/api/register', name: 'user_register', methods: ['POST'])]
     public function register(Request $request, UserPasswordHasherInterface $passwordEncoder, EntityManagerInterface $entityManager, UserRepository $userRepository, UserService $userService): Response
     {
-        
         $username = $request->request->get('username', '');
         $password = $request->request->get('password', '');
         $name = $request->request->get('name', '');
@@ -110,6 +117,7 @@ class SecurityController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
+        // Le token est généré pour connecter directement l'utilisateur après son inscription
         $token = $userService->generateTokenForUser($user);
 
         return $this->json([

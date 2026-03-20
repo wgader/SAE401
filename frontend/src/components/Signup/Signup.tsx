@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
@@ -7,6 +7,7 @@ import { FiX, FiCheck } from "react-icons/fi";
 import { Button } from "../ui/Button/Button";
 import { Input } from "../ui/Input/Input";
 import { cn } from "../../lib/utils";
+import { api } from "../../lib/api";
 import logo from '../../assets/logo_sphere.svg';
 
 export default function Signup() {
@@ -20,6 +21,14 @@ export default function Signup() {
   const [tosAccepted, setTosAccepted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [generalError, setGeneralError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (api.isAuthenticated()) {
+      navigate("/home");
+    }
+  }, [navigate]);
 
   // Password constraint checks
   const constraints = {
@@ -46,27 +55,14 @@ export default function Signup() {
     return "bg-primary";
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    setGeneralError(null);
+
     const newErrors: Record<string, string> = {};
 
-    // Validate No Special Characters for names
-    const nameRegex = /^[a-zA-ZÀ-ÿ\s-]+$/;
-    if (!nameRegex.test(firstName)) {
-      newErrors.firstName = "Le prénom ne doit pas contenir de caractères spéciaux.";
-    }
-    if (!nameRegex.test(lastName)) {
-      newErrors.lastName = "Le nom ne doit pas contenir de caractères spéciaux.";
-    }
-
-    // Validate Username
-    const usernameRegex = /^[a-zA-Z0-9_]+$/;
-    if (!usernameRegex.test(username)) {
-      newErrors.username = "Le nom d'utilisateur ne doit pas contenir de caractères spéciaux.";
-    } else if (username.length > 20) {
-      newErrors.username = "Le nom d'utilisateur ne doit pas dépasser 20 caractères.";
-    }
-
+    // Basic frontend validation
     if (password !== confirmPassword) {
       newErrors.confirmPassword = "Les mots de passe ne correspondent pas.";
     }
@@ -75,18 +71,27 @@ export default function Signup() {
       newErrors.password = "Veuillez respecter toutes les règles de mot de passe.";
     }
 
-    if (email === "test@test.com") {
-      newErrors.email = "Cette adresse e-mail est déjà utilisée.";
-    }
-    if (username === "admin") {
-      newErrors.username = "Ce nom d'utilisateur est déjà pris.";
-    }
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-    } else {
-      console.log("Signup parameters valid! Redirecting...");
-      navigate("/login");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("name", `${firstName} ${lastName}`);
+      formData.append("email", email);
+      // avatar is optional, not handled here yet but could be added
+
+      await api.register(formData);
+      navigate("/home");
+    } catch (err: any) {
+      setGeneralError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,6 +107,11 @@ export default function Signup() {
       <header className="flex flex-col items-center gap-6 mb-8">
         <img src={logo} alt="Sphere Logo" className="h-8" />
         <h1 className="text-2xl font-sf-pro font-bold text-text-primary">Créer un compte</h1>
+        {generalError && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1 w-full max-w-[480px]">
+            {generalError}
+          </div>
+        )}
       </header>
 
       {/* Main Form Card */}
@@ -176,8 +186,8 @@ export default function Signup() {
             </span>
           </label>
 
-          <Button type="submit" variant="primary" size="lg" fullWidth className="mt-4 text-black tracking-normal">
-            S'INSCRIRE
+          <Button type="submit" variant="primary" size="lg" fullWidth className="mt-4 text-black tracking-normal" disabled={isLoading}>
+            {isLoading ? "CHARGEMENT..." : "S'INSCRIRE"}
           </Button>
         </form>
 

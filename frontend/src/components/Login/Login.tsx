@@ -1,36 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { Button } from "../ui/Button/Button";
 import { Input } from "../ui/Input/Input";
+import { api } from "../../lib/api";
 import logo from '../../assets/logo_sphere.svg';
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setErrors({}); // Reset errors
-
-    // Simulation of backend error returning
-    const newErrors: { email?: string; password?: string } = {};
-    if (email === "test@test.com") {
-      newErrors.email = "Adresse e-mail introuvable.";
-    } else if (password === "wrongpassword") {
-      newErrors.password = "Mot de passe incorrect.";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-    } else {
-      // Simulate successful login
-      console.log("Login successful! Redirecting...");
+  useEffect(() => {
+    if (api.isAuthenticated()) {
       navigate("/home");
+    }
+  }, [navigate]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await api.login({ username: identifier, password });
+      navigate("/home");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -40,18 +42,22 @@ export default function Login() {
       <header className="flex flex-col items-center gap-6 mb-8">
         <img src={logo} alt="Sphere Logo" className="h-8" />
         <h1 className="text-2xl font-sf-pro font-bold text-text-primary">Connectez-vous</h1>
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1">
+            {error}
+          </div>
+        )}
       </header>
 
       {/* Main Form Card */}
       <section className="bg-surface w-full max-w-[440px] rounded-3xl p-8 shadow-xl border border-border/50">
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           <Input
-            label="Email"
-            type="email"
-            placeholder="exemple@email.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={errors.email}
+            label="Email ou Nom d'utilisateur"
+            type="text"
+            placeholder="exemple@email.com ou votrepseudo"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             required
           />
 
@@ -62,7 +68,6 @@ export default function Login() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
               required
             />
             <div className="flex justify-end">
@@ -72,8 +77,8 @@ export default function Login() {
             </div>
           </div>
 
-          <Button type="submit" variant="primary" size="lg" fullWidth className="mt-2 text-black tracking-normal">
-            SE CONNECTER
+          <Button type="submit" variant="primary" size="lg" fullWidth className="mt-2 text-black tracking-normal" disabled={isLoading}>
+            {isLoading ? "CHARGEMENT..." : "SE CONNECTER"}
           </Button>
         </form>
 

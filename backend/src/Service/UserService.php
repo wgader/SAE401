@@ -26,7 +26,7 @@ class UserService
 
         $apiToken->setToken($hashedToken);
 
-        // AJOUT : On définit l'expiration à +24 heures à partir de maintenant
+        // On définit l'expiration à +24 heures à partir de maintenant
         $apiToken->setExpiresAt((new \DateTimeImmutable())->modify('+24 hours'));
 
         $this->em->flush();

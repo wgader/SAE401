@@ -1,7 +1,17 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import Navigation from "../components/ui/Navigation";
+import { api } from "../lib/api";
+import { useEffect } from "react";
 
 export default function RootLayout() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!api.isAuthenticated()) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
   return (
     <div className="bg-background min-h-screen w-full text-text-primary flex">
       <Navigation />

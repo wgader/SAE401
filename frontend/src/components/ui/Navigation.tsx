@@ -1,8 +1,21 @@
 import { FiHome, FiPlus } from 'react-icons/fi';
 import logo from '../../assets/logo_sphere.svg';
-import { CURRENT_USER } from '../../data/user';
+import { api } from '../../lib/api';
+import type { User } from '../../lib/api';
+import { useState, useEffect } from 'react';
 
 export default function Navigation() {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (api.isAuthenticated()) {
+      api.getMe().then(setUser).catch(() => {
+        api.logout();
+        // Redirect will be handled by RootLayout once isAuthenticated is false
+      });
+    }
+  }, []);
+
   return (
     <>
       {/* Mobile Header */}
@@ -14,7 +27,7 @@ export default function Navigation() {
 
         <ul className="flex flex-col gap-2 flex-1">
           <li>
-            <a href="#" className="flex items-center gap-3 text-primary font-bold text-lg px-4 py-3 rounded-full hover:bg-surface-hover transition font-sf-pro">
+            <a href="/home" className="flex items-center gap-3 text-primary font-bold text-lg px-4 py-3 rounded-full hover:bg-surface-hover transition font-sf-pro">
               <FiHome className="w-6 h-6" />
               Accueil
             </a>
@@ -28,20 +41,24 @@ export default function Navigation() {
         </ul>
 
         {/* Profile Card */}
-        <div className="flex items-center justify-between mt-auto px-2 py-3 rounded-xl hover:bg-surface-hover cursor-pointer transition">
-          <div className="flex items-center gap-3">
-            <img
-              src={CURRENT_USER.avatar}
-              alt="Profile"
-              className="w-10 h-10 rounded-full"
-            />
-            <div className="flex flex-col font-sf-pro text-left">
-              <span className="font-bold text-sm text-text-primary whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
-                {CURRENT_USER.firstName} {CURRENT_USER.lastName}
-              </span>
-              <span className="text-text-secondary text-sm mt-0.5">@{CURRENT_USER.username}</span>
+        <div className="flex flex-col gap-2 mt-auto">
+          {user && (
+            <div className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-surface-hover transition group">
+              <div className="flex items-center gap-3">
+                <img
+                  src={user.avatar || "https://i.pravatar.cc/150?img=11"}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full bg-surface border border-border"
+                />
+                <div className="flex flex-col font-sf-pro text-left overflow-hidden">
+                  <span className="font-bold text-sm text-text-primary whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+                    {user.name}
+                  </span>
+                  <span className="text-text-secondary text-xs mt-0.5">@{user.username}</span>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </nav>
 
