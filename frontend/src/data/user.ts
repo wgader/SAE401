@@ -11,5 +11,5 @@ export const CURRENT_USER: User = {
   firstName: "Davide",
   lastName: "Biscuso",
   username: "biscutte",
-  avatar: "https://i.pravatar.cc/150?img=11",
+  avatar: "http://localhost:8080/uploads/avatars/default.png",
 };

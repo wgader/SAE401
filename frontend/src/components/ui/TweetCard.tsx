@@ -1,7 +1,6 @@
 import { cn } from "../../lib/utils";
 
-const DEFAULT_AVATAR =
-    "https://www.figma.com/api/mcp/asset/8f7c47fb-14e7-4104-ab7e-902258550bdc";
+const DEFAULT_AVATAR = "http://localhost:8080/uploads/avatars/default.png";
 
 export interface TweetCardProps {
     authorName: string;
@@ -12,6 +11,25 @@ export interface TweetCardProps {
     className?: string;
 }
 
+const formatDate = (dateString: string) => {
+    if (!dateString) return "";
+    
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return `${diffInSeconds}s`;
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours}h`;
+    
+    // Otherwise return Day Month (e.g., 12 oct.)
+    return date.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+};
+
 export default function TweetCard({
     authorName,
     username,
@@ -21,11 +39,12 @@ export default function TweetCard({
     className,
 }: TweetCardProps) {
     const shortUsername = username.length > 12 ? `${username.slice(0, 12)}…` : username;
+    const formattedDate = timeAgo.includes("T") ? formatDate(timeAgo) : timeAgo;
 
     return (
         <li
             className={cn(
-                'flex items-start gap-3 p-3 border-b border-border)]',
+                'flex items-start gap-3 p-3 border-b border-border',
                 className,
             )}
             aria-label="Tweet card"
@@ -46,14 +65,14 @@ export default function TweetCard({
 
                     <p className="text-text-secondary truncate max-w-[7rem] text-sm sm:text-sm">@{shortUsername}</p>
 
-                    {timeAgo ? (
+                    {formattedDate ? (
                         <time className="text-text-secondary ml-1 whitespace-nowrap text-sm sm:text-sm" dateTime={timeAgo}>
-                            · {timeAgo}
+                            · {formattedDate}
                         </time>
                     ) : null}
                 </header>
 
-                <p className="mt-1 text-text-primary text-sm sm:text-base">{content}</p>
+                <p className="mt-1 text-text-primary text-sm sm:text-base whitespace-pre-wrap break-words">{content}</p>
             </figcaption>
         </li>
     );

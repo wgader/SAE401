@@ -1,20 +1,29 @@
-import { FiHome, FiPlus } from 'react-icons/fi';
+import { FiHome, FiPlus, FiLogOut } from 'react-icons/fi';
 import logo from '../../assets/logo_sphere.svg';
 import { api } from '../../lib/api';
 import type { User } from '../../lib/api';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const AVATAR_BASE_URL = "http://localhost:8080/uploads/avatars/";
 
 export default function Navigation() {
   const [user, setUser] = useState<User | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (api.isAuthenticated()) {
       api.getMe().then(setUser).catch(() => {
         api.logout();
-        // Redirect will be handled by RootLayout once isAuthenticated is false
       });
     }
   }, []);
+
+  const handleLogout = () => {
+    api.logout();
+    navigate("/login");
+  };
 
   return (
     <>
@@ -34,7 +43,10 @@ export default function Navigation() {
           </li>
 
           <li>
-            <button className="bg-[image:var(--color-linear-gradient)] text-background font-extrabold text-lg rounded-full py-3.5 mt-4 w-full hover:opacity-90 transition shadow-lg font-druk">
+            <button 
+              onClick={() => navigate("/post")}
+              className="bg-[image:var(--color-linear-gradient)] text-background font-extrabold text-lg rounded-full py-3.5 mt-4 w-full hover:opacity-90 transition shadow-lg font-druk"
+            >
               ECRIRE
             </button>
           </li>
@@ -46,7 +58,7 @@ export default function Navigation() {
             <div className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-surface-hover transition group">
               <div className="flex items-center gap-3">
                 <img
-                  src={user.avatar || "https://i.pravatar.cc/150?img=11"}
+                  src={`${AVATAR_BASE_URL}${user.avatar}`}
                   alt="Profile"
                   className="w-10 h-10 rounded-full bg-surface border border-border"
                 />
@@ -59,6 +71,14 @@ export default function Navigation() {
               </div>
             </div>
           )}
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 px-4 py-3 rounded-full text-red-500 hover:bg-red-500/10 transition font-sf-pro font-bold mt-auto"
+          >
+            <FiLogOut className="w-5 h-5" />
+            Déconnexion
+          </button>
         </div>
       </nav>
 
@@ -73,8 +93,11 @@ export default function Navigation() {
       <nav className="md:hidden flex items-center justify-center h-16 w-full fixed bottom-0 left-0 bg-background/90 backdrop-blur-md z-50 border-t border-border">
         <ul className="flex justify-center flex-1 w-full">
           <li>
-            <button className="text-primary hover:text-primary-hover transition p-2">
-              <FiPlus className="w-8 h-8 pointer-events-none" />
+            <button 
+              onClick={() => navigate("/post")}
+              className="text-primary hover:text-primary-hover transition p-2"
+            >
+              <FiPlus className="w-10 h-10 pointer-events-none stroke-[3]" />
             </button>
           </li>
         </ul>

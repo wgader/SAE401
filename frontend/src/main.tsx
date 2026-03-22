@@ -7,6 +7,7 @@ import RootLayout from './routes/root'
 import Home from './routes/home'
 import Signup from './routes/signup'
 import Login from './routes/login'
+import Post from './routes/post'
 import NotFound from './routes/not-found'
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <Home />,
+      },
+      {
+        path: "post",
+        element: <Post />,
       },
     ],
   },

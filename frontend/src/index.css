@@ -79,8 +79,22 @@
 
 /* Thème alternatif */
 [data-theme="twitter-violet"] {
-
     --color-primary: #A6FD7A;
     --color-text: #ffffff;
     --color-background: #261E2F;
+}
+
+/* Global Styles */
+button {
+    cursor: pointer;
+}
+
+@layer utilities {
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
 }

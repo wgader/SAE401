@@ -13,7 +13,7 @@ RUN apt-get update && \
     libpq-dev \
     libonig-dev
 
-# Install PDO MySQL extension
+# Install PDO MySQL
 RUN docker-php-ext-install pdo_mysql
 
 # Install Composer globally

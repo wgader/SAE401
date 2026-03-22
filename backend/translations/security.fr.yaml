@@ -1,0 +1,3 @@
+'Invalid credentials.': 'Identifiant ou mot de passe incorrect.'
+'Invalid CSRF token.': 'Jeton CSRF invalide.'
+'Username could not be found.': 'Utilisateur introuvable.'

@@ -1,0 +1,16 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}Code de vérification - Sphere{% endblock %}
+{% block header_title %}Vérifiez votre compte{% endblock %}
+
+{% block body %}
+    <p>Bonjour <strong style="color: #fff;">{{ name }}</strong>,</p>
+    <p>Bienvenue sur Sphere. Pour finaliser la création de votre compte et rejoindre notre réseau, veuillez utiliser le code de vérification sécurisé ci-dessous :</p>
+    
+    <div style="margin: 40px 0; padding: 40px; background: rgba(166, 253, 122, 0.05); border: 1px dashed rgba(166, 253, 122, 0.3); border-radius: 20px; text-align: center;">
+        <span style="font-size: 54px; font-weight: 900; letter-spacing: 15px; color: #A6FD7A; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;">{{ code }}</span>
+    </div>
+    
+    <p style="font-size: 14px; text-align: center;">Ce code expirera dans <strong style="color: #fff;">15 minutes</strong>.</p>
+    <p style="margin-top: 30px; font-size: 13px;">Si vous n'avez pas demandé ce code, vous pouvez ignorer cet e-mail en toute sécurité.</p>
+{% endblock %}

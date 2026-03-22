@@ -55,7 +55,7 @@ export default function Login() {
           <Input
             label="Email ou Nom d'utilisateur"
             type="text"
-            placeholder="exemple@email.com ou votrepseudo"
+            placeholder="votrepseudo ou exemple@email.com"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             required

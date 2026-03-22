@@ -5,13 +5,14 @@ namespace App\Controller\Api;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
     // Get all users
     #[Route('/api/user', methods: ['GET'])]
-    public function list(UserRepository $userRepository): Response
+    public function list(UserRepository $userRepository): JsonResponse
     {
         $users = $userRepository->findAll();
         $data = [];
@@ -32,12 +33,12 @@ class UserController extends AbstractController
 
     // Get one user by id
     #[Route('/users/{id}', methods: ['GET'])]
-    public function show(UserRepository $userRepository, int $id): Response
+    public function show(UserRepository $userRepository, int $id): JsonResponse
     {
         $user = $userRepository->findOneById($id);
 
         if (!$user) {
-            throw $this->createNotFoundException('The user does not exist');
+            throw $this->createNotFoundException('L\'utilisateur n\'existe pas');
         }
 
         return $this->json([
@@ -52,7 +53,7 @@ class UserController extends AbstractController
 
     // Get one user by username
     #[Route('/api/users/{username}', methods: ['GET'])]
-    public function showByUsername(UserRepository $userRepository, string $username): Response
+    public function showByUsername(UserRepository $userRepository, string $username): JsonResponse
     {
         $user = $userRepository->findOneBy(['username' => $username]);
 
@@ -71,12 +72,12 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/me', methods: ['GET'])]
-    public function me(): Response
+    public function me(): JsonResponse
     {
         $user = $this->getUser();
 
         if (!$user) {
-            return $this->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+            return $this->json(['message' => 'Non autorisé'], Response::HTTP_UNAUTHORIZED);
         }
 
         return $this->json([

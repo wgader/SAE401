@@ -1,0 +1,20 @@
+{% extends 'emails/base.html.twig' %}
+
+{% block title %}Bienvenue sur Sphere !{% endblock %}
+{% block header_title %}Félicitations !{% endblock %}
+
+{% block body %}
+    <p>Bonjour <strong style="color: #fff;">{{ name }}</strong>,</p>
+    <p>Votre compte a été vérifié avec succès. Vous faites désormais partie de l'expérience <span class="highlight">Sphere</span>.</p>
+    
+    <div style="text-align: center; margin: 40px 0;">
+        <p style="color: #fff; font-size: 18px; font-weight: 600;">Votre aventure commence maintenant.</p>
+        <p>Explorez votre fil d'actualité, partagez vos pensées et connectez-vous avec votre réseau de manière élégante et fluide.</p>
+    </div>
+
+    <div style="text-align: center;">
+        <a href="{{ app_url }}" class="btn">Accéder à mon compte</a>
+    </div>
+    
+    <p style="margin-top: 40px; font-size: 13px; text-align: center;">Merci de nous avoir rejoints.<br>L'équipe Sphere</p>
+{% endblock %}
