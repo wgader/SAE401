@@ -38,7 +38,9 @@ const router = createBrowserRouter([
     path: "login",
     element: <Login />,
   },
-])
+], {
+  basename: import.meta.env.BASE_URL
+})
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
