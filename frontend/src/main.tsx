@@ -8,6 +8,7 @@ import Home from './routes/home'
 import Signup from './routes/signup'
 import Login from './routes/login'
 import Post from './routes/post'
+import Terms from './routes/terms'
 import NotFound from './routes/not-found'
 
 const router = createBrowserRouter([
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
         element: <Post />,
       },
     ],
+  },
+  {
+    path: "terms",
+    element: <Terms />,
   },
   {
     path: "signup",

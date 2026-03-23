@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../../lib/api";
+import { api, BASE_URL } from "../../lib/api";
 import type { User } from "../../lib/api";
 import { cn } from "../../lib/utils";
 import { TweetInput } from "../ui/Input/TweetInput";
 import { FiX, FiImage, FiBarChart2, FiGlobe } from "react-icons/fi";
 
-const AVATAR_BASE_URL = "http://localhost:8080/uploads/avatars/";
+const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
 export default function CreatePost() {
   const [content, setContent] = useState("");

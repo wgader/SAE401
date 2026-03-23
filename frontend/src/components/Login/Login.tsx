@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { Button } from "../ui/Button/Button";
@@ -101,11 +101,11 @@ export default function Login() {
       {/* Footer */}
       <footer className="mt-8 flex flex-col items-center gap-4">
         <p className="font-sf-pro text-text-secondary">
-          Vous n'avez pas de compte ? <a href="/signup" className="text-primary hover:text-primary-hover font-bold ml-1 transition">Inscrivez-vous</a>
+          Vous n'avez pas de compte ? <Link to="/signup" className="text-primary hover:text-primary-hover font-bold ml-1 transition">Inscrivez-vous</Link>
         </p>
         <div className="flex items-center gap-4 text-xs text-text-secondary/70 font-sf-pro">
-          <a href="#" className="hover:text-text-primary transition">Mentions légales</a>
-          <a href="#" className="hover:text-text-primary transition">Politique de confidentialité</a>
+          <Link to="/terms" className="hover:text-text-primary transition">Mentions légales</Link>
+          <Link to="/terms" className="hover:text-text-primary transition">Politique de confidentialité</Link>
         </div>
       </footer>
     </main>

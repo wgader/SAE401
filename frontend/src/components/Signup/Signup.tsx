@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { FiX, FiCheck, FiCamera, FiMail, FiArrowRight, FiArrowLeft, FiUpload } from "react-icons/fi";
@@ -288,7 +288,7 @@ export default function Signup() {
                 {tosAccepted && <FiCheck className="w-3.5 h-3.5 text-black absolute" />}
               </div>
               <span className="text-sm font-sf-pro text-text-secondary leading-tight">
-                J'accepte les <a href="#" className="text-primary hover:text-primary-hover transition">conditions d'utilisation</a>
+                J'accepte les <Link to="/terms" className="text-primary hover:text-primary-hover transition">conditions d'utilisation</Link>
               </span>
             </label>
 
@@ -410,7 +410,7 @@ export default function Signup() {
       {/* Footer */}
       <footer className="mt-8 flex flex-col items-center gap-4">
         <p className="font-sf-pro text-text-secondary">
-          Vous avez déjà un compte ? <a href="/login" className="text-primary hover:text-primary-hover font-bold ml-1 transition">Connectez-vous</a>
+          Vous avez déjà un compte ? <Link to="/login" className="text-primary hover:text-primary-hover font-bold ml-1 transition">Connectez-vous</Link>
         </p>
       </footer>
     </main>

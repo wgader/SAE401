@@ -1,6 +1,7 @@
 import { cn } from "../../lib/utils";
+import { BASE_URL } from "../../lib/api";
 
-const DEFAULT_AVATAR = "http://localhost:8080/uploads/avatars/default.png";
+const DEFAULT_AVATAR = `${BASE_URL}/uploads/avatars/default.png`;
 
 export interface TweetCardProps {
     authorName: string;

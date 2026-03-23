@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import TweetCard from "../ui/TweetCard";
-import { api } from "../../lib/api";
+import { api, BASE_URL } from "../../lib/api";
 import type { Post } from "../../lib/api";
 
-const AVATAR_BASE_URL = "http://localhost:8080/uploads/avatars/";
+const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
 export default function Home() {
   const [posts, setPosts] = useState<Post[]>([]);

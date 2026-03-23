@@ -1,11 +1,11 @@
 import { FiHome, FiPlus, FiLogOut } from 'react-icons/fi';
 import logo from '../../assets/logo_sphere.svg';
-import { api } from '../../lib/api';
+import { api, BASE_URL } from '../../lib/api';
 import type { User } from '../../lib/api';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
-const AVATAR_BASE_URL = "http://localhost:8080/uploads/avatars/";
+const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
 export default function Navigation() {
   const [user, setUser] = useState<User | null>(null);
@@ -36,10 +36,10 @@ export default function Navigation() {
 
         <ul className="flex flex-col gap-2 flex-1">
           <li>
-            <a href="/home" className="flex items-center gap-3 text-primary font-bold text-lg px-4 py-3 rounded-full hover:bg-surface-hover transition font-sf-pro">
+            <Link to="/home" className="flex items-center gap-3 text-primary font-bold text-lg px-4 py-3 rounded-full hover:bg-surface-hover transition font-sf-pro">
               <FiHome className="w-6 h-6" />
               Accueil
-            </a>
+            </Link>
           </li>
 
           <li>
