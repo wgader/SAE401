@@ -84,10 +84,6 @@
     --color-background: #261E2F;
 }
 
-/* Global Styles */
-button {
-    cursor: pointer;
-}
 
 @layer utilities {
     .hide-scrollbar::-webkit-scrollbar {
@@ -97,4 +93,8 @@ button {
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+}
+
+button {
+    cursor: pointer;
 }
