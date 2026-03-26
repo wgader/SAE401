@@ -7,8 +7,16 @@ export interface User {
   name: string;
   email?: string;
   avatar: string | null;
+  bio?: string | null;
+  location?: string | null;
+  website?: string | null;
+  banner?: string | null;
   isVerified: boolean;
+  isBlocked: boolean;
   createdAt: string;
+  followersCount?: number;
+  followingCount?: number;
+  isFollowing?: boolean;
 }
 
 export interface AuthResponse {
@@ -27,7 +35,10 @@ export interface Post {
         username: string;
         name: string;
         avatar: string;
+        isBlocked: boolean;
     };
+    likesCount: number;
+    isLiked: boolean;
 }
 
 const getHeaders = () => {
@@ -40,6 +51,36 @@ const getHeaders = () => {
   }
   return headers;
 };
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const response = await fetch(`${API_URL}${path}`, {
+        ...options,
+        headers: {
+            ...getHeaders(),
+            ...options.headers,
+        },
+    });
+
+    if (response.status === 401 || response.status === 403) {
+        const data = await response.json().catch(() => ({}));
+        if (data.message?.includes("bloqué") || response.status === 401) {
+            localStorage.removeItem("token");
+            window.dispatchEvent(new Event('auth-changed'));
+            // Custom event to trigger a nice UI modal
+            window.dispatchEvent(new CustomEvent('user-blocked', { 
+                detail: { message: data.message || "Ce compte est suspendu." } 
+            }));
+        }
+        throw new Error(data.message || "Non autorisé");
+    }
+
+    if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || "Une erreur est survenue");
+    }
+
+    return response.json();
+}
 
 export const api = {
   
@@ -61,6 +102,7 @@ export const api = {
     }
 
     localStorage.setItem("token", data.token);
+    window.dispatchEvent(new Event('auth-changed'));
     return data;
   },
 
@@ -80,21 +122,27 @@ export const api = {
   },
 
   async getMe(): Promise<User> {
-    const response = await fetch(`${API_URL}/me`, {
-      method: "GET",
-      headers: getHeaders(),
+    return request<User>('/me');
+  },
+
+  async updateProfile(formData: FormData): Promise<User> {
+    return request<User>('/me/update', {
+      method: 'POST',
+      body: formData,
     });
+  },
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Erreur lors de la récupération du profil");
-    }
+  async getUser(username: string): Promise<User> {
+    return request<User>(`/users/${username}`);
+  },
 
-    return data;
+  async getUserPosts(username: string): Promise<Post[]> {
+    return request<Post[]>(`/users/${username}/posts`);
   },
 
   logout() {
     localStorage.removeItem("token");
+    window.dispatchEvent(new Event('auth-changed'));
   },
 
   isAuthenticated(): boolean {
@@ -102,22 +150,15 @@ export const api = {
   },
 
   async verifyCode(email: string, code: string): Promise<AuthResponse> {
-    const response = await fetch(`${API_URL}/verify-code`, {
-      method: "POST",
-      headers: { 
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
+    const data = await request<AuthResponse>('/verify-code', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, code }),
     });
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Code de vérification invalide");
-    }
-
     if (data.token) {
       localStorage.setItem("token", data.token);
+      window.dispatchEvent(new Event('auth-changed'));
     }
     return data;
   },
@@ -126,54 +167,51 @@ export const api = {
     const queryParams = new URLSearchParams();
     if (params.username) queryParams.append("username", params.username);
     if (params.email) queryParams.append("email", params.email);
-
-    const response = await fetch(`${API_URL}/check-availability?${queryParams.toString()}`, {
-      method: "GET",
-      headers: { "Accept": "application/json" },
-    });
-
-    return await response.json();
+    return request<any>(`/check-availability?${queryParams.toString()}`);
   },
 
   async resendCode(email: string): Promise<any> {
-    const response = await fetch(`${API_URL}/resend-code`, {
-      method: "POST",
-      headers: { 
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
+    return request<any>('/resend-code', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Erreur lors de l'envoi du code");
-    }
-    return data;
   },
 
-  async getPosts(): Promise<Post[]> {
-    const response = await fetch(`${API_URL}/posts`, {
-        method: "GET",
-        headers: getHeaders(),
-    });
-    if (!response.ok) throw new Error('Failed to fetch posts');
-    return response.json();
+  async getPosts(feed: 'for-you' | 'following' = 'for-you'): Promise<Post[]> {
+    const path = feed === 'following' ? '/posts?feed=following' : '/posts';
+    return request<Post[]>(path);
   },
 
   async createPost(content: string): Promise<Post> {
-    const response = await fetch(`${API_URL}/posts`, {
-        method: "POST",
-        headers: {
-            ...getHeaders(),
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content }),
+    return request<Post>('/posts', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
     });
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create post');
-    }
-    return response.json();
+  },
+
+  async likePost(postId: number): Promise<{ likesCount: number; isLiked: boolean }> {
+    return request<{ likesCount: number; isLiked: boolean }>(`/posts/${postId}/like`, {
+      method: 'POST',
+    });
+  },
+
+  async unlikePost(postId: number): Promise<{ likesCount: number; isLiked: boolean }> {
+    return request<{ likesCount: number; isLiked: boolean }>(`/posts/${postId}/like`, {
+      method: 'DELETE',
+    });
+  },
+
+  async toggleFollow(username: string): Promise<{ isFollowing: boolean; followersCount: number; followingCount: number }> {
+    return request<{ isFollowing: boolean; followersCount: number; followingCount: number }>(`/users/${username}/follow`, {
+      method: 'POST',
+    });
+  },
+
+  async deletePost(postId: number): Promise<any> {
+    return request<any>(`/posts/${postId}`, {
+      method: 'DELETE',
+    });
   }
 };

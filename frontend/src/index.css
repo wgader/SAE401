@@ -70,18 +70,32 @@
     --font-sf-pro: 'SF Pro', sans-serif;
 }
 
-/* Mode light */
-[data-theme="twitter-light"] {
-    --color-primary: #A6FD7A;
-    --color-background: #ffffff;
-    --color-text: #161616;
+html, body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
-/* Thème alternatif */
-[data-theme="twitter-violet"] {
-    --color-primary: #A6FD7A;
-    --color-text: #ffffff;
+/* Mode light */
+[data-theme="theme-light"] {
+    --color-background: #ffffff;
+    --color-text-primary: #161616;
+    --color-text-secondary: #536471;
+    --color-surface: #f7f9f9;
+    --color-surface-hover: #eff3f4;
+    --color-border: #eff3f4;
+}
+
+/* Thème violet */
+[data-theme="theme-violet"] {
     --color-background: #261E2F;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #a8a2b1;
+    --color-surface: #312739;
+    --color-surface-hover: #3d3147;
+    --color-border: #3d3147;
 }
 
 
@@ -89,6 +103,7 @@
     .hide-scrollbar::-webkit-scrollbar {
         display: none;
     }
+
     .hide-scrollbar {
         -ms-overflow-style: none;
         scrollbar-width: none;
@@ -97,4 +112,20 @@
 
 button {
     cursor: pointer;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(to right, var(--color-surface-hover) 8%, var(--color-border) 18%, var(--color-surface-hover) 33%);
+    background-size: 1000px 100%;
 }

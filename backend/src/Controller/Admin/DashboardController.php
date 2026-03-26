@@ -42,8 +42,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::section('Users'),
             MenuItem::linkTo(UserCrudController::class, 'Users', 'fa fa-user'),
 
-            // MenuItem::section('Blog'),
-            // MenuItem::linkTo(PostCrudController::class, 'Posts', 'fa fa-tags'),
+            MenuItem::section('Blog'),
+            MenuItem::linkTo(PostCrudController::class, 'Posts', 'fa fa-tags'),
         ];
     }
 }

@@ -44,6 +44,10 @@ class SecurityController extends AbstractController
             return $this->json(['message' => 'Identifiants ou mot de passe incorrects'], Response::HTTP_UNAUTHORIZED);
         }
 
+        if ($user->isBlocked()) {
+            return $this->json(['message' => 'Ce compte a été bloqué pour non respect des conditions d\'utilisation'], Response::HTTP_FORBIDDEN);
+        }
+
         if (!$user->isVerified()) {
             return $this->json([
                 'status' => 'unverified',
@@ -172,7 +176,7 @@ class SecurityController extends AbstractController
             $user->setEmail($email);
             $user->setAvatar($avatar);
             $user->setRoles(['ROLE_USER']);
-            $user->setVerified(false);
+            $user->setIsVerified(false);
             $user->setVerificationCode(str_pad((string)random_int(0, 999999), 6, '0', STR_PAD_LEFT));
             $user->setVerificationCodeExpiresAt(new \DateTimeImmutable('+15 minutes'));
 
@@ -218,7 +222,7 @@ class SecurityController extends AbstractController
             return $this->json(['message' => 'Le code de vérification a expiré'], Response::HTTP_BAD_REQUEST);
         }
 
-        $user->setVerified(true);
+        $user->setIsVerified(true);
         $user->setVerificationCode(null);
         $entityManager->flush();
 

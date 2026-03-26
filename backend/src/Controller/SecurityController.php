@@ -22,7 +22,6 @@ class SecurityController extends AbstractController
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        // Check for custom error from AccessDeniedHandler
         $customError = null;
         $flashErrors = $request->getSession()->getFlashBag()->get('error');
         if (!empty($flashErrors)) {
@@ -39,6 +38,6 @@ class SecurityController extends AbstractController
     #[Route('/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        throw new \LogicException('Cette méthode est vide car elle est interceptée par la clé de déconnexion du pare-feu.');
     }
 }

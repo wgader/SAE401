@@ -25,4 +25,38 @@ class PostService
 
         return $post;
     }
+
+    public function toggleLike(Post $post, User $user): bool
+    {
+        $isLiked = $post->getLikes()->contains($user);
+        
+        if ($isLiked) {
+            $user->removeLikedPost($post);
+        } else {
+            $user->addLikedPost($post);
+        }
+
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        return !$isLiked;
+    }
+
+    public function like(Post $post, User $user): void
+    {
+        if (!$post->getLikes()->contains($user)) {
+            $user->addLikedPost($post);
+            $this->entityManager->persist($post);
+            $this->entityManager->flush();
+        }
+    }
+
+    public function unlike(Post $post, User $user): void
+    {
+        if ($post->getLikes()->contains($user)) {
+            $user->removeLikedPost($post);
+            $this->entityManager->persist($post);
+            $this->entityManager->flush();
+        }
+    }
 }

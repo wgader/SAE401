@@ -10,6 +10,8 @@ import Login from './routes/login'
 import Post from './routes/post'
 import Terms from './routes/terms'
 import NotFound from './routes/not-found'
+import Profile from './components/Profile/Profile'
+import Settings from './components/Settings/Settings'
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
       {
         path: "post",
         element: <Post />,
+      },
+      {
+        path: "profile/:username",
+        element: <Profile />,
+      },
+      {
+        path: "settings",
+        element: <Settings />,
       },
     ],
   },
