@@ -3,9 +3,11 @@ import Navigation from "../components/ui/Navigation";
 import { api } from "../lib/api";
 import { useEffect, useState } from "react";
 import { BlockedModal } from "../components/ui/BlockedModal";
+import { useStore } from "../store/StoreContext";
 
 export default function RootLayout() {
   const navigate = useNavigate();
+  const { setCurrentUser } = useStore();
   const [blockedMessage, setBlockedMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -20,10 +22,15 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (!api.isAuthenticated()) {
-      navigate("/login");
-    }
-  }, [navigate]);
+      if (api.isAuthenticated()) {
+          api.getMe().then(setCurrentUser).catch(() => {
+              localStorage.removeItem("token");
+              navigate("/login");
+          });
+      } else {
+          navigate("/login");
+      }
+  }, [navigate, setCurrentUser]);
 
   useEffect(() => {
     const handleBlocked = (e: any) => {

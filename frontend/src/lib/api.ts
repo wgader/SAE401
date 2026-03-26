@@ -27,18 +27,18 @@ export interface AuthResponse {
 }
 
 export interface Post {
+  id: number;
+  content: string;
+  createdAt: string;
+  user: {
     id: number;
-    content: string;
-    createdAt: string;
-    user: {
-        id: number;
-        username: string;
-        name: string;
-        avatar: string;
-        isBlocked: boolean;
-    };
-    likesCount: number;
-    isLiked: boolean;
+    username: string;
+    name: string;
+    avatar: string;
+    isBlocked: boolean;
+  };
+  likesCount: number;
+  isLiked: boolean;
 }
 
 const getHeaders = () => {
@@ -53,53 +53,51 @@ const getHeaders = () => {
 };
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  try {
     const response = await fetch(`${API_URL}${path}`, {
-        ...options,
-        headers: {
-            ...getHeaders(),
-            ...options.headers,
-        },
+      ...options,
+      headers: {
+        ...getHeaders(),
+        ...options.headers,
+      },
     });
 
+    const data = await response.json().catch(() => ({}));
+
     if (response.status === 401 || response.status === 403) {
-        const data = await response.json().catch(() => ({}));
-        if (data.message?.includes("bloqué") || response.status === 401) {
-            localStorage.removeItem("token");
-            window.dispatchEvent(new Event('auth-changed'));
-            // Custom event to trigger a nice UI modal
-            window.dispatchEvent(new CustomEvent('user-blocked', { 
-                detail: { message: data.message || "Ce compte est suspendu." } 
-            }));
-        }
-        throw new Error(data.message || "Non autorisé");
+      if (data.message?.includes("bloqué") || response.status === 401) {
+        localStorage.removeItem("token");
+        window.dispatchEvent(new Event('auth-changed'));
+        window.dispatchEvent(new CustomEvent('user-blocked', {
+          detail: { message: data.message || "Ce compte est suspendu." }
+        }));
+      }
+      throw new Error(data.message || "Non autorisé");
     }
 
     if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.message || "Une erreur est survenue");
+      throw new Error(data.message || "Une erreur est survenue");
     }
 
-    return response.json();
+    return data;
+  } catch (err: any) {
+    console.error(`API Error (${path}):`, err);
+    throw err;
+  }
 }
 
 export const api = {
-  
+
   async login(credentials: Record<string, string>): Promise<AuthResponse> {
     const formData = new FormData();
     Object.entries(credentials).forEach(([key, value]) => {
       formData.append(key, value);
     });
 
-    const response = await fetch(`${API_URL}/login`, {
+    const data = await request<AuthResponse>('/login', {
       method: "POST",
-      headers: { "Accept": "application/json" },
       body: formData,
     });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Erreur lors de la connexion");
-    }
 
     localStorage.setItem("token", data.token);
     window.dispatchEvent(new Event('auth-changed'));

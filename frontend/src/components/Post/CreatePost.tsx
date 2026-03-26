@@ -1,24 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, BASE_URL } from "../../lib/api";
-import type { User } from "../../lib/api";
 import { cn } from "../../lib/utils";
 import { TweetInput } from "../ui/Input/TweetInput";
 import { FiX, FiImage, FiBarChart2, FiGlobe } from "react-icons/fi";
+import { useStore } from "../../store/StoreContext";
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
 export default function CreatePost() {
   const [content, setContent] = useState("");
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const { currentUser } = useStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (api.isAuthenticated()) {
-      api.getMe().then(setCurrentUser).catch(() => navigate("/login"));
-    } else {
+    if (!api.isAuthenticated()) {
       navigate("/login");
     }
   }, [navigate]);

@@ -30,7 +30,6 @@ class PostRepository extends ServiceEntityRepository
     public function save(Post $post, bool $flush = false): void
     {
         $this->getEntityManager()->persist($post);
-
         if ($flush) {
             $this->getEntityManager()->flush();
         }

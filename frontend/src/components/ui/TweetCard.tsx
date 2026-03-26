@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { FiMoreHorizontal, FiTrash2, FiSlash } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { api, BASE_URL } from "../../lib/api";
+import { useStore } from "../../store/StoreContext";
 
 const DEFAULT_AVATAR = `${BASE_URL}/uploads/avatars/default.png`;
 
@@ -51,25 +52,19 @@ export default function TweetCard({
     className,
     initialLikesCount = 0,
     initialIsLiked = false,
-    currentUserId,
-    currentUsername,
     onDelete,
     isAuthorBlocked = false,
 }: TweetCardProps) {
-    const [likesCount, setLikesCount] = useState(initialLikesCount);
-    const [prevLikesCount, setPrevLikesCount] = useState(initialLikesCount);
-    const [isLiked, setIsLiked] = useState(initialIsLiked);
+    const { currentUser, toggleLike, deletePost, posts, profilePosts } = useStore();
     const [isAnimating, setIsAnimating] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    const [currentUser, setCurrentUser] = useState<any>(null);
 
-    useEffect(() => {
-        if (!currentUserId && !currentUsername && api.isAuthenticated()) {
-            api.getMe().then(setCurrentUser).catch(console.error);
-        }
-    }, [currentUserId, currentUsername]);
+    // Find current state in store (for cross-component sync)
+    const storePost = [...posts, ...profilePosts].find(p => p.id === id);
+    const isLiked = storePost ? storePost.isLiked : initialIsLiked;
+    const likesCount = storePost ? storePost.likesCount : initialLikesCount;
 
     const handleLike = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -80,10 +75,10 @@ export default function TweetCard({
         }
 
         const newIsLiked = !isLiked;
-        setPrevLikesCount(likesCount);
-        setIsLiked(newIsLiked);
-        setLikesCount(prev => newIsLiked ? prev + 1 : prev - 1);
-
+        const newCount = newIsLiked ? likesCount + 1 : likesCount - 1;
+        
+        // Optimistic update in store
+        toggleLike(id, newIsLiked, newCount);
         if (newIsLiked) setIsAnimating(true);
 
         try {
@@ -93,9 +88,8 @@ export default function TweetCard({
                 await api.unlikePost(id);
             }
         } catch (err) {
-            setPrevLikesCount(likesCount);
-            setIsLiked(!newIsLiked);
-            setLikesCount(prev => !newIsLiked ? prev + 1 : prev - 1);
+            // Revert on error
+            toggleLike(id, isLiked, likesCount);
             console.error(err);
         }
     };
@@ -106,6 +100,7 @@ export default function TweetCard({
         setIsDeleting(true);
         try {
             await api.deletePost(id);
+            deletePost(id);
             if (onDelete) onDelete(id);
         } catch (err) {
             console.error(err);
@@ -118,7 +113,6 @@ export default function TweetCard({
 
     const shortUsername = username.length > 12 ? `${username.slice(0, 12)}…` : username;
     const formattedDate = timeAgo.includes("T") ? formatDate(timeAgo) : timeAgo;
-    const direction = likesCount > prevLikesCount ? 1 : -1;
 
     return (
         <li
@@ -128,7 +122,7 @@ export default function TweetCard({
             )}
             aria-label="Tweet card"
         >
-            <article className="flex items-start gap-3 w-full relative">
+            <article className="flex items-start gap-3 w-full relative text-left">
                 <Link to={`/profile/${username}`} className="shrink-0 w-12 h-12 sm:w-10 sm:h-10 rounded-full overflow-hidden m-0 block hover:opacity-80 transition-opacity">
                     <img
                         src={avatarUrl ?? DEFAULT_AVATAR}
@@ -156,7 +150,6 @@ export default function TweetCard({
                         ) : null}
                     </header>
 
-                    {/* Three Dots Menu - Positioned handled via parent header pr-8 and absolute positioning */}
                     <div className="absolute right-0 top-0">
                         <button
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(!showMenu); }}
@@ -170,7 +163,7 @@ export default function TweetCard({
                             <>
                                 <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
                                 <menu className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-xl shadow-xl z-50 overflow-hidden m-0 p-1 font-sf-pro">
-                                    {(currentUsername === username || (currentUser && currentUser.username === username)) ? (
+                                    {(currentUser?.username === username) ? (
                                         <li>
                                             <button
                                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(false); setShowConfirm(true); }}
@@ -240,16 +233,12 @@ export default function TweetCard({
                                 </div>
 
                                 <div className="relative h-4 w-6 overflow-hidden flex items-center">
-                                    <AnimatePresence mode="popLayout" custom={direction}>
+                                    <AnimatePresence mode="popLayout">
                                         <motion.span
                                             key={likesCount}
-                                            initial={{ y: direction > 0 ? 15 : -15, opacity: 0 }}
+                                            initial={{ y: 15, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
-                                            exit={{ y: direction > 0 ? -15 : 15, opacity: 0 }}
-                                            transition={{
-                                                y: { type: "spring", stiffness: 300, damping: 30 },
-                                                opacity: { duration: 0.2 }
-                                            }}
+                                            exit={{ y: -15, opacity: 0 }}
                                             className={cn(
                                                 "text-xs absolute left-0 w-full text-left",
                                                 isLiked && "text-primary transition-colors"
@@ -265,7 +254,6 @@ export default function TweetCard({
                 </section>
             </article>
 
-            {/* Confirmation Modal */}
             {showConfirm && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-[1px]" onClick={(e) => e.stopPropagation()}>
                     <dialog

@@ -3,8 +3,8 @@ import { FiSlash } from 'react-icons/fi';
 import { BASE_URL } from '../../lib/api';
 
 interface ProfileBannerProps {
-    banner: string | null;
-    avatar: string | null;
+    banner?: string | null;
+    avatar?: string | null;
     name: string;
     isBlocked: boolean;
     avatarBaseUrl: string;

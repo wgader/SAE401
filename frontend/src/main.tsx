@@ -57,8 +57,12 @@ const router = createBrowserRouter([
   basename: import.meta.env.BASE_URL
 })
 
+import { StoreProvider } from './store/StoreContext'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <StoreProvider>
+      <RouterProvider router={router} />
+    </StoreProvider>
   </StrictMode>,
 )

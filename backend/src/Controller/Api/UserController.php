@@ -10,57 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
-    // Get all users
-    #[Route('/api/user', methods: ['GET'])]
-    public function list(UserRepository $userRepository): JsonResponse
-    {
-        $users = $userRepository->findAll();
-        $data = [];
-
-        foreach ($users as $user) {
-            $data[] = [
-                'id' => $user->getId(),
-                'username' => $user->getUsername(),
-                'name' => $user->getName(),
-                'avatar' => $user->getAvatar(),
-                'bio' => $user->getBio(),
-                'location' => $user->getLocation(),
-                'website' => $user->getWebsite(),
-                'banner' => $user->getBanner(),
-                'isVerified' => $user->isVerified(),
-                'isBlocked' => $user->isBlocked(),
-                'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
-            ];
-        }
-
-        return $this->json($data);
-    }
-
-    // Get one user by id
-    #[Route('/users/{id}', methods: ['GET'])]
-    public function show(UserRepository $userRepository, int $id): JsonResponse
-    {
-        $user = $userRepository->findOneById($id);
-
-        if (!$user) {
-            throw $this->createNotFoundException('L\'utilisateur n\'existe pas');
-        }
-
-        return $this->json([
-            'id' => $user->getId(),
-            'username' => $user->getUsername(),
-            'name' => $user->getName(),
-            'avatar' => $user->getAvatar(),
-            'bio' => $user->getBio(),
-            'location' => $user->getLocation(),
-            'website' => $user->getWebsite(),
-            'banner' => $user->getBanner(),
-            'isVerified' => $user->isVerified(),
-            'isBlocked' => $user->isBlocked(),
-            'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
-        ]);
-    }
-
     // Get one user by username
     #[Route('/api/users/{username}', methods: ['GET'])]
     public function showByUsername(UserRepository $userRepository, string $username): JsonResponse

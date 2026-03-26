@@ -4,15 +4,15 @@ import HomeHeader from "../ui/HomeHeader";
 import RefreshLoader from "../ui/RefreshLoader";
 import { TweetSkeleton } from "../ui/Skeletons";
 import { api, BASE_URL } from "../../lib/api";
-import type { Post } from "../../lib/api";
+import { useStore } from "../../store/StoreContext";
+import { RenderErrorBoundary } from "../ui/RenderErrorBoundary";
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { posts, setPosts, currentUser } = useStore();
   const [activeFeed, setActiveFeed] = useState<'for-you' | 'following'>('for-you');
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [startY, setStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
@@ -70,9 +70,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (api.isAuthenticated()) {
-      api.getMe().then(setCurrentUser).catch(console.error);
-    }
     fetchPosts(activeFeed);
 
     const intervalStr = localStorage.getItem("refreshInterval") || "off";
@@ -97,35 +94,35 @@ export default function Home() {
       <RefreshLoader isRefreshing={isRefreshing} pullDistance={pullDistance} />
 
       <section className="flex flex-col">
-        <ul className="flex flex-col m-0 p-0">
-          {loading ? (
-            <>
-              {[...Array(5)].map((_, i) => <TweetSkeleton key={i} />)}
-            </>
-          ) : posts.length === 0 ? (
-            <li className="flex flex-col items-center justify-center p-20 text-center">
-              <p className="text-text-secondary font-sf-pro text-lg">Il n'y a pas encore de posts. Soyez le premier à en publier un !</p>
-            </li>
-          ) : (
-            posts.map((post) => (
-              <TweetCard
-                key={post.id}
-                id={post.id}
-                authorName={post.user.name}
-                username={post.user.username}
-                timeAgo={post.createdAt}
-                content={post.content}
-                avatarUrl={`${AVATAR_BASE_URL}${post.user.avatar}`}
-                initialLikesCount={post.likesCount}
-                initialIsLiked={post.isLiked}
-                currentUserId={currentUser?.id}
-                currentUsername={currentUser?.username}
-                onDelete={(deletedId) => setPosts(prev => prev.filter(p => p.id !== deletedId))}
-                isAuthorBlocked={post.user.isBlocked}
-              />
-            ))
-          )}
-        </ul>
+        <RenderErrorBoundary>
+          <ul className="flex flex-col m-0 p-0 overflow-hidden">
+            {loading ? (
+              <>
+                {[...Array(5)].map((_, i) => <TweetSkeleton key={i} />)}
+              </>
+            ) : posts.length === 0 ? (
+              <li className="flex flex-col items-center justify-center p-20 text-center list-none">
+                <p className="text-text-secondary font-sf-pro text-lg">Il n'y a pas encore de posts. Soyez le premier à en publier un !</p>
+              </li>
+            ) : (
+              posts.map((post) => (
+                <TweetCard
+                  key={post.id}
+                  id={post.id}
+                  authorName={post.user.name}
+                  username={post.user.username}
+                  timeAgo={post.createdAt}
+                  content={post.content}
+                  avatarUrl={`${AVATAR_BASE_URL}${post.user.avatar}`}
+                  initialLikesCount={post.likesCount}
+                  initialIsLiked={post.isLiked}
+                  currentUserId={currentUser?.id}
+                  currentUsername={currentUser?.username}
+                />
+              ))
+            )}
+          </ul>
+        </RenderErrorBoundary>
       </section>
     </main>
   );

@@ -1,31 +1,22 @@
 import { FiHome, FiPlus, FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
 import logo from '../../assets/logo_sphere.svg';
-import { api, BASE_URL } from '../../lib/api';
-import type { User } from '../../lib/api';
-import { useState, useEffect } from 'react';
+import { BASE_URL } from '../../lib/api';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useScrollDirection } from '../../hooks/useScrollDirection';
 import { cn } from '../../lib/utils';
+import { useStore } from '../../store/StoreContext';
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
 export default function Navigation() {
-  const [user, setUser] = useState<User | null>(null);
+  const { currentUser: user, logout } = useStore();
   const { isVisible } = useScrollDirection();
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    if (api.isAuthenticated()) {
-      api.getMe().then(setUser).catch(() => {
-        api.logout();
-      });
-    }
-  }, []);
-
   const handleLogout = () => {
-    api.logout();
+    logout();
     navigate("/login");
   };
 
@@ -35,7 +26,6 @@ export default function Navigation() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
-
 
   const getDesktopLinkClass = (path: string) => {
     const isActive = location.pathname.startsWith(path);
@@ -51,10 +41,8 @@ export default function Navigation() {
 
   return (
     <>
-      {/* Mobile Header */}
       <nav className="hidden md:flex flex-col w-[250px] h-screen fixed left-0 top-0 border-r border-border p-6 bg-background">
         <header className="flex items-center gap-2 mb-10 pl-2">
-          {/* Sphere Logo */}
           <img src={logo} alt="Sphere Logo" className="h-8 pl-2" />
         </header>
 
@@ -90,7 +78,6 @@ export default function Navigation() {
           </li>
         </ul>
 
-        {/* Profile Card */}
         <footer className="flex flex-col gap-2 mt-auto pb-4">
           {user && (
             <section className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-surface-hover transition group">
@@ -120,12 +107,10 @@ export default function Navigation() {
         </footer>
       </nav>
 
-      {/* Mobile Top Header */}
       <header className={cn(
         "md:hidden flex items-center justify-between h-14 w-full fixed top-0 left-0 bg-background px-4 border-b border-border z-50 transition-transform duration-300 ease-in-out",
         !isVisible && "-translate-y-full"
       )}>
-        {/* Left: User Avatar */}
         <section className="w-8 h-8 flex-shrink-0">
           {user ? (
             <img
@@ -138,12 +123,10 @@ export default function Navigation() {
           )}
         </section>
 
-        {/* Center: Logo (absolutely centered) */}
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
           <img src={logo} alt="Sphere Logo" className="h-6" />
         </div>
 
-        {/* Right: Actions */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <Link
             to="/settings"
@@ -162,7 +145,6 @@ export default function Navigation() {
         </div>
       </header>
 
-      {/* Mobile Bottom Bar */}
       <nav className={cn(
         "md:hidden flex items-center justify-center h-16 w-full fixed bottom-0 left-0 bg-background/90 backdrop-blur-md z-50 border-t border-border pb-1 transition-transform duration-300 ease-in-out",
         !isVisible && "translate-y-full"
