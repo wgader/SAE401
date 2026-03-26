@@ -34,8 +34,6 @@ export function createResource<T>(promise: Promise<T>) {
                     error = err;
                 }
             );
-            // We can't easily "replace" the suspender for existing readers without a re-render 
-            // but this is a starting point for re-fetching.
             return s;
         }
     };
