@@ -31,6 +31,11 @@ class UserCrudController extends AbstractCrudController
                 ->setUploadDir('public/uploads/avatars')
                 ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
                 ->setRequired(false),
+            ImageField::new('banner', 'Bannière de profil')
+                ->setBasePath('uploads/banners')
+                ->setUploadDir('public/uploads/banners')
+                ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
+                ->setRequired(false),
             ChoiceField::new('roles', 'Rôles')
                 ->setChoices([
                     'Utilisateur' => 'ROLE_USER',
