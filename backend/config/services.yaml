@@ -9,6 +9,7 @@
 parameters:
     avatars_directory: '%kernel.project_dir%/public/uploads/avatars'
     banners_directory: '%kernel.project_dir%/public/uploads/banners'
+    posts_directory: '%kernel.project_dir%/public/uploads/posts'
     admin_email: 'wiretn16@gmail.com'
     front_url: '%env(FRONT_URL)%'
 

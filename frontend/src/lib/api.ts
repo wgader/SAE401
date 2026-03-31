@@ -9,14 +9,18 @@ export interface User {
   avatar: string | null;
   bio?: string | null;
   location?: string | null;
-  website?: string | null;
-  banner?: string | null;
-  isVerified: boolean;
-  isBlocked: boolean;
-  createdAt: string;
+  website?: string;
+  banner?: string;
+  isVerified?: boolean;
+  isBlocked?: boolean; // Admin suspension
+  isBlockedByMe?: boolean; // User-to-user blocking
+  hasBlockedMe?: boolean;
+  createdAt?: string;
+  isFollowing?: boolean;
+  isFollower?: boolean;
   followersCount?: number;
   followingCount?: number;
-  isFollowing?: boolean;
+  blockedCount?: number;
 }
 
 export interface AuthResponse {
@@ -24,6 +28,12 @@ export interface AuthResponse {
   message: string;
   token: string;
   user: User;
+}
+
+export interface PostMedia {
+  id: number;
+  url: string;
+  type: 'image' | 'video';
 }
 
 export interface Post {
@@ -35,10 +45,16 @@ export interface Post {
     username: string;
     name: string;
     avatar: string;
-    isBlocked: boolean;
+    isBlocked: boolean; // Admin suspension
+    isBlockedByMe?: boolean;
+    hasBlockedMe?: boolean;
+    isFollowing?: boolean;
   };
   likesCount: number;
   isLiked: boolean;
+  repliesCount: number;
+  parentId?: number;
+  media?: PostMedia[];
 }
 
 const getHeaders = () => {
@@ -65,18 +81,24 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     const data = await response.json().catch(() => ({}));
 
     if (response.status === 401 || response.status === 403) {
-      if (data.message?.includes("bloqué") || response.status === 401) {
+      const isSuspended = data.message?.toLowerCase().includes("suspendu") ||
+        data.message?.toLowerCase().includes("enfreint") ||
+        data.message?.toLowerCase().includes("désactivé");
+
+      if (response.status === 401 || isSuspended) {
         localStorage.removeItem("token");
         window.dispatchEvent(new Event('auth-changed'));
         window.dispatchEvent(new CustomEvent('user-blocked', {
-          detail: { message: data.message || "Ce compte est suspendu." }
+          detail: { message: data.message || "Ce compte est suspendu par l'administrateur." }
         }));
       }
-      throw new Error(data.message || "Non autorisé");
+      throw new Error(data.message || "Accès refusé");
     }
 
     if (!response.ok) {
-      throw new Error(data.message || "Une erreur est survenue");
+      const error = new Error(data.message || "Une erreur est survenue") as any;
+      error.status = response.status;
+      throw error;
     }
 
     return data;
@@ -181,11 +203,10 @@ export const api = {
     return request<Post[]>(path);
   },
 
-  async createPost(content: string): Promise<Post> {
+  async createPost(formData: FormData): Promise<Post> {
     return request<Post>('/posts', {
       method: 'POST',
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
+      body: formData,
     });
   },
 
@@ -207,9 +228,42 @@ export const api = {
     });
   },
 
+  async blockUser(username: string): Promise<{ isBlockedByMe: boolean; followersCount: number; followingCount: number }> {
+    return request<{ isBlockedByMe: boolean; followersCount: number; followingCount: number }>(`/users/${username}/block`, {
+      method: 'POST',
+    });
+  },
+
+  async getBlockedUsers(): Promise<User[]> {
+    return request<User[]>('/me/blocked');
+  },
+
+  async getFollowers(username: string): Promise<User[]> {
+    return request<User[]>(`/users/${username}/followers`);
+  },
+
+  async getFollowing(username: string): Promise<User[]> {
+    return request<User[]>(`/users/${username}/following`);
+  },
+
   async deletePost(postId: number): Promise<any> {
     return request<any>(`/posts/${postId}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
+  },
+
+  async updatePost(postId: number, formData: FormData): Promise<Post> {
+    return request<Post>(`/posts/${postId}`, {
+      method: 'POST',
+      body: formData,
+    });
+  },
+
+  async getPostReplies(postId: number): Promise<Post[]> {
+    return request<Post[]>(`/posts/${postId}/replies`);
+  },
+
+  async getPost(postId: number): Promise<Post> {
+    return request<Post>(`/posts/${postId}`);
   }
 };

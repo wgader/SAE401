@@ -8,15 +8,24 @@ import Home from './routes/home'
 import Signup from './routes/signup'
 import Login from './routes/login'
 import Post from './routes/post'
+import PostDetail from './routes/post-detail'
 import Terms from './routes/terms'
 import NotFound from './routes/not-found'
 import Profile from './components/Profile/Profile'
+import FollowList from './components/Profile/FollowList'
 import Settings from './components/Settings/Settings'
+
+import { GlobalToast } from './components/ui/GlobalToast';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RootLayout />,
+    element: (
+      <>
+        <RootLayout />
+        <GlobalToast />
+      </>
+    ),
     errorElement: <NotFound />,
     children: [
       {
@@ -32,8 +41,20 @@ const router = createBrowserRouter([
         element: <Post />,
       },
       {
+        path: "post/:id",
+        element: <PostDetail />,
+      },
+      {
         path: "profile/:username",
         element: <Profile />,
+      },
+      {
+        path: "profile/:username/followers",
+        element: <FollowList type="followers" />,
+      },
+      {
+        path: "profile/:username/following",
+        element: <FollowList type="following" />,
       },
       {
         path: "settings",

@@ -1,13 +1,13 @@
-import React from 'react';
 import { FiMapPin, FiLink, FiCalendar, FiSlash } from 'react-icons/fi';
 import type { User } from '../../lib/api';
 
 interface ProfileInfoProps {
     profile: User;
     joinedDate: string;
+    onShowList?: (type: 'followers' | 'following' | 'blocked') => void;
 }
 
-export default function ProfileInfo({ profile, joinedDate }: ProfileInfoProps) {
+export default function ProfileInfo({ profile, joinedDate, onShowList }: ProfileInfoProps) {
     return (
         <section className="mt-2 text-text-primary px-4 md:px-6 flex flex-col gap-3">
             <hgroup className="flex flex-col">
@@ -24,7 +24,7 @@ export default function ProfileInfo({ profile, joinedDate }: ProfileInfoProps) {
                         <div className="h-4 w-5/6 bg-text-tertiary rounded-full" />
                         <div className="h-4 w-4/6 bg-text-tertiary rounded-full" />
                     </div>
-                    <p className="text-red-500 font-black italic text-lg tracking-tight uppercase flex items-center gap-2">
+                    <p className="text-red-500 font-black text-lg tracking-tight uppercase flex items-center gap-2">
                         <FiSlash className="w-5 h-5" />
                         Profil Neutralisé par la Sphère
                     </p>
@@ -59,12 +59,26 @@ export default function ProfileInfo({ profile, joinedDate }: ProfileInfoProps) {
                     </address>
 
                     <ul className="flex gap-4 text-[15px] m-0 p-0 list-none mt-1">
-                        <li>
+                        <li 
+                          className="hover:underline cursor-pointer transition" 
+                          onClick={() => onShowList?.('following')}
+                        >
                             <strong className="text-text-primary">{profile.followingCount ?? 0}</strong> <span className="text-text-secondary">abonnements</span>
                         </li>
-                        <li>
+                        <li 
+                          className="hover:underline cursor-pointer transition" 
+                          onClick={() => onShowList?.('followers')}
+                        >
                             <strong className="text-text-primary">{profile.followersCount ?? 0}</strong> <span className="text-text-secondary">abonnés</span>
                         </li>
+                        {profile.blockedCount !== undefined && profile.blockedCount > 0 && (
+                            <li 
+                              className="hover:underline cursor-pointer transition" 
+                              onClick={() => onShowList?.('blocked')}
+                            >
+                                <strong className="text-text-primary">{profile.blockedCount}</strong> <span className="text-text-secondary">bloqués</span>
+                            </li>
+                        )}
                     </ul>
                 </>
             )}

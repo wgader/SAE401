@@ -10,6 +10,7 @@ const buttonVariants = cva(
         primary: "bg-[image:var(--color-linear-gradient)] text-background hover:opacity-90 shadow-[0_4px_14px_0_rgba(166,253,122,0.39)] font-druk tracking-wide",
         outline: "bg-surface border border-border text-text-primary hover:bg-surface-hover font-sf-pro",
         ghost: "bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface font-sf-pro",
+        danger: "bg-red-600 text-white hover:bg-red-700 font-sf-pro",
       },
       size: {
         default: "h-11 px-6 py-2",

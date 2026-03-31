@@ -80,6 +80,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->likedPosts = new ArrayCollection();
         $this->following = new ArrayCollection();
         $this->followers = new ArrayCollection();
+        $this->blockedUsers = new ArrayCollection();
+        $this->blockers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -308,6 +310,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'following')]
     private Collection $followers;
 
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\ManyToMany(targetEntity: self::class, inversedBy: 'blockers')]
+    #[ORM\JoinTable(name: 'user_blocks')]
+    #[ORM\JoinColumn(name: 'blocker_id', referencedColumnName: 'id')]
+    #[ORM\InverseJoinColumn(name: 'blocked_id', referencedColumnName: 'id')]
+    private Collection $blockedUsers;
+
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'blockedUsers')]
+    private Collection $blockers;
+
     public function getApiToken(): ?ApiToken
     {
         return $this->apiToken;
@@ -425,6 +442,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getBlockedUsers(): Collection
+    {
+        return $this->blockedUsers;
+    }
+
+    public function block(self $user): static
+    {
+        if (!$this->blockedUsers->contains($user)) {
+            $this->blockedUsers->add($user);
+            // Automatic unfollow logic
+            $this->removeFollowing($user);
+            $this->removeFollower($user);
+            $user->removeFollowing($this);
+            $user->removeFollower($this);
+        }
+
+        return $this;
+    }
+
+    public function unblock(self $user): static
+    {
+        $this->blockedUsers->removeElement($user);
+
+        return $this;
+    }
+
+    public function isBlocking(self $user): bool
+    {
+        return $this->blockedUsers->contains($user);
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getBlockers(): Collection
+    {
+        return $this->blockers;
     }
 
     public function isBlocked(): bool

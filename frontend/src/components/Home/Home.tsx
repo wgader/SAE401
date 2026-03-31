@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import TweetCard from "../ui/TweetCard";
 import HomeHeader from "../ui/HomeHeader";
 import RefreshLoader from "../ui/RefreshLoader";
@@ -6,6 +7,7 @@ import { TweetSkeleton } from "../ui/Skeletons";
 import { api, BASE_URL } from "../../lib/api";
 import { useStore } from "../../store/StoreContext";
 import { RenderErrorBoundary } from "../ui/RenderErrorBoundary";
+import { Toast } from "../ui/Toast";
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
@@ -17,6 +19,8 @@ export default function Home() {
   const [startY, setStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
   const [settingsRevision, setSettingsRevision] = useState(0);
+  const [showToast, setShowToast] = useState(false);
+  const location = useLocation();
 
   const fetchPosts = async (feed: 'for-you' | 'following', silent = false) => {
     try {
@@ -66,8 +70,16 @@ export default function Home() {
   useEffect(() => {
     const handleSettingsChange = () => setSettingsRevision(p => p + 1);
     window.addEventListener('settings-changed', handleSettingsChange);
+
+    // Show toast if post was just created
+    if (location.state?.postCreated) {
+      setShowToast(true);
+      // Clean up state to avoid showing toast on refresh
+      window.history.replaceState({}, document.title);
+    }
+
     return () => window.removeEventListener('settings-changed', handleSettingsChange);
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     fetchPosts(activeFeed);
@@ -118,12 +130,20 @@ export default function Home() {
                   initialIsLiked={post.isLiked}
                   currentUserId={currentUser?.id}
                   currentUsername={currentUser?.username}
+                  media={post.media}
+                  isAuthorBlocked={post.user.isBlocked}
                 />
               ))
             )}
           </ul>
         </RenderErrorBoundary>
       </section>
+
+      <Toast 
+        isVisible={showToast} 
+        message="Ton post a été envoyé !" 
+        onClose={() => setShowToast(false)} 
+      />
     </main>
   );
 }

@@ -33,10 +33,28 @@ class Post
     #[ORM\JoinTable(name: 'post_likes')]
     private Collection $likes;
 
+    /**
+     * @var Collection<int, PostMedia>
+     */
+    #[ORM\OneToMany(mappedBy: 'post', targetEntity: PostMedia::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $media;
+
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'replies')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private ?self $parent = null;
+
+    /**
+     * @var Collection<int, self>
+     */
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
+    private Collection $replies;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->likes = new ArrayCollection();
+        $this->media = new ArrayCollection();
+        $this->replies = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,6 +119,73 @@ class Post
     {
         $this->likes->removeElement($user);
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PostMedia>
+     */
+    public function getMedia(): Collection
+    {
+        return $this->media;
+    }
+
+    public function addMedia(PostMedia $media): static
+    {
+        if (!$this->media->contains($media)) {
+            $this->media->add($media);
+            $media->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedia(PostMedia $media): static
+    {
+        if ($this->media->removeElement($media)) {
+            if ($media->getPost() === $this) {
+                $media->setPost(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getReplies(): Collection
+    {
+        return $this->replies;
+    }
+
+    public function addReply(self $reply): static
+    {
+        if (!$this->replies->contains($reply)) {
+            $this->replies->add($reply);
+            $reply->setParent($this);
+        }
+        return $this;
+    }
+
+    public function removeReply(self $reply): static
+    {
+        if ($this->replies->removeElement($reply)) {
+            if ($reply->getParent() === $this) {
+                $reply->setParent(null);
+            }
+        }
         return $this;
     }
 }

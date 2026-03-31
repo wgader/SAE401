@@ -35,6 +35,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setState(prev => ({ ...prev, posts }));
     }, []);
 
+    const setCurrentPost = useCallback((post: Post | null) => {
+        setState(prev => ({ ...prev, currentPost: post }));
+    }, []);
+
     const addPost = useCallback((post: Post) => {
         setState(prev => ({ ...prev, posts: [post, ...prev.posts] }));
     }, []);
@@ -43,7 +47,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setState(prev => ({
             ...prev,
             posts: prev.posts.filter(p => p.id !== postId),
-            profilePosts: prev.profilePosts.filter(p => p.id !== postId)
+            profilePosts: prev.profilePosts.filter(p => p.id !== postId),
+            currentPost: prev.currentPost?.id === postId ? null : prev.currentPost
         }));
     }, []);
 
@@ -66,8 +71,84 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setState(prev => ({
             ...prev,
             posts: updatePosts(prev.posts),
-            profilePosts: updatePosts(prev.profilePosts)
+            profilePosts: updatePosts(prev.profilePosts),
+            currentPost: prev.currentPost?.id === postId ? { ...prev.currentPost, isLiked, likesCount } : prev.currentPost
         }));
+    }, []);
+
+    const updatePost = useCallback((postId: number, updatedPost: Post) => {
+        const update = (posts: Post[]) => posts.map(post => post.id === postId ? updatedPost : post);
+        setState(prev => ({
+            ...prev,
+            posts: update(prev.posts),
+            profilePosts: update(prev.profilePosts),
+            currentPost: prev.currentPost?.id === postId ? updatedPost : prev.currentPost
+        }));
+    }, []);
+
+    const addReply = useCallback((parentId: number, reply: Post) => {
+        const update = (posts: Post[]) => posts.map(post => {
+            if (post.id === parentId) {
+                return { ...post, repliesCount: post.repliesCount + 1 };
+            }
+            return post;
+        });
+
+        setState(prev => ({
+            ...prev,
+            posts: [reply, ...update(prev.posts)],
+            profilePosts: reply.user.id === prev.currentUser?.id
+                ? [reply, ...update(prev.profilePosts)]
+                : update(prev.profilePosts),
+            currentPost: prev.currentPost?.id === parentId ? { ...prev.currentPost, repliesCount: prev.currentPost.repliesCount + 1 } : prev.currentPost
+        }));
+    }, []);
+
+    const toggleFollow = useCallback((username: string, data: { isFollowing: boolean; followersCount: number; followingCount: number }) => {
+        setState(prev => {
+            const isTargetProfile = prev.currentProfile?.username === username;
+            const updatedProfile = isTargetProfile ? { ...prev.currentProfile!, ...data } : prev.currentProfile;
+
+            const updateInPosts = (posts: Post[]) => posts.map(p =>
+                p.user.username === username ? { ...p, user: { ...p.user, isFollowing: data.isFollowing } } : p
+            );
+
+            return {
+                ...prev,
+                currentProfile: updatedProfile,
+                posts: updateInPosts(prev.posts),
+                profilePosts: updateInPosts(prev.profilePosts),
+                currentPost: prev.currentPost?.user.username === username ? { ...prev.currentPost, user: { ...prev.currentPost.user, isFollowing: data.isFollowing } } : prev.currentPost
+            };
+        });
+    }, []);
+
+    const toggleBlock = useCallback((username: string, data: { isBlockedByMe: boolean; followersCount: number; followingCount: number }) => {
+        setState(prev => {
+            const isTargetProfile = prev.currentProfile?.username === username;
+            const updatedProfile = isTargetProfile ? { ...prev.currentProfile!, ...data } : prev.currentProfile;
+
+            // When blocking, set isFollowing to false in both directions (client logic)
+            const updateInPosts = (posts: Post[]) => posts.map(p =>
+                p.user.username === username ? { ...p, user: { ...p.user, isBlockedByMe: data.isBlockedByMe, isFollowing: data.isBlockedByMe ? false : p.user.isFollowing } } : p
+            );
+
+            const updateCurrentPost = () => {
+                if (!prev.currentPost) return null;
+                if (prev.currentPost.user.username === username) {
+                    return { ...prev.currentPost, user: { ...prev.currentPost.user, isBlockedByMe: data.isBlockedByMe, isFollowing: data.isBlockedByMe ? false : prev.currentPost.user.isFollowing } };
+                }
+                return prev.currentPost;
+            };
+
+            return {
+                ...prev,
+                currentProfile: updatedProfile,
+                posts: updateInPosts(prev.posts),
+                profilePosts: updateInPosts(prev.profilePosts),
+                currentPost: updateCurrentPost()
+            };
+        });
     }, []);
 
     const value: StoreContextType = {
@@ -76,11 +157,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         logout,
         setCurrentUser,
         setPosts,
+        setCurrentPost,
         addPost,
         deletePost,
         setCurrentProfile,
         setProfilePosts,
         toggleLike,
+        updatePost,
+        addReply,
+        toggleFollow,
+        toggleBlock,
     };
 
     return (

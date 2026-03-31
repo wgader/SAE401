@@ -26,14 +26,14 @@ export const TweetInput = forwardRef<HTMLTextAreaElement, TweetInputProps>(
           ref={ref}
           onChange={handleInput}
           className={cn(
-            "w-full bg-transparent border-none text-[1.0625rem] sm:text-lg font-sf-pro text-text-primary placeholder:text-text-secondary focus:ring-0 focus:outline-none focus-visible:outline-none resize-none min-h-[120px] p-0 hide-scrollbar shadow-none",
+            "w-full bg-transparent border-none text-[0.9375rem] font-sf-pro text-text-primary placeholder:text-text-secondary focus:ring-0 focus:outline-none focus-visible:outline-none resize-none min-h-[7.5rem] p-0 hide-scrollbar shadow-none",
             error && "text-red-500",
             className
           )}
           {...props}
         />
         {error && (
-          <p role="alert" className="text-sm text-red-500 font-sf-pro mt-2">
+          <p role="alert" className="text-[0.875rem] text-red-500 font-sf-pro mt-[0.5rem]">
             {error}
           </p>
         )}

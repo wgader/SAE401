@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { api, BASE_URL } from '../../lib/api';
 import type { User } from '../../lib/api';
 import { FiX, FiCamera } from 'react-icons/fi';
+import { Toast } from '../ui/Toast';
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
@@ -17,19 +18,18 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
   const [location, setLocation] = useState(user.location || '');
   const [website, setWebsite] = useState(user.website || '');
   const [focus, setFocus] = useState<string | null>(null);
-  
+
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [bannerFile, setBannerFile] = useState<File | null>(null);
 
   const [avatarPreview, setAvatarPreview] = useState<string>(user.avatar ? `${AVATAR_BASE_URL}${user.avatar}` : `${AVATAR_BASE_URL}default.png`);
   const [bannerPreview, setBannerPreview] = useState<string>(
-    user.banner && user.banner !== 'default_banniere.png' 
-      ? `${BASE_URL}/uploads/banners/${user.banner}` 
+    user.banner && user.banner !== 'default_banniere.png'
+      ? `${BASE_URL}/uploads/banners/${user.banner}`
       : ''
   );
-
+  const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
 
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
@@ -72,12 +72,9 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
       const updatedUser = await api.updateProfile(formData);
       onUpdate(updatedUser);
       onClose();
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Une erreur inconnue est survenue');
-      }
+    } catch (err: any) {
+      console.error(err);
+      setError(err?.message || 'Une erreur inconnue est survenue');
     } finally {
       setIsSaving(false);
     }
@@ -87,11 +84,11 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-end sm:justify-center bg-black/60 backdrop-blur-sm sm:p-4 animate-in fade-in duration-200">
       <dialog open className="relative w-full h-full sm:h-auto sm:max-w-xl bg-background sm:border sm:border-border sm:rounded-2xl shadow-2xl flex flex-col sm:max-h-[min(90vh,45rem)] overflow-hidden m-0 p-0 text-text-primary">
         <form onSubmit={handleSubmit} className="flex flex-col h-[100dvh] sm:h-full overflow-hidden w-full">
-          
+
           <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-background/90 backdrop-blur-md sticky top-0 z-10 shrink-0">
             <nav className="flex items-center gap-4 m-0 p-0 min-w-0">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={onClose}
                 className="p-2 hover:bg-surface-hover rounded-full transition-colors"
                 aria-label="Fermer"
@@ -100,12 +97,12 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
               </button>
               <h1 className="text-xl font-bold m-0 whitespace-nowrap truncate shrink min-w-0">Éditer le profil</h1>
             </nav>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isSaving || !name.trim() || bio.length > 160 || name.length > 50 || location.length > 30 || website.length > 100}
-              className="bg-[image:var(--color-linear-gradient)] text-black font-bold px-4 py-1.5 rounded-full hover:opacity-90 transition disabled:opacity-50 text-sm shadow-[0_4px_14px_0_rgba(166,253,122,0.39)] shrink-0"
+              className="bg-[image:var(--color-linear-gradient)] text-black font-bold font-druk uppercase px-4 py-1.5 rounded-full hover:opacity-90 transition disabled:opacity-50 text-sm shadow-[0_4px_14px_0_rgba(166,253,122,0.39)] shrink-0"
             >
-              Enregistrer
+              ENREGISTRER
             </button>
           </header>
 
@@ -119,7 +116,7 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                 <div className="w-full h-full bg-[image:var(--color-linear-gradient)] opacity-50" />
               )}
               <figcaption className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity">
-                <button 
+                <button
                   type="button"
                   onClick={() => bannerInputRef.current?.click()}
                   className="p-3 bg-black/50 rounded-full hover:bg-black/70 transition-colors"
@@ -127,11 +124,11 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                 >
                   <FiCamera className="w-5 h-5 text-white" />
                 </button>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  ref={bannerInputRef} 
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  ref={bannerInputRef}
                   onChange={handleBannerChange}
                 />
               </figcaption>
@@ -141,7 +138,7 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
               <picture className="relative -mt-12 w-28 h-28 rounded-full border-4 border-background bg-surface overflow-hidden group block">
                 <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover block" />
                 <figcaption className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     type="button"
                     onClick={() => avatarInputRef.current?.click()}
                     className="p-2.5 bg-black/50 rounded-full hover:bg-black/70 transition-colors"
@@ -149,11 +146,11 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   >
                     <FiCamera className="w-5 h-5 text-white" />
                   </button>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    className="hidden" 
-                    ref={avatarInputRef} 
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    ref={avatarInputRef}
                     onChange={handleAvatarChange}
                   />
                 </figcaption>
@@ -166,9 +163,9 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   <p className={`text-xs transition-colors m-0 ${focus === 'name' ? 'text-primary' : 'text-text-secondary'}`}>Nom</p>
                   {focus === 'name' && <output className="text-xs text-text-secondary m-0">{name.length} / 50</output>}
                 </header>
-                <input 
-                  type="text" 
-                  value={name} 
+                <input
+                  type="text"
+                  value={name}
                   onChange={(e) => setName(e.target.value)}
                   onFocus={() => setFocus('name')}
                   onBlur={() => setFocus(null)}
@@ -183,8 +180,8 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   <p className={`text-xs transition-colors m-0 ${focus === 'bio' ? 'text-primary' : 'text-text-secondary'}`}>Bio</p>
                   {focus === 'bio' && <output className="text-xs text-text-secondary m-0">{bio.length} / 160</output>}
                 </header>
-                <textarea 
-                  value={bio} 
+                <textarea
+                  value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   onFocus={() => setFocus('bio')}
                   onBlur={() => setFocus(null)}
@@ -198,9 +195,9 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   <p className={`text-xs transition-colors m-0 ${focus === 'location' ? 'text-primary' : 'text-text-secondary'}`}>Localisation</p>
                   {focus === 'location' && <output className="text-xs text-text-secondary m-0">{location.length} / 30</output>}
                 </header>
-                <input 
-                  type="text" 
-                  value={location} 
+                <input
+                  type="text"
+                  value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   onFocus={() => setFocus('location')}
                   onBlur={() => setFocus(null)}
@@ -214,9 +211,9 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   <p className={`text-xs transition-colors m-0 ${focus === 'website' ? 'text-primary' : 'text-text-secondary'}`}>Site web</p>
                   {focus === 'website' && <output className="text-xs text-text-secondary m-0">{website.length} / 100</output>}
                 </header>
-                <input 
-                  type="url" 
-                  value={website} 
+                <input
+                  type="url"
+                  value={website}
                   onChange={(e) => setWebsite(e.target.value)}
                   onFocus={() => setFocus('website')}
                   onBlur={() => setFocus(null)}
@@ -228,6 +225,14 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
           </section>
         </form>
       </dialog>
+      {error && (
+        <Toast 
+          isVisible={!!error} 
+          message={error} 
+          onClose={() => setError(null)} 
+          type="error"
+        />
+      )}
     </div>
   );
 }
