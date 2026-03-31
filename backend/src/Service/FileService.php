@@ -56,7 +56,13 @@ class FileService
             mkdir($this->postsDirectory, 0777, true);
         }
 
-        $newFilename = uniqid() . '.' . $file->guessExtension();
+        $extension = $file->guessExtension();
+        if (!$extension) {
+            $mimeType = $file->getMimeType();
+            $extension = str_contains($mimeType, 'video') ? 'mp4' : 'jpg';
+        }
+
+        $newFilename = uniqid() . '.' . $extension;
 
         try {
             $file->move($this->postsDirectory, $newFilename);

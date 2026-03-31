@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api, BASE_URL, type Post } from "../../lib/api";
+import { api, MEDIA_URL as BASE_URL, type Post } from "../../lib/api";
 import TweetCard from "../ui/TweetCard";
 import ThreadMainPost from "../ui/ThreadMainPost";
 import PostComposer from "./PostComposer";
@@ -123,7 +123,7 @@ export default function PostDetailView() {
         />
 
         {/* Comment Input Section */}
-        {currentUser && !currentPost.user.isBlocked && (
+        {currentUser && !currentPost.user.isBlocked && !currentPost.isCensored && (
           <section className="px-4 py-3 border-b border-border">
             {!isReplying ? (
               <hgroup className="flex items-center gap-3">
@@ -194,7 +194,7 @@ export default function PostDetailView() {
 
         {/* Replies List Section */}
         <section aria-label="Réponses">
-          {replies.length > 0 ? (
+          {!currentPost.isCensored && replies.length > 0 ? (
             <ul className="m-0 p-0">
               {replies.map((reply: Post) => (
                 <TweetCard
@@ -212,6 +212,7 @@ export default function PostDetailView() {
                   onDelete={handleDeleteReply}
                   onLike={handleLikeReply}
                   isAuthorBlocked={reply.user.isBlocked}
+                  isCensored={reply.isCensored}
                   className="border-b border-border"
                 />
               ))}

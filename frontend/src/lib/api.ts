@@ -1,5 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
-export const BASE_URL = API_URL.replace(/\/api\/?$/, "");
+const API_URL = import.meta.env.VITE_API_URL || "";
+export const MEDIA_URL = import.meta.env.VITE_MEDIA_URL || (API_URL ? API_URL.replace(/\/api\/?$/, "") : "");
+export const BASE_URL = MEDIA_URL;
 
 export interface User {
   id: number;
@@ -55,6 +56,7 @@ export interface Post {
   repliesCount: number;
   parentId?: number;
   media?: PostMedia[];
+  isCensored: boolean;
 }
 
 const getHeaders = () => {

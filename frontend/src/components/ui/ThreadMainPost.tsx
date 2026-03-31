@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { FaHeart, FaRegHeart, FaRegComment } from "react-icons/fa";
 import { FiMoreHorizontal, FiTrash2, FiEdit2, FiSlash } from "react-icons/fi";
-import { UnifiedBlockUI } from "./UnifiedBlockUI";
+import { ModerationUI } from "./ModerationUI";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL, api } from "../../lib/api";
+import { MEDIA_URL as BASE_URL, api } from "../../lib/api";
 import type { Post } from "../../lib/api";
 import { MediaGrid } from "./MediaGrid";
 import { useStore } from "../../store/StoreContext";
@@ -75,122 +75,128 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
       </Link>
 
       <section className="flex-1 min-w-0">
-        <header className="flex items-center justify-between mb-1 min-w-0">
-          <hgroup className="flex flex-col min-w-0">
-            <Link to={`/profile/${post.user.username}`} className="hover:underline">
-              <strong className="text-text-primary text-[0.875rem] sm:text-[1rem] font-bold leading-tight block truncate">
-                {post.user.name}
-              </strong>
-            </Link>
-            <p className="text-text-secondary text-[0.875rem] leading-tight m-0 truncate">
-              @{post.user.username}
-            </p>
-          </hgroup>
-
-          <nav className="relative shrink-0">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="p-[0.5rem] -mr-[0.5rem] text-text-secondary hover:bg-primary/10 hover:text-primary rounded-full transition-colors"
-              aria-label="Plus d'actions"
-            >
-              <FiMoreHorizontal className="w-[1.25rem] h-[1.25rem]" />
-            </button>
-
-            {showMenu && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(false); }} />
-                <menu className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-xl shadow-xl z-50 overflow-hidden m-0 p-1 font-sf-pro">
-                  {isAuthor ? (
-                    <>
-                      <li className="list-none">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => { setShowMenu(false); setShowEdit(true); }}
-                          className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-text-primary hover:bg-surface-hover"
-                        >
-                          <FiEdit2 className="w-4 h-4" />
-                          <p className="m-0 text-inherit font-bold text-sm">Modifier le post</p>
-                        </Button>
-                      </li>
-                      <li className="list-none">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => { setShowMenu(false); setShowConfirm(true); }}
-                          className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-red-500 hover:bg-red-500/10"
-                        >
-                          <FiTrash2 className="w-4 h-4" />
-                          <p className="m-0 text-inherit font-bold text-sm">Supprimer le post</p>
-                        </Button>
-                      </li>
-                    </>
-                  ) : (
-                    <li className="list-none">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={async (e) => { 
-                            e.preventDefault();
-                            e.stopPropagation();
-                            try {
-                                const data = await api.blockUser(post.user.username);
-                                toggleBlock(post.user.username, data);
-                                setShowMenu(false);
-                                window.dispatchEvent(new CustomEvent('show-toast', { 
-                                    detail: { 
-                                        message: data.isBlockedByMe ? `Vous avez bloqué @${post.user.username}` : `Vous avez débloqué @${post.user.username}`,
-                                        variant: data.isBlockedByMe ? 'error' : 'success'
-                                    } 
-                                }));
-                            } catch (err) {
-                                console.error(err);
-                            }
-                          }}
-                          className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-red-500 hover:bg-red-500/10"
-                        >
-                          <FiSlash className="w-4 h-4 text-inherit" />
-                          <p className="m-0 text-inherit font-bold text-sm">
-                            {latestPost.user.isBlockedByMe ? `Débloquer @${latestPost.user.username.length > 10 ? latestPost.user.username.slice(0, 10) + '…' : latestPost.user.username}` : `Bloquer @${latestPost.user.username.length > 10 ? latestPost.user.username.slice(0, 10) + '…' : latestPost.user.username}`}
-                          </p>
-                        </Button>
-                    </li>
-                  )}
-                </menu>
-              </>
-            )}
-          </nav>
-        </header>
-
-        {post.parentId && (
-          <aside className="mb-[0.25rem] font-sf-pro">
-            <small className="text-text-secondary text-[1rem] text-inherit">En réponse à </small>
-            <Link to={`/profile/${post.user.username}`} className="text-primary hover:underline">
-              <strong className="font-sf-pro text-[1rem] ">@{post.user.username}</strong>
-            </Link>
-          </aside>
-        )}
-
-        {isAuthorBlocked ? (
-          <UnifiedBlockUI className="mt-2" />
+        {post.isCensored ? (
+          <ModerationUI variant="censored" className="mb-6" />
         ) : (
           <>
-            <div className="mt-[0.25rem] text-text-primary text-[0.875rem] sm:text-[1rem] whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
-              {post.content}
-            </div>
+            <header className="flex items-center justify-between mb-1 min-w-0">
+              <hgroup className="flex flex-col min-w-0">
+                <Link to={`/profile/${post.user.username}`} className="hover:underline">
+                  <strong className="text-text-primary text-[0.875rem] sm:text-[1rem] font-bold leading-tight block truncate">
+                    {post.user.name}
+                  </strong>
+                </Link>
+                <p className="text-text-secondary text-[0.875rem] leading-tight m-0 truncate">
+                  @{post.user.username}
+                </p>
+              </hgroup>
 
-            {post.media && post.media.length > 0 && (
-              <figure className="mt-[0.75rem]">
-                <div className="max-w-[32rem]">
-                  <MediaGrid
-                    media={post.media.map(m => ({
-                      url: `${BASE_URL}/uploads/posts/${m.url}`,
-                      type: m.type
-                    }))}
-                    className="mt-3"
-                  />
+              <nav className="relative shrink-0">
+                <button
+                  onClick={() => setShowMenu(!showMenu)}
+                  className="p-[0.5rem] -mr-[0.5rem] text-text-secondary hover:bg-primary/10 hover:text-primary rounded-full transition-colors"
+                  aria-label="Plus d'actions"
+                >
+                  <FiMoreHorizontal className="w-[1.25rem] h-[1.25rem]" />
+                </button>
+
+                {showMenu && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(false); }} />
+                    <menu className="absolute right-0 top-full mt-1 w-48 bg-background border border-border rounded-xl shadow-xl z-50 overflow-hidden m-0 p-1 font-sf-pro">
+                      {isAuthor ? (
+                        <>
+                          <li className="list-none">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => { setShowMenu(false); setShowEdit(true); }}
+                              className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-text-primary hover:bg-surface-hover"
+                            >
+                              <FiEdit2 className="w-4 h-4" />
+                              <p className="m-0 text-inherit font-bold text-sm">Modifier le post</p>
+                            </Button>
+                          </li>
+                          <li className="list-none">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => { setShowMenu(false); setShowConfirm(true); }}
+                              className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-red-500 hover:bg-red-500/10"
+                            >
+                              <FiTrash2 className="w-4 h-4" />
+                              <p className="m-0 text-inherit font-bold text-sm">Supprimer le post</p>
+                            </Button>
+                          </li>
+                        </>
+                      ) : (
+                        <li className="list-none">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={async (e) => { 
+                                e.preventDefault();
+                                e.stopPropagation();
+                                try {
+                                    const data = await api.blockUser(post.user.username);
+                                    toggleBlock(post.user.username, data);
+                                    setShowMenu(false);
+                                    window.dispatchEvent(new CustomEvent('show-toast', { 
+                                        detail: { 
+                                            message: data.isBlockedByMe ? `Vous avez bloqué @${post.user.username}` : `Vous avez débloqué @${post.user.username}`,
+                                            variant: data.isBlockedByMe ? 'error' : 'success'
+                                        } 
+                                    }));
+                                } catch (err) {
+                                    console.error(err);
+                                }
+                              }}
+                              className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-red-500 hover:bg-red-500/10"
+                            >
+                              <FiSlash className="w-4 h-4 text-inherit" />
+                              <p className="m-0 text-inherit font-bold text-sm">
+                                {latestPost.user.isBlockedByMe ? `Débloquer @${latestPost.user.username.length > 10 ? latestPost.user.username.slice(0, 10) + '…' : latestPost.user.username}` : `Bloquer @${latestPost.user.username.length > 10 ? latestPost.user.username.slice(0, 10) + '…' : latestPost.user.username}`}
+                              </p>
+                            </Button>
+                        </li>
+                      )}
+                    </menu>
+                  </>
+                )}
+              </nav>
+            </header>
+
+            {post.parentId && (
+              <aside className="mb-[0.25rem] font-sf-pro">
+                <small className="text-text-secondary text-[1rem] text-inherit">En réponse à </small>
+                <Link to={`/profile/${post.user.username}`} className="text-primary hover:underline">
+                  <strong className="font-sf-pro text-[1rem] ">@{post.user.username}</strong>
+                </Link>
+              </aside>
+            )}
+
+            {isAuthorBlocked ? (
+              <ModerationUI className="mt-2" />
+            ) : (
+              <>
+                <div className="mt-[0.25rem] text-text-primary text-[0.875rem] sm:text-[1rem] whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
+                  {post.content}
                 </div>
-              </figure>
+
+                {post.media && post.media.length > 0 && (
+                  <figure className="mt-[0.75rem]">
+                    <div className="max-w-[32rem]">
+                      <MediaGrid
+                        media={post.media.map(m => ({
+                          url: `${BASE_URL}/uploads/posts/${m.url}`,
+                          type: m.type
+                        }))}
+                        className="mt-3"
+                      />
+                    </div>
+                  </figure>
+                )}
+              </>
             )}
           </>
         )}
@@ -205,7 +211,7 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
 
           {/* Action Navigation (Identical to Card Layout) */}
           {!isAuthorBlocked && (
-            <nav className="flex items-center gap-[3rem] py-[0.75rem] border-y border-border group">
+            <nav className="flex items-center gap-[3rem] py-[0.75rem] border-t border-border group">
               <button
                 onClick={() => {
                     if (latestPost.user.isBlockedByMe || latestPost.user.hasBlockedMe) {
@@ -219,13 +225,17 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
                     }
                     if (onReplyClick) onReplyClick();
                 }}
-                className="group/reply flex items-center gap-[0.25rem] text-text-secondary transition-colors focus:outline-none"
+                disabled={post.isCensored}
+                className={cn(
+                    "group/reply flex items-center gap-[0.25rem] text-text-secondary transition-colors focus:outline-none",
+                    post.isCensored ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
+                )}
                 title="Répondre"
               >
                 <div className="w-[2.125rem] h-[2.125rem] flex items-center justify-center rounded-full group-hover/reply:bg-primary/10 group-hover/reply:text-primary transition-colors">
                   <FaRegComment className="w-[1.125rem] h-[1.125rem]" />
                 </div>
-                {post.repliesCount > 0 && (
+                {!post.isCensored && post.repliesCount > 0 && (
                   <small className="text-[0.8125rem] font-sf-pro text-left min-w-[1rem]">
                     {post.repliesCount}
                   </small>
@@ -245,16 +255,18 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
                     }
                     if (onLike) onLike();
                 }}
+                disabled={post.isCensored}
                 className={cn(
                   "group/like flex items-center gap-[0.25rem] transition-colors focus:outline-none",
-                  latestPost.isLiked ? 'text-primary' : 'text-text-secondary'
+                  latestPost.isLiked ? 'text-primary' : 'text-text-secondary',
+                  post.isCensored ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
                 )}
                 title="J'aime"
               >
                 <div className="w-[2.125rem] h-[2.125rem] flex items-center justify-center rounded-full group-hover/like:bg-primary/10 group-hover/like:text-primary transition-colors">
                   {latestPost.isLiked ? <FaHeart className="w-[1.125rem] h-[1.125rem]" /> : <FaRegHeart className="w-[1.125rem] h-[1.125rem]" />}
                 </div>
-                {latestPost.likesCount > 0 && (
+                {!post.isCensored && latestPost.likesCount > 0 && (
                   <small className="text-[0.8125rem] font-sf-pro text-left min-w-[1rem]">
                     {latestPost.likesCount}
                   </small>

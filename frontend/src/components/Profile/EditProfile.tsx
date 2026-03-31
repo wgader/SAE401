@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { api, BASE_URL } from '../../lib/api';
+import { api, MEDIA_URL as BASE_URL } from '../../lib/api';
 import type { User } from '../../lib/api';
 import { FiX, FiCamera } from 'react-icons/fi';
 import { Toast } from '../ui/Toast';
@@ -230,7 +230,7 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
           isVisible={!!error} 
           message={error} 
           onClose={() => setError(null)} 
-          type="error"
+          variant="error"
         />
       )}
     </div>

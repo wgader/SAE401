@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { BASE_URL, type PostMedia as PostMediaApi } from "../../lib/api";
+import { MEDIA_URL, type PostMedia as PostMediaApi } from "../../lib/api";
 import { cn } from "../../lib/utils";
 import { TweetInput } from "../ui/Input/TweetInput";
 import { FiX, FiImage, FiBarChart2, FiGlobe } from "react-icons/fi";
@@ -7,8 +7,8 @@ import { useStore } from "../../store/StoreContext";
 import { MediaGrid } from "../ui/MediaGrid";
 
 import { Button } from "../ui/Button/Button";
-const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
-const POST_MEDIA_BASE_URL = `${BASE_URL}/uploads/posts/`;
+const AVATAR_BASE_URL = `${MEDIA_URL}/uploads/avatars/`;
+const POST_MEDIA_BASE_URL = `${MEDIA_URL}/uploads/posts/`;
 
 interface PostComposerProps {
   initialContent?: string;
@@ -50,13 +50,14 @@ export default function PostComposer({
   const isLoading = externalIsLoading || internalIsLoading;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null);
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const MAX_SIZE = 15 * 1024 * 1024;
+    const MAX_SIZE = 2 * 1024 * 1024; // 2Mo par défaut car MMI limite à 2Mo
     const oversizedFiles = files.filter(file => file.size > MAX_SIZE);
     if (oversizedFiles.length > 0) {
-      setError("Fichier trop lourd (max 15Mo).");
+      setError("Le fichier dépasse la limite du serveur (2Mo).");
       return;
     }
 
@@ -83,6 +84,7 @@ export default function PostComposer({
   };
 
   const removeMedia = (index: number) => {
+    setError(null);
     const visibleExistingCount = existingMedia.length - mediaToRemove.length;
 
     if (index < visibleExistingCount) {
@@ -127,11 +129,7 @@ export default function PostComposer({
 
       await onSubmit(formData, mediaToRemove);
     } catch (err: any) {
-      if (err.status === 413) {
-        setError("Le fichier est trop volumineux pour le serveur.");
-      } else {
-        setError(err.message || "Erreur lors de l'opération");
-      }
+      setError(err.message || "Une erreur est survenue lors de la publication.");
     } finally {
       setInternalIsLoading(false);
     }
@@ -190,7 +188,10 @@ export default function PostComposer({
           <TweetInput
             autoFocus
             value={content}
-            onChange={(e) => setContent(e.target.value)}
+            onChange={(e) => {
+              setContent(e.target.value);
+              if (error) setError(null);
+            }}
             placeholder={placeholder}
             error={error || undefined}
             className="mt-1"

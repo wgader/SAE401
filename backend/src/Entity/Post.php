@@ -49,6 +49,9 @@ class Post
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     private Collection $replies;
 
+    #[ORM\Column(options: ['default' => false])]
+    private bool $isCensored = false;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -186,6 +189,17 @@ class Post
                 $reply->setParent(null);
             }
         }
+        return $this;
+    }
+
+    public function isCensored(): bool
+    {
+        return $this->isCensored;
+    }
+
+    public function setIsCensored(bool $isCensored): static
+    {
+        $this->isCensored = $isCensored;
         return $this;
     }
 }

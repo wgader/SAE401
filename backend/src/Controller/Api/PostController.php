@@ -11,6 +11,7 @@ use App\Repository\UserRepository;
 use App\Service\PostService;
 use App\Service\FileService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -45,7 +46,7 @@ class PostController extends AbstractController
                 'username' => $post->getUser()->getUsername(),
                 'name' => $post->getUser()->getName(),
                 'avatar' => $post->getUser()->getAvatar(),
-                'isBlocked' => (bool)$post->getUser()->isBlocked(),
+                'isBlocked' => (bool) $post->getUser()->isBlocked(),
                 'isBlockedByMe' => $user instanceof User ? $user->isBlocking($post->getUser()) : false,
                 'hasBlockedMe' => $user instanceof User ? $post->getUser()->isBlocking($user) : false,
             ],
@@ -54,6 +55,7 @@ class PostController extends AbstractController
             'repliesCount' => $post->getReplies()->count(),
             'parentId' => $post->getParent()?->getId(),
             'media' => $media,
+            'isCensored' => $post->isCensored(),
         ]);
     }
 
@@ -93,7 +95,7 @@ class PostController extends AbstractController
                     'username' => $author->getUsername(),
                     'name' => $author->getName(),
                     'avatar' => $author->getAvatar(),
-                    'isBlocked' => (bool)$author->isBlocked(),
+                    'isBlocked' => (bool) $author->isBlocked(),
                     'isBlockedByMe' => $user instanceof User ? $user->isBlocking($author) : false,
                     'hasBlockedMe' => $user instanceof User ? $author->isBlocking($user) : false,
                 ],
@@ -102,6 +104,7 @@ class PostController extends AbstractController
                 'repliesCount' => $post->getReplies()->count(),
                 'parentId' => $post->getParent()?->getId(),
                 'media' => $media,
+                'isCensored' => $post->isCensored(),
             ];
         }, $posts);
 
@@ -134,16 +137,38 @@ class PostController extends AbstractController
         }
 
         $mediaData = [];
-        $files = $request->files->get('media'); // Tableau de fichiers
+        $filesFromRequest = $request->files->all();
+        $files = $filesFromRequest['media'] ?? $request->files->get('media');
+
+        if (!$content && empty($files)) {
+            return $this->json(['message' => 'Le contenu ne peut pas être vide'], Response::HTTP_BAD_REQUEST);
+        }
+
         if ($files && is_array($files)) {
             // Respecte la limite de 4 fichiers
             $files = array_slice($files, 0, 4);
             foreach ($files as $file) {
-                if ($file) {
-                    $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
-                    $path = $fileService->uploadPostMedia($file);
-                    if ($path) {
-                        $mediaData[] = ['path' => $path, 'type' => $type];
+                if ($file instanceof UploadedFile) {
+                    if (!$file->isValid()) {
+                        $errorMsg = match ($file->getError()) {
+                            UPLOAD_ERR_INI_SIZE => "Le fichier \"" . $file->getClientOriginalName() . "\" est trop lourd pour le serveur (max 2Mo).",
+                            UPLOAD_ERR_FORM_SIZE => "Le fichier est trop lourd pour le formulaire.",
+                            UPLOAD_ERR_PARTIAL => "L'envoi du fichier a été interrompu.",
+                            UPLOAD_ERR_NO_FILE => "Aucun fichier n'a été reçu.",
+                            default => "Erreur d'upload : " . $file->getErrorMessage()
+                        };
+                        return $this->json(['message' => $errorMsg], Response::HTTP_BAD_REQUEST);
+                    }
+                    
+                    try {
+                        $mimeType = $file->getMimeType();
+                        $type = str_contains($mimeType, 'video') ? 'video' : 'image';
+                        $path = $fileService->uploadPostMedia($file);
+                        if ($path) {
+                            $mediaData[] = ['path' => $path, 'type' => $type];
+                        }
+                    } catch (\Exception $e) {
+                        return $this->json(['message' => "Erreur lors du traitement du fichier \"" . $file->getClientOriginalName() . "\" : " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
                     }
                 }
             }
@@ -175,7 +200,7 @@ class PostController extends AbstractController
                 'username' => $user->getUsername(),
                 'name' => $user->getName(),
                 'avatar' => $user->getAvatar(),
-                'isBlocked' => (bool)$user->isBlocked(),
+                'isBlocked' => (bool) $user->isBlocked(),
                 'isBlockedByMe' => false,
                 'hasBlockedMe' => false,
             ],
@@ -184,6 +209,7 @@ class PostController extends AbstractController
             'repliesCount' => 0,
             'parentId' => $post->getParent()?->getId(),
             'media' => $mediaResponse,
+            'isCensored' => $post->isCensored(),
         ], Response::HTTP_CREATED);
     }
 
@@ -256,7 +282,7 @@ class PostController extends AbstractController
                     'username' => $author->getUsername(),
                     'name' => $author->getName(),
                     'avatar' => $author->getAvatar(),
-                    'isBlocked' => (bool)$author->isBlocked(),
+                    'isBlocked' => (bool) $author->isBlocked(),
                     'isBlockedByMe' => $currentUser instanceof User ? $currentUser->isBlocking($author) : false,
                     'hasBlockedMe' => $currentUser instanceof User ? $author->isBlocking($currentUser) : false,
                 ],
@@ -265,6 +291,7 @@ class PostController extends AbstractController
                 'repliesCount' => $post->getReplies()->count(),
                 'parentId' => $post->getParent()?->getId(),
                 'media' => $media,
+                'isCensored' => $post->isCensored(),
             ];
         }, $posts);
 
@@ -326,15 +353,23 @@ class PostController extends AbstractController
                 }
             }
 
+            $filesFromRequest = $request->files->all();
+            $files = $filesFromRequest['media'] ?? $request->files->get('media');
+
             $availableSlots = 4 - ($currentCount - $removedCount);
-            if ($availableSlots > 0) {
+            if ($availableSlots > 0 && $files && is_array($files)) {
                 $filesToAdd = array_slice($files, 0, $availableSlots);
                 foreach ($filesToAdd as $file) {
-                    if ($file) {
-                        $type = str_contains($file->getMimeType(), 'video') ? 'video' : 'image';
-                        $path = $fileService->uploadPostMedia($file);
-                        if ($path) {
-                            $newMediaData[] = ['path' => $path, 'type' => $type];
+                    if ($file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile && $file->isValid()) {
+                        try {
+                            $mimeType = $file->getMimeType();
+                            $type = str_contains($mimeType, 'video') ? 'video' : 'image';
+                            $path = $fileService->uploadPostMedia($file);
+                            if ($path) {
+                                $newMediaData[] = ['path' => $path, 'type' => $type];
+                            }
+                        } catch (\Exception $e) {
+                            continue;
                         }
                     }
                 }
@@ -360,7 +395,7 @@ class PostController extends AbstractController
                 'username' => $user->getUsername(),
                 'name' => $user->getName(),
                 'avatar' => $user->getAvatar(),
-                'isBlocked' => (bool)$user->isBlocked(),
+                'isBlocked' => (bool) $user->isBlocked(),
                 'isBlockedByMe' => false,
                 'hasBlockedMe' => false,
             ],
@@ -369,6 +404,7 @@ class PostController extends AbstractController
             'repliesCount' => $post->getReplies()->count(),
             'parentId' => $post->getParent()?->getId(),
             'media' => $mediaResponse,
+            'isCensored' => $post->isCensored(),
         ]);
     }
 
@@ -398,7 +434,7 @@ class PostController extends AbstractController
                     'username' => $author->getUsername(),
                     'name' => $author->getName(),
                     'avatar' => $author->getAvatar(),
-                    'isBlocked' => (bool)$author->isBlocked(),
+                    'isBlocked' => (bool) $author->isBlocked(),
                     'isBlockedByMe' => $user instanceof User ? $user->isBlocking($author) : false,
                     'hasBlockedMe' => $user instanceof User ? $author->isBlocking($user) : false,
                 ],
@@ -407,6 +443,7 @@ class PostController extends AbstractController
                 'repliesCount' => $reply->getReplies()->count(),
                 'parentId' => $reply->getParent()?->getId(),
                 'media' => $media,
+                'isCensored' => $reply->isCensored(),
             ];
         }, $replies->toArray());
 

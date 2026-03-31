@@ -6,12 +6,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class CreatePostPayload
 {
-    #[Assert\NotBlank(message: "Le contenu ne peut pas être vide")]
     #[Assert\Length(
         max: 280,
         maxMessage: "Le contenu ne peut pas dépasser {{ limit }} caractères"
     )]
-    private string $content;
+    private ?string $content = null;
 
     public function __construct(string $content = "")
     {

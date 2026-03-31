@@ -11,5 +11,5 @@ export const CURRENT_USER: User = {
   firstName: "Davide",
   lastName: "Biscuso",
   username: "biscutte",
-  avatar: "http://localhost:8080/uploads/avatars/default.png",
+  avatar: `${import.meta.env.VITE_MEDIA_URL || ''}/uploads/avatars/default.png`,
 };

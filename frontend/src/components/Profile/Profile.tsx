@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api, BASE_URL } from '../../lib/api';
+import { api, MEDIA_URL as BASE_URL } from '../../lib/api';
 import type { User } from '../../lib/api';
 import TweetCard from '../ui/TweetCard';
 import EditProfile from './EditProfile';
@@ -245,6 +245,7 @@ export default function Profile() {
                       currentUsername={currentUser?.username}
                       media={post.media}
                       isAuthorBlocked={post.user.isBlocked || post.user.isBlockedByMe}
+                      isCensored={post.isCensored}
                       className="border-b border-border"
                     />
                   ))}

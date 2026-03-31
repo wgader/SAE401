@@ -2,10 +2,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { FaHeart, FaRegHeart, FaRegComment } from "react-icons/fa";
 import { FiMoreHorizontal, FiTrash2, FiSlash, FiEdit2 } from "react-icons/fi";
-import { UnifiedBlockUI } from "./UnifiedBlockUI";
+import { ModerationUI } from "./ModerationUI";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "../../lib/utils";
-import { api, BASE_URL } from "../../lib/api";
+import { api, MEDIA_URL as BASE_URL } from "../../lib/api";
 import type { PostMedia } from "../../lib/api";
 import { useStore } from "../../store/StoreContext";
 import { MediaGrid } from "./MediaGrid";
@@ -32,6 +32,7 @@ export interface TweetCardProps {
     isAuthorBlocked?: boolean;
     initialRepliesCount?: number;
     media?: PostMedia[];
+    isCensored?: boolean;
     onLike?: (id: number, isLiked: boolean, likesCount: number) => void;
 }
 
@@ -66,6 +67,7 @@ export default function TweetCard({
     onDelete,
     isAuthorBlocked = false,
     media = [],
+    isCensored = false,
     onLike,
 }: TweetCardProps) {
     const [showConfirm, setShowConfirm] = useState(false);
@@ -247,7 +249,9 @@ export default function TweetCard({
                     </header>
 
                     {storePost?.user?.isBlocked ? (
-                        <UnifiedBlockUI />
+                        <ModerationUI />
+                    ) : isCensored ? (
+                        <ModerationUI variant="censored" />
                     ) : (
                         <div className="flex flex-col">
                             <div className="mt-1 text-text-primary text-[0.875rem] sm:text-[1rem] whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
@@ -298,6 +302,7 @@ export default function TweetCard({
 
                             <footer className="mt-[0.75rem] flex items-center gap-[3rem] group">
                                 <button
+                                    disabled={isCensored}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -312,22 +317,29 @@ export default function TweetCard({
                                         }
                                         setShowReply(true);
                                     }}
-                                    className="flex items-center gap-[0.25rem] text-text-secondary transition-colors group/reply focus:outline-none"
+                                    className={cn(
+                                        "flex items-center gap-[0.25rem] text-text-secondary transition-colors group/reply focus:outline-none",
+                                        isCensored ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
+                                    )}
                                     aria-label="Reply"
                                 >
                                     <div className="w-[2.125rem] h-[2.125rem] flex items-center justify-center rounded-full group-hover/reply:bg-primary/10 group-hover/reply:text-primary transition-colors">
                                         <FaRegComment className="w-[1.125rem] h-[1.125rem]" />
                                     </div>
-                                    <small className="text-[0.8125rem] font-sf-pro min-w-[1rem] text-left">
-                                        {repliesCount > 0 ? repliesCount : ""}
-                                    </small>
+                                    {!isCensored && (
+                                        <small className="text-[0.8125rem] font-sf-pro min-w-[1rem] text-left">
+                                            {repliesCount > 0 ? repliesCount : ""}
+                                        </small>
+                                    )}
                                 </button>
 
                                 <button
+                                    disabled={isCensored}
                                     onClick={handleLike}
                                     className={cn(
                                         "flex items-center gap-[0.25rem] text-text-secondary transition-colors duration-200 focus:outline-none group/like",
-                                        isLiked ? "text-primary font-bold" : ""
+                                        isLiked ? "text-primary font-bold" : "",
+                                        isCensored ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
                                     )}
                                     aria-label={isLiked ? "Unlike" : "Like"}
                                 >
@@ -355,19 +367,21 @@ export default function TweetCard({
                                             )}
                                         </AnimatePresence>
                                     </div>
-                                    <small className="text-[0.8125rem] font-sf-pro min-w-[1rem] text-left">
-                                        <AnimatePresence mode="popLayout">
-                                            <motion.span
-                                                key={likesCount}
-                                                initial={{ y: 15, opacity: 0 }}
-                                                animate={{ y: 0, opacity: 1 }}
-                                                exit={{ y: -15, opacity: 0 }}
-                                                className="block"
-                                            >
-                                                {likesCount > 0 ? likesCount : ""}
-                                            </motion.span>
-                                        </AnimatePresence>
-                                    </small>
+                                    {!isCensored && (
+                                        <small className="text-[0.8125rem] font-sf-pro min-w-[1rem] text-left">
+                                            <AnimatePresence mode="popLayout">
+                                                <motion.span
+                                                    key={likesCount}
+                                                    initial={{ y: 15, opacity: 0 }}
+                                                    animate={{ y: 0, opacity: 1 }}
+                                                    exit={{ y: -15, opacity: 0 }}
+                                                    className="block"
+                                                >
+                                                    {likesCount > 0 ? likesCount : ""}
+                                                </motion.span>
+                                            </AnimatePresence>
+                                        </small>
+                                    )}
                                 </button>
                             </footer>
                         </div>

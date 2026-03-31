@@ -1,5 +1,5 @@
 import PostComposer from "./PostComposer";
-import { api, BASE_URL } from "../../lib/api";
+import { api, MEDIA_URL as BASE_URL } from "../../lib/api";
 import type { Post } from "../../lib/api";
 import { useStore } from "../../store/StoreContext";
 

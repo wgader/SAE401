@@ -4,7 +4,7 @@ import TweetCard from "../ui/TweetCard";
 import HomeHeader from "../ui/HomeHeader";
 import RefreshLoader from "../ui/RefreshLoader";
 import { TweetSkeleton } from "../ui/Skeletons";
-import { api, BASE_URL } from "../../lib/api";
+import { api, MEDIA_URL as BASE_URL } from "../../lib/api";
 import { useStore } from "../../store/StoreContext";
 import { RenderErrorBoundary } from "../ui/RenderErrorBoundary";
 import { Toast } from "../ui/Toast";
@@ -132,6 +132,7 @@ export default function Home() {
                   currentUsername={currentUser?.username}
                   media={post.media}
                   isAuthorBlocked={post.user.isBlocked}
+                  isCensored={post.isCensored}
                 />
               ))
             )}

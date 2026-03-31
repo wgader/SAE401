@@ -62,6 +62,9 @@ async function deploy() {
         // 5. Ignorer les dossiers node_modules s'ils traînent
         if (relativePath === 'node_modules' || relativePath.startsWith('node_modules/')) return false;
 
+        // 6. NE PAS TOUCHER aux configurations d'environnement (Production vs Local)
+        if (relativePath === '.env' || relativePath === '.env.local') return false;
+
         return true;
       }
     });

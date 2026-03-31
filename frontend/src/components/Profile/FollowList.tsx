@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { api, BASE_URL, type User } from '../../lib/api';
+import { api, MEDIA_URL as BASE_URL, type User } from '../../lib/api';
 import { Button } from '../ui/Button/Button';
 import { FiArrowLeft, FiSlash } from 'react-icons/fi';
 import { useStore } from '../../store/StoreContext';

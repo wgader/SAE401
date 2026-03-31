@@ -1,6 +1,6 @@
 import { FiHome, FiPlus, FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
 import logo from '../../assets/logo_sphere.svg';
-import { BASE_URL } from '../../lib/api';
+import { MEDIA_URL as BASE_URL } from '../../lib/api';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useScrollDirection } from '../../hooks/useScrollDirection';
 import { cn } from '../../lib/utils';
