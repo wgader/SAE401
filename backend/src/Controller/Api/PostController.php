@@ -49,6 +49,7 @@ class PostController extends AbstractController
                 'isBlocked' => (bool) $post->getUser()->isBlocked(),
                 'isBlockedByMe' => $user instanceof User ? $user->isBlocking($post->getUser()) : false,
                 'hasBlockedMe' => $user instanceof User ? $post->getUser()->isBlocking($user) : false,
+                'isReadOnly' => (bool) $post->getUser()->isReadOnly(),
             ],
             'likesCount' => $post->getLikes()->count(),
             'isLiked' => $user ? $post->getLikes()->contains($user) : false,
@@ -98,6 +99,7 @@ class PostController extends AbstractController
                     'isBlocked' => (bool) $author->isBlocked(),
                     'isBlockedByMe' => $user instanceof User ? $user->isBlocking($author) : false,
                     'hasBlockedMe' => $user instanceof User ? $author->isBlocking($user) : false,
+                    'isReadOnly' => (bool) $author->isReadOnly(),
                 ],
                 'likesCount' => $post->getLikes()->count(),
                 'isLiked' => $user ? $post->getLikes()->contains($user) : false,
@@ -177,8 +179,13 @@ class PostController extends AbstractController
         $parentId = $request->request->get('parentId');
         $parent = $parentId ? $postRepository->find($parentId) : null;
 
-        if ($parent && $parent->getUser()->isBlocked()) {
-            return $this->json(['message' => 'Impossible de répondre à un utilisateur suspendu'], Response::HTTP_FORBIDDEN);
+        if ($parent) {
+            if ($parent->getUser()->isBlocked()) {
+                return $this->json(['message' => 'Impossible de répondre à un utilisateur suspendu'], Response::HTTP_FORBIDDEN);
+            }
+            if ($parent->getUser()->isReadOnly()) {
+                return $this->json(['message' => 'Cet utilisateur a activé le mode lecture seule'], Response::HTTP_FORBIDDEN);
+            }
         }
 
         $post = $postService->create($user, $payload, $mediaData, $parent);
@@ -203,6 +210,7 @@ class PostController extends AbstractController
                 'isBlocked' => (bool) $user->isBlocked(),
                 'isBlockedByMe' => false,
                 'hasBlockedMe' => false,
+            'isReadOnly' => (bool) $user->isReadOnly(),
             ],
             'likesCount' => 0,
             'isLiked' => false,
@@ -398,6 +406,7 @@ class PostController extends AbstractController
                 'isBlocked' => (bool) $user->isBlocked(),
                 'isBlockedByMe' => false,
                 'hasBlockedMe' => false,
+            'isReadOnly' => (bool) $user->isReadOnly(),
             ],
             'likesCount' => $post->getLikes()->count(),
             'isLiked' => $post->getLikes()->contains($user),
@@ -437,6 +446,7 @@ class PostController extends AbstractController
                     'isBlocked' => (bool) $author->isBlocked(),
                     'isBlockedByMe' => $user instanceof User ? $user->isBlocking($author) : false,
                     'hasBlockedMe' => $user instanceof User ? $author->isBlocking($user) : false,
+                    'isReadOnly' => (bool) $author->isReadOnly(),
                 ],
                 'likesCount' => $reply->getLikes()->count(),
                 'isLiked' => $user instanceof User ? $reply->getLikes()->contains($user) : false,

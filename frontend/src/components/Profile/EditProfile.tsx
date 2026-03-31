@@ -24,7 +24,7 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
 
   const [avatarPreview, setAvatarPreview] = useState<string>(user.avatar ? `${AVATAR_BASE_URL}${user.avatar}` : `${AVATAR_BASE_URL}default.png`);
   const [bannerPreview, setBannerPreview] = useState<string>(
-    user.banner && user.banner !== 'default_banniere.png'
+    user.banner && user.banner !== 'default_banniere.png' && user.banner !== ''
       ? `${BASE_URL}/uploads/banners/${user.banner}`
       : ''
   );

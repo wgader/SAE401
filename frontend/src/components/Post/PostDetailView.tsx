@@ -136,6 +136,15 @@ export default function PostDetailView() {
                 </figure>
                 <button
                 onClick={() => {
+                    if (currentPost.user.isReadOnly) {
+                        window.dispatchEvent(new CustomEvent('show-toast', { 
+                            detail: { 
+                                message: `Désolé, ce compte est en lecture seule.`,
+                                variant: 'info'
+                            } 
+                        }));
+                        return;
+                    }
                     if (currentPost.user.isBlockedByMe || currentPost.user.hasBlockedMe) {
                         window.dispatchEvent(new CustomEvent('show-toast', { 
                             detail: { 
@@ -153,6 +162,15 @@ export default function PostDetailView() {
                 </button>
                 <Button 
                   onClick={() => {
+                    if (currentPost.user.isReadOnly) {
+                        window.dispatchEvent(new CustomEvent('show-toast', { 
+                            detail: { 
+                                message: `Désolé, ce compte est en lecture seule.`,
+                                variant: 'info'
+                            } 
+                        }));
+                        return;
+                    }
                     if (currentPost.user.isBlockedByMe || currentPost.user.hasBlockedMe) {
                         window.dispatchEvent(new CustomEvent('show-toast', { 
                             detail: { 

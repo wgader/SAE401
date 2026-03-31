@@ -22,6 +22,7 @@ export interface User {
   followersCount?: number;
   followingCount?: number;
   blockedCount?: number;
+  isReadOnly?: boolean;
 }
 
 export interface AuthResponse {
@@ -50,6 +51,7 @@ export interface Post {
     isBlockedByMe?: boolean;
     hasBlockedMe?: boolean;
     isFollowing?: boolean;
+    isReadOnly?: boolean;
   };
   likesCount: number;
   isLiked: boolean;

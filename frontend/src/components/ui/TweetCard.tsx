@@ -34,6 +34,7 @@ export interface TweetCardProps {
     media?: PostMedia[];
     isCensored?: boolean;
     onLike?: (id: number, isLiked: boolean, likesCount: number) => void;
+    isReadOnly?: boolean;
 }
 
 const formatDate = (dateString: string) => {
@@ -69,6 +70,7 @@ export default function TweetCard({
     media = [],
     isCensored = false,
     onLike,
+    isReadOnly: initialIsReadOnly = false,
 }: TweetCardProps) {
     const [showConfirm, setShowConfirm] = useState(false);
     const [showBlockConfirm, setShowBlockConfirm] = useState(false);
@@ -86,6 +88,7 @@ export default function TweetCard({
     const isLiked = storePost ? storePost.isLiked : initialIsLiked;
     const likesCount = storePost ? storePost.likesCount : initialLikesCount;
     const repliesCount = storePost ? storePost.repliesCount : initialRepliesCount;
+    const isReadOnly = storePost?.user?.isReadOnly ?? initialIsReadOnly;
 
     const handleLike = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -306,6 +309,15 @@ export default function TweetCard({
                                     onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
+                                        if (isReadOnly) {
+                                            window.dispatchEvent(new CustomEvent('show-toast', {
+                                                detail: {
+                                                    message: `Désolé, ce compte est en lecture seule.`,
+                                                    type: 'info'
+                                                }
+                                            }));
+                                            return;
+                                        }
                                         if (storePost?.user?.isBlockedByMe || storePost?.user?.hasBlockedMe) {
                                             window.dispatchEvent(new CustomEvent('show-toast', {
                                                 detail: {
@@ -319,7 +331,7 @@ export default function TweetCard({
                                     }}
                                     className={cn(
                                         "flex items-center gap-[0.25rem] text-text-secondary transition-colors group/reply focus:outline-none",
-                                        isCensored ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
+                                        (isCensored || isReadOnly) ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
                                     )}
                                     aria-label="Reply"
                                 >
@@ -434,7 +446,7 @@ export default function TweetCard({
 
             {showReply && (
                 <ReplyModal
-                    parentPost={{ id, content, user: { id: 0, username, name: authorName, avatar: avatarUrl || "", isBlocked: isAuthorBlocked }, likesCount, isLiked, repliesCount, createdAt: timeAgo } as any}
+                    parentPost={{ id, content, user: { id: 0, username, name: authorName, avatar: avatarUrl || "", isBlocked: isAuthorBlocked, isReadOnly }, likesCount, isLiked, repliesCount, createdAt: timeAgo } as any}
                     onClose={() => setShowReply(false)}
                 />
             )}

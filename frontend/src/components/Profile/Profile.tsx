@@ -246,6 +246,7 @@ export default function Profile() {
                       media={post.media}
                       isAuthorBlocked={post.user.isBlocked || post.user.isBlockedByMe}
                       isCensored={post.isCensored}
+                      isReadOnly={post.user.isReadOnly}
                       className="border-b border-border"
                     />
                   ))}

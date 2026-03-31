@@ -53,6 +53,7 @@ class UserController extends AbstractController
             'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
             'isFollowing' => $isFollowing,
             'isFollower' => $isFollower,
+            'isReadOnly' => $user->isReadOnly(),
             'followersCount' => $user->getFollowers()->count(),
             'followingCount' => $user->getFollowing()->count(),
         ]);
@@ -78,6 +79,7 @@ class UserController extends AbstractController
             'banner' => $user->getBanner(),
             'isVerified' => $user->isVerified(),
             'isBlocked' => $user->isBlocked(),
+            'isReadOnly' => $user->isReadOnly(),
             'createdAt' => $user->getCreatedAt()?->format(\DateTimeInterface::ATOM),
             'followersCount' => $user->getFollowers()->count(),
             'followingCount' => $user->getFollowing()->count(),
@@ -107,6 +109,9 @@ class UserController extends AbstractController
         }
         if ($request->request->has('website')) {
             $user->setWebsite($request->request->get('website'));
+        }
+        if ($request->request->has('isReadOnly')) {
+            $user->setIsReadOnly($request->request->getBoolean('isReadOnly'));
         }
 
         try {

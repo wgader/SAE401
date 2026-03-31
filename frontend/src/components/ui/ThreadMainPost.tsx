@@ -214,6 +214,15 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
             <nav className="flex items-center gap-[3rem] py-[0.75rem] border-t border-border group">
               <button
                 onClick={() => {
+                    if (latestPost.user.isReadOnly) {
+                        window.dispatchEvent(new CustomEvent('show-toast', { 
+                            detail: { 
+                                message: `Désolé, ce compte est en lecture seule.`,
+                                variant: 'info'
+                            } 
+                        }));
+                        return;
+                    }
                     if (latestPost.user.isBlockedByMe || latestPost.user.hasBlockedMe) {
                         window.dispatchEvent(new CustomEvent('show-toast', { 
                             detail: { 
@@ -228,7 +237,7 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
                 disabled={post.isCensored}
                 className={cn(
                     "group/reply flex items-center gap-[0.25rem] text-text-secondary transition-colors focus:outline-none",
-                    post.isCensored ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
+                    (post.isCensored || latestPost.user.isReadOnly) ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
                 )}
                 title="Répondre"
               >

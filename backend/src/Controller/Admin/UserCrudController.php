@@ -44,6 +44,7 @@ class UserCrudController extends AbstractCrudController
                 ->allowMultipleChoices()
                 ->renderExpanded(),
             BooleanField::new('isVerified', 'Compte vérifié'),
+            BooleanField::new('isReadOnly', 'Mode Lecture Seule'),
             BooleanField::new('isBlocked', 'Bloqué'),
             DateTimeField::new('createdAt', 'Créé le')->hideOnForm(),
         ];

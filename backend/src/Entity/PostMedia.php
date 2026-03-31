@@ -17,7 +17,7 @@ class PostMedia
     private ?string $filePath = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $type = null; // 'image' or 'video'
+    private ?string $type = null; // 'image' ou 'video'
 
     #[ORM\ManyToOne(inversedBy: 'media')]
     #[ORM\JoinColumn(nullable: false)]

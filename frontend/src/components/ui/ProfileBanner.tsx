@@ -12,7 +12,7 @@ interface ProfileBannerProps {
 export default function ProfileBanner({ banner, avatar, name, isBlocked, avatarBaseUrl }: ProfileBannerProps) {
     return (
         <figure className="h-32 md:h-48 w-full bg-surface-hover relative overflow-visible mt-2 md:mt-0">
-            {banner && banner !== 'default_banniere.png' && !isBlocked ? (
+            {banner && banner !== 'default_banniere.png' && banner !== '' && !isBlocked ? (
                 <img
                     src={`${BASE_URL}/uploads/banners/${banner}`}
                     alt="Bannière"

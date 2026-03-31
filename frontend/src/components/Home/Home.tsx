@@ -133,6 +133,7 @@ export default function Home() {
                   media={post.media}
                   isAuthorBlocked={post.user.isBlocked}
                   isCensored={post.isCensored}
+                  isReadOnly={post.user.isReadOnly}
                 />
               ))
             )}
