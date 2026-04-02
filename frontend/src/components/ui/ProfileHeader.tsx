@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 
@@ -21,11 +20,11 @@ export default function ProfileHeader({ name, isBlocked, postCount }: ProfileHea
                 <FiArrowLeft className="w-5 h-5" />
             </button>
             <hgroup className="flex flex-col">
-                <h1 className="text-xl font-bold text-text-primary leading-none m-0">
+                <h1 className="text-[1.25rem] font-bold text-text-primary leading-none m-0">
                     {isBlocked ? 'Compte Suspendu' : name}
                 </h1>
                 {!isBlocked && (
-                    <p className="text-sm text-text-secondary m-0">
+                    <p className="text-[0.875rem] text-text-secondary m-0">
                         {postCount} {postCount > 1 ? 'posts' : 'post'}
                     </p>
                 )}

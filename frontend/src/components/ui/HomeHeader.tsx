@@ -2,6 +2,7 @@ import { useScrollDirection } from "../../hooks/useScrollDirection";
 import { cn } from "../../lib/utils";
 import { FiRefreshCw } from "react-icons/fi";
 import { useState } from "react";
+import { motion } from "motion/react";
 
 interface HomeHeaderProps {
   activeFeed: 'for-you' | 'following';
@@ -43,27 +44,37 @@ export default function HomeHeader({ activeFeed, setActiveFeed, onRefresh }: Hom
           onClick={() => setActiveFeed('for-you')}
           className="flex-1 flex flex-col items-center pt-4 group transition-colors hover:bg-surface-hover/50 h-14"
         >
-          <p className={cn(
-            "pb-3 font-bold text-[15px] transition-colors relative h-full flex items-center",
-            activeFeed === 'for-you'
-              ? "text-text-primary after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1 after:bg-primary after:rounded-full"
-              : "text-text-secondary group-hover:text-text-primary"
+          <span className={cn(
+            "pb-3 font-bold text-[0.9375rem] transition-colors relative h-full flex items-center",
+            activeFeed === 'for-you' ? "text-text-primary" : "text-text-secondary group-hover:text-text-primary"
           )}>
             Pour vous
-          </p>
+            {activeFeed === 'for-you' && (
+              <motion.div 
+                layoutId="activeHomeTab"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" 
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </span>
         </button>
         <button
           onClick={() => setActiveFeed('following')}
           className="flex-1 flex flex-col items-center pt-4 group transition-colors hover:bg-surface-hover/50 h-14"
         >
-          <p className={cn(
-            "pb-3 font-bold text-[15px] transition-colors relative h-full flex items-center",
-            activeFeed === 'following'
-              ? "text-text-primary after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-1 after:bg-primary after:rounded-full"
-              : "text-text-secondary group-hover:text-text-primary"
+          <span className={cn(
+            "pb-3 font-bold text-[0.9375rem] transition-colors relative h-full flex items-center",
+            activeFeed === 'following' ? "text-text-primary" : "text-text-secondary group-hover:text-text-primary"
           )}>
             Abonné
-          </p>
+            {activeFeed === 'following' && (
+              <motion.div 
+                layoutId="activeHomeTab"
+                className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" 
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </span>
         </button>
 
         {/* Desktop Refresh Button */}

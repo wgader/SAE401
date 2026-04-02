@@ -73,11 +73,48 @@ export default function Profile() {
   };
 
   if (loading) return <ProfileSkeleton />;
-  if (!profile) return (
-    <main className="w-full min-h-screen bg-background flex flex-col items-center justify-center text-text-primary">
-      <h2>Utilisateur introuvable</h2>
-    </main>
-  );
+
+  // Si le profil n'existe pas, on affiche une version placeholder
+  if (!profile) {
+    const notFoundUser: User = {
+      id: 0,
+      username: username || "inconnu",
+      name: "Utilisateur introuvable",
+      avatar: null,
+      banner: "default_banniere.png",
+      bio: "Ce compte n'existe pas ou a été supprimé. Vérifiez l'orthographe ou essayez une autre recherche.",
+      isVerified: false,
+    };
+
+    return (
+      <RenderErrorBoundary>
+        <article className="w-full max-w-2xl border-x border-border min-h-screen bg-background flex flex-col pb-20 font-sf-pro">
+          <ProfileHeader name="Profil" isBlocked={false} postCount={0} />
+          <ProfileBanner banner={null} avatar={null} name="?" isBlocked={false} avatarBaseUrl={AVATAR_BASE_URL} />
+          
+          <menu className="flex justify-end px-4 md:px-6 mt-3 h-10 m-0 p-0 gap-2 pr-4 md:pr-6 list-none relative">
+            <Button variant="outline" size="sm" onClick={() => navigate('/')}>
+              Retour à l'accueil
+            </Button>
+          </menu>
+
+          <ProfileInfo 
+            profile={notFoundUser} 
+            joinedDate="" 
+            onShowList={() => {}}
+          />
+
+          <section className="mt-8 p-12 text-center flex flex-col items-center gap-4">
+             <div className="p-4 bg-surface rounded-full">
+                <FiSlash className="w-12 h-12 text-text-tertiary/20" />
+             </div>
+             <h3 className="text-[1.25rem] font-bold text-text-primary">Désolé, cette page n'existe pas.</h3>
+             <p className="text-text-secondary text-[0.875rem] max-w-xs mx-auto">Essayez de rechercher autre chose ou vérifiez le lien que vous avez suivi.</p>
+          </section>
+        </article>
+      </RenderErrorBoundary>
+    );
+  }
 
   const isOwnProfile = currentUser?.username === profile.username;
   const joinedDate = profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : "";
@@ -166,7 +203,7 @@ export default function Profile() {
                              <li>
                                 <button 
                                   onClick={() => { setShowBlockMenu(false); setShowBlockConfirm(true); }}
-                                  className="w-full text-left px-4 py-2.5 hover:bg-red-500/10 transition flex items-center gap-3 text-red-500 font-bold text-sm"
+                                  className="w-full text-left px-4 py-2.5 hover:bg-red-500/10 transition flex items-center gap-3 text-red-500 font-bold text-[0.875rem]"
                                 >
                                    <FiSlash className="w-4 h-4" />
                                    {profile.isBlockedByMe ? `Débloquer @${profile.username}` : `Bloquer @${profile.username}`}
@@ -208,6 +245,7 @@ export default function Profile() {
         <ProfileInfo 
           profile={profile} 
           joinedDate={joinedDate} 
+          isOwnProfile={isOwnProfile}
           onShowList={(type) => navigate(`/profile/${profile.username}/${type}`)}
         />
 
@@ -219,40 +257,74 @@ export default function Profile() {
               {profile.hasBlockedMe && (
                 <div className="bg-red-500/10 border-b border-red-500/20 px-4 py-8 text-center animate-in fade-in duration-300">
                    <FiSlash className="w-12 h-12 text-red-500/30 mx-auto mb-3" />
-                   <h3 className="text-xl font-black text-white uppercase font-druk m-0 leading-none">Accès restreint</h3>
-                   <p className="text-sm text-text-secondary mt-2 max-w-xs mx-auto">Cet utilisateur vous a bloqué. Vous pouvez voir ses posts mais les interactions sont limitées.</p>
+                   <h3 className="text-[1.25rem] font-black text-white uppercase font-druk m-0 leading-none">Accès restreint</h3>
+                   <p className="text-[0.875rem] text-text-secondary mt-2 max-w-xs mx-auto">Cet utilisateur vous a bloqué. Vous pouvez voir ses posts mais les interactions sont limitées.</p>
                 </div>
               )}
               
               <header className="px-4 py-3 border-b border-border flex items-center justify-between bg-background sticky top-0 z-10">
-                 <h3 className="font-bold text-text-primary text-lg m-0">Posts</h3>
+                 <h3 className="font-bold text-text-primary text-[1.125rem] m-0">Posts</h3>
               </header>
 
               {posts.length > 0 ? (
                 <ul className="flex flex-col list-none m-0 p-0">
-                  {posts.map(post => (
-                    <TweetCard
-                      key={post.id}
-                      id={post.id}
-                      authorName={post.user.name}
-                      username={post.user.username}
-                      timeAgo={post.createdAt}
-                      content={post.content}
-                      avatarUrl={post.user.avatar ? `${AVATAR_BASE_URL}${post.user.avatar}` : undefined}
-                      initialLikesCount={post.likesCount}
-                      initialIsLiked={post.isLiked}
-                      currentUserId={currentUser?.id}
-                      currentUsername={currentUser?.username}
-                      media={post.media}
-                      isAuthorBlocked={post.user.isBlocked || post.user.isBlockedByMe}
-                      isCensored={post.isCensored}
-                      isReadOnly={post.user.isReadOnly}
-                      className="border-b border-border"
-                    />
-                  ))}
+                  {(() => {
+                    const pinnedIds = profile.pinnedPostIds || [];
+                    const pinnedPosts = posts
+                      .filter(p => pinnedIds.includes(p.id))
+                      .sort((a, b) => pinnedIds.indexOf(a.id) - pinnedIds.indexOf(b.id));
+                    const otherPosts = posts.filter(p => !pinnedIds.includes(p.id));
+                    
+                    return (
+                      <>
+                        {pinnedPosts.map(post => (
+                          <TweetCard
+                            key={`pinned-${post.id}`}
+                            id={post.id}
+                            authorName={post.user.name}
+                            username={post.user.username}
+                            timeAgo={post.createdAt}
+                            content={post.content}
+                            avatarUrl={post.user.avatar ? `${AVATAR_BASE_URL}${post.user.avatar}` : undefined}
+                            initialLikesCount={post.likesCount}
+                            initialIsLiked={post.isLiked}
+                            currentUserId={currentUser?.id}
+                            currentUsername={currentUser?.username}
+                            media={post.media}
+                            isAuthorBlocked={post.user.isBlocked || post.user.isBlockedByMe}
+                            isCensored={post.isCensored}
+                            isReadOnly={post.user.isReadOnly}
+                            showPinnedIndicator={true}
+                            className="border-b border-border"
+                          />
+                        ))}
+                        {otherPosts.map(post => (
+                          <TweetCard
+                            key={post.id}
+                            id={post.id}
+                            authorName={post.user.name}
+                            username={post.user.username}
+                            timeAgo={post.createdAt}
+                            content={post.content}
+                            avatarUrl={post.user.avatar ? `${AVATAR_BASE_URL}${post.user.avatar}` : undefined}
+                            initialLikesCount={post.likesCount}
+                            initialIsLiked={post.isLiked}
+                            currentUserId={currentUser?.id}
+                            currentUsername={currentUser?.username}
+                            media={post.media}
+                            isAuthorBlocked={post.user.isBlocked || post.user.isBlockedByMe}
+                            isCensored={post.isCensored}
+                            isReadOnly={post.user.isReadOnly}
+                            showPinnedIndicator={true}
+                            className="border-b border-border"
+                          />
+                        ))}
+                      </>
+                    );
+                  })()}
                 </ul>
               ) : (
-                <p className="p-12 text-center text-text-secondary m-0">Aucun post pour le moment.</p>
+                <p className="p-12 text-center text-text-secondary m-0 text-[1rem]">Aucun post pour le moment.</p>
               )}
             </>
           )}

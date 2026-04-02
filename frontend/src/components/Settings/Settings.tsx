@@ -53,7 +53,7 @@ export default function Settings() {
         >
           <FiArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-xl font-bold text-text-primary m-0">Paramètres</h1>
+        <h1 className="text-[1.25rem] font-bold text-text-primary m-0">Paramètres</h1>
       </header>
 
       <section className="p-6 flex flex-col gap-10">
@@ -63,7 +63,7 @@ export default function Settings() {
              <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 {theme === "dark" ? <FiMoon className="w-5 h-5" /> : theme === "light" ? <FiSun className="w-5 h-5" /> : <FiHexagon className="w-5 h-5" />}
              </div>
-             <h2 className="text-lg font-bold text-text-primary m-0">Affichage</h2>
+             <h2 className="text-[1.125rem] font-bold text-text-primary m-0">Affichage</h2>
           </header>
           
           <nav className="grid grid-cols-3 bg-surface rounded-2xl p-1.5 border border-border shadow-inner">
@@ -72,21 +72,21 @@ export default function Settings() {
               className={`flex flex-col items-center gap-1 py-3 rounded-xl transition-all ${theme === "light" ? "bg-background shadow-lg text-primary font-bold scale-[1.02]" : "text-text-secondary hover:text-text-primary hover:bg-surface-hover/50"}`}
             >
               <FiSun className="w-5 h-5" />
-              <p className="text-xs m-0">Clair</p>
+              <p className="text-[0.875rem] m-0">Clair</p>
             </button>
             <button
               onClick={() => setTheme("dark")}
               className={`flex flex-col items-center gap-1 py-3 rounded-xl transition-all ${theme === "dark" ? "bg-background shadow-lg text-primary font-bold scale-[1.02]" : "text-text-secondary hover:text-text-primary hover:bg-surface-hover/50"}`}
             >
               <FiMoon className="w-5 h-5" />
-              <p className="text-xs m-0">Sombre</p>
+              <p className="text-[0.875rem] m-0">Sombre</p>
             </button>
             <button
               onClick={() => setTheme("violet")}
               className={`flex flex-col items-center gap-1 py-3 rounded-xl transition-all ${theme === "violet" ? "bg-background shadow-lg text-primary font-bold scale-[1.02]" : "text-text-secondary hover:text-text-primary hover:bg-surface-hover/50"}`}
             >
               <FiHexagon className="w-5 h-5" />
-              <p className="text-xs m-0">Violet</p>
+              <p className="text-[0.875rem] m-0">Violet</p>
             </button>
           </nav>
         </section>
@@ -97,14 +97,14 @@ export default function Settings() {
             <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <FiLock className="w-5 h-5" />
             </div>
-            <h2 className="text-lg font-bold text-text-primary m-0">Confidentialité</h2>
+            <h2 className="text-[1.125rem] font-bold text-text-primary m-0">Confidentialité</h2>
           </header>
           
           <article className="bg-surface rounded-2xl p-6 border border-border flex flex-col gap-6 shadow-sm">
             <header className="flex items-center justify-between gap-4">
               <div className="flex-1">
-                <h3 className="text-sm font-bold text-text-primary mb-1">Mode Lecture Seule</h3>
-                <p className="text-xs text-text-secondary leading-relaxed">
+                <h3 className="text-[0.875rem] font-bold text-text-primary mb-1">Mode Lecture Seule</h3>
+                <p className="text-[0.875rem] text-text-secondary leading-relaxed">
                   Empêche les autres utilisateurs de répondre à vos posts. Vos posts restent visibles et "likables".
                 </p>
               </div>
@@ -146,13 +146,13 @@ export default function Settings() {
             <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <FiRefreshCw className="w-5 h-5" />
             </div>
-            <h2 className="text-lg font-bold text-text-primary m-0">Contenu</h2>
+            <h2 className="text-[1.125rem] font-bold text-text-primary m-0">Contenu</h2>
           </header>
           
           <article className="bg-surface rounded-2xl p-6 border border-border flex flex-col gap-6 shadow-sm">
             <header>
-              <h3 className="text-sm font-bold text-text-primary mb-1">Rafraîchissement automatique</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">Personnalisez la fréquence d'actualisation de votre fil pour ne rien manquer.</p>
+              <h3 className="text-[0.875rem] font-bold text-text-primary mb-1">Rafraîchissement automatique</h3>
+              <p className="text-[0.875rem] text-text-secondary leading-relaxed">Personnalisez la fréquence d'actualisation de votre fil pour ne rien manquer.</p>
             </header>
             <Dropdown 
               options={REFRESH_OPTIONS} 

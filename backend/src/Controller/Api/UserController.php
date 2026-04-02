@@ -37,7 +37,7 @@ class UserController extends AbstractController
             $hasBlockedMe = $user->isBlocking($currentUser);
         }
 
-        return $this->json([
+        $response = [
             'id' => $user->getId(),
             'username' => $user->getUsername(),
             'name' => $user->getName(),
@@ -56,7 +56,19 @@ class UserController extends AbstractController
             'isReadOnly' => $user->isReadOnly(),
             'followersCount' => $user->getFollowers()->count(),
             'followingCount' => $user->getFollowing()->count(),
-        ]);
+            'pinnedPostIds' => (function($user) {
+                $pinned = array_filter($user->getPosts()->toArray(), fn($p) => $p->getPinnedAt() !== null);
+                usort($pinned, fn($a, $b) => $b->getPinnedAt() <=> $a->getPinnedAt());
+                return array_values(array_map(fn($p) => $p->getId(), $pinned));
+            })($user),
+        ];
+
+        // Include blockedCount only for own profile
+        if ($currentUser instanceof User && $currentUser === $user) {
+            $response['blockedCount'] = $user->getBlockedUsers()->count();
+        }
+
+        return $this->json($response);
     }
 
     #[Route('/api/me', methods: ['GET'])]
@@ -84,6 +96,11 @@ class UserController extends AbstractController
             'followersCount' => $user->getFollowers()->count(),
             'followingCount' => $user->getFollowing()->count(),
             'blockedCount' => $user->getBlockedUsers()->count(),
+            'pinnedPostIds' => (function($user) {
+                $pinned = array_filter($user->getPosts()->toArray(), fn($p) => $p->getPinnedAt() !== null);
+                usort($pinned, fn($a, $b) => $b->getPinnedAt() <=> $a->getPinnedAt());
+                return array_values(array_map(fn($p) => $p->getId(), $pinned));
+            })($user),
         ]);
     }
 
@@ -292,5 +309,32 @@ class UserController extends AbstractController
         }, $user->getFollowing()->toArray());
 
         return $this->json($following);
+    }
+
+    #[Route('/api/search/users', methods: ['GET'])]
+    public function search(Request $request, UserRepository $userRepository): JsonResponse
+    {
+        $q = $request->query->get('q', '');
+        if (strlen($q) < 1) {
+            return $this->json([]);
+        }
+
+        // Recherche insensible à la casse
+        $users = $userRepository->createQueryBuilder('u')
+            ->where('LOWER(u.username) LIKE LOWER(:q)')
+            ->orWhere('LOWER(u.name) LIKE LOWER(:q)')
+            ->setParameter('q', $q . '%')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+
+        return $this->json(array_map(function (User $u) {
+            return [
+                'id' => $u->getId(),
+                'username' => $u->getUsername(),
+                'name' => $u->getName(),
+                'avatar' => $u->getAvatar(),
+            ];
+        }, $users));
     }
 }

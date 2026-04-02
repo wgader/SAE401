@@ -27,8 +27,8 @@ export default function BlockedProfileView({ type = 'suspended' }: BlockedProfil
         </div>
         
         <hgroup className="relative z-10 flex flex-col gap-3">
-            <h3 className="text-4xl md:text-5xl font-black text-white tracking-widest uppercase font-druk">Silence Absolu</h3>
-            <p className="text-text-secondary max-w-sm mx-auto text-base font-bold uppercase tracking-tight">
+            <h3 className="text-[2.25rem] md:text-[3rem] font-black text-white tracking-widest uppercase font-druk">Silence Absolu</h3>
+            <p className="text-text-secondary max-w-sm mx-auto text-[1rem] font-bold uppercase tracking-tight">
                 Cette unité a été déconnectée. Les archives sont inaccessibles.
             </p>
         </hgroup>

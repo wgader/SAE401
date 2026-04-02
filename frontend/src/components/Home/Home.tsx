@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { motion, type Variants } from "motion/react";
 import { useLocation } from "react-router-dom";
 import TweetCard from "../ui/TweetCard";
 import HomeHeader from "../ui/HomeHeader";
@@ -11,16 +12,22 @@ import { Toast } from "../ui/Toast";
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
+interface LocationState {
+  postCreated?: boolean;
+}
+
 export default function Home() {
   const { posts, setPosts, currentUser } = useStore();
   const [activeFeed, setActiveFeed] = useState<'for-you' | 'following'>('for-you');
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [startY, setStartY] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
   const [settingsRevision, setSettingsRevision] = useState(0);
   const [showToast, setShowToast] = useState(false);
+
   const location = useLocation();
+  const state = location.state as LocationState;
+  const mainRef = useRef<HTMLElement>(null);
 
   const fetchPosts = async (feed: 'for-you' | 'following', silent = false) => {
     try {
@@ -32,6 +39,7 @@ export default function Home() {
     } finally {
       if (!silent) setLoading(false);
       setIsRefreshing(false);
+      setPullDistance(0);
     }
   };
 
@@ -39,47 +47,80 @@ export default function Home() {
     fetchPosts(activeFeed, true);
   };
 
-  // Pull to refresh logic for mobile
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (window.pageYOffset === 0) {
-      setStartY(e.touches[0].pageY);
-    }
-  };
+  useEffect(() => {
+    const element = mainRef.current;
+    if (!element) return;
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (startY) {
-      const currentY = e.touches[0].pageY;
-      const distance = currentY - startY;
-      if (distance > 0 && window.pageYOffset === 0) {
-        const pull = Math.pow(distance, 0.85);
-        setPullDistance(Math.min(pull, 120));
-        if (distance > 30) e.preventDefault();
+    let localStartY = 0;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (window.pageYOffset === 0) {
+        localStartY = e.touches[0].pageY;
       }
-    }
-  };
+    };
 
-  const handleTouchEnd = () => {
+    const onTouchMove = (e: TouchEvent) => {
+      if (localStartY > 0) {
+        const currentY = e.touches[0].pageY;
+        const distance = currentY - localStartY;
+
+        if (distance > 0 && window.pageYOffset === 0) {
+          const pull = Math.pow(distance, 0.85);
+          setPullDistance(Math.min(pull, 120));
+
+          if (distance > 10 && e.cancelable) {
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    const onTouchEnd = () => {
+      localStartY = 0;
+    };
+
+    element.addEventListener('touchstart', onTouchStart, { passive: true });
+    element.addEventListener('touchmove', onTouchMove, { passive: false });
+    element.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      element.removeEventListener('touchstart', onTouchStart);
+      element.removeEventListener('touchmove', onTouchMove);
+      element.removeEventListener('touchend', onTouchEnd);
+    };
+  }, []);
+
+  const handleTouchEndInReact = () => {
     if (pullDistance > 60) {
       setIsRefreshing(true);
       handleRefresh();
+    } else {
+      setPullDistance(0);
     }
-    setPullDistance(0);
-    setStartY(0);
+  };
+
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
   };
 
   useEffect(() => {
     const handleSettingsChange = () => setSettingsRevision(p => p + 1);
     window.addEventListener('settings-changed', handleSettingsChange);
 
-    // Show toast if post was just created
-    if (location.state?.postCreated) {
+    if (state?.postCreated) {
       setShowToast(true);
-      // Clean up state to avoid showing toast on refresh
       window.history.replaceState({}, document.title);
     }
 
     return () => window.removeEventListener('settings-changed', handleSettingsChange);
-  }, [location]);
+  }, [state, location]);
 
   useEffect(() => {
     fetchPosts(activeFeed);
@@ -96,10 +137,9 @@ export default function Home() {
 
   return (
     <main
+      ref={mainRef}
       className="w-full max-w-2xl border-x border-border min-h-screen bg-background flex flex-col pt-0 relative"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      onTouchEnd={handleTouchEndInReact}
     >
       <HomeHeader activeFeed={activeFeed} setActiveFeed={setActiveFeed} onRefresh={handleRefresh} />
 
@@ -107,14 +147,19 @@ export default function Home() {
 
       <section className="flex flex-col">
         <RenderErrorBoundary>
-          <ul className="flex flex-col m-0 p-0 overflow-hidden">
+          <motion.ul 
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col m-0 p-0 overflow-hidden list-none"
+          >
             {loading ? (
               <>
                 {[...Array(5)].map((_, i) => <TweetSkeleton key={i} />)}
               </>
             ) : posts.length === 0 ? (
-              <li className="flex flex-col items-center justify-center p-20 text-center list-none">
-                <p className="text-text-secondary font-sf-pro text-lg">Il n'y a pas encore de posts. Soyez le premier à en publier un !</p>
+              <li className="flex flex-col items-center justify-center p-20 text-center">
+                <p className="text-text-secondary font-sf-pro text-[1.125rem]">Il n'y a pas encore de posts. Soyez le premier à en publier un !</p>
               </li>
             ) : (
               posts.map((post) => (
@@ -137,14 +182,14 @@ export default function Home() {
                 />
               ))
             )}
-          </ul>
+          </motion.ul>
         </RenderErrorBoundary>
       </section>
 
-      <Toast 
-        isVisible={showToast} 
-        message="Ton post a été envoyé !" 
-        onClose={() => setShowToast(false)} 
+      <Toast
+        isVisible={showToast}
+        message="Ton post a été envoyé !"
+        onClose={() => setShowToast(false)}
       />
     </main>
   );

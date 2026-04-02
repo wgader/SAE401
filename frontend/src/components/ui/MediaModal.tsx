@@ -53,7 +53,7 @@ export const MediaModal: React.FC<MediaModalProps> = ({
             <FiX className="w-6 h-6" />
           </button>
           
-          <div className="text-white font-medium">
+          <div className="text-white text-[1rem] font-medium">
             {currentIndex + 1} / {media.length}
           </div>
           

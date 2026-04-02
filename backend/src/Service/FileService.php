@@ -53,23 +53,26 @@ class FileService
     public function uploadPostMedia(UploadedFile $file): ?string
     {
         if (!is_dir($this->postsDirectory)) {
-            mkdir($this->postsDirectory, 0777, true);
+            if (!mkdir($this->postsDirectory, 0777, true) && !is_dir($this->postsDirectory)) {
+                throw new \Exception("Impossible de créer le dossier : " . $this->postsDirectory);
+            }
+            chmod($this->postsDirectory, 0777);
+        }
+
+        if (!is_writable($this->postsDirectory)) {
+            throw new \Exception("Dossier non accessible en écriture : " . $this->postsDirectory);
         }
 
         $extension = $file->guessExtension();
         if (!$extension) {
             $mimeType = $file->getMimeType();
-            $extension = str_contains($mimeType, 'video') ? 'mp4' : 'jpg';
+            $extension = str_contains($mimeType, 'video') ? 'mp4' : (str_contains($mimeType, 'image') ? 'jpg' : 'bin');
         }
 
         $newFilename = uniqid() . '.' . $extension;
 
-        try {
-            $file->move($this->postsDirectory, $newFilename);
-            return $newFilename;
-        } catch (\Exception $e) {
-            return null;
-        }
+        $file->move($this->postsDirectory, $newFilename);
+        return $newFilename;
     }
 
     public function deleteFile(string $filename, string $folder): bool

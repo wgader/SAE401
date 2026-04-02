@@ -9,6 +9,7 @@ const StoreContext = createContext<StoreContextType | null>(null);
 const initialState: AppState = {
     currentUser: null,
     posts: [],
+    currentPost: null,
     currentProfile: null,
     profilePosts: [],
 };
@@ -128,6 +129,18 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             const isTargetProfile = prev.currentProfile?.username === username;
             const updatedProfile = isTargetProfile ? { ...prev.currentProfile!, ...data } : prev.currentProfile;
 
+            // Update blockedCount on current user
+            const blockedDelta = data.isBlockedByMe ? 1 : -1;
+            const updatedCurrentUser = prev.currentUser ? {
+                ...prev.currentUser,
+                blockedCount: Math.max(0, (prev.currentUser.blockedCount ?? 0) + blockedDelta)
+            } : null;
+
+            // Also update blockedCount on currentProfile if viewing own profile
+            const finalProfile = updatedProfile && prev.currentUser && updatedProfile.username === prev.currentUser.username
+                ? { ...updatedProfile, blockedCount: Math.max(0, (updatedProfile.blockedCount ?? 0) + blockedDelta) }
+                : updatedProfile;
+
             // When blocking, set isFollowing to false in both directions (client logic)
             const updateInPosts = (posts: Post[]) => posts.map(p =>
                 p.user.username === username ? { ...p, user: { ...p.user, isBlockedByMe: data.isBlockedByMe, isFollowing: data.isBlockedByMe ? false : p.user.isFollowing } } : p
@@ -143,7 +156,8 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
             return {
                 ...prev,
-                currentProfile: updatedProfile,
+                currentUser: updatedCurrentUser,
+                currentProfile: finalProfile,
                 posts: updateInPosts(prev.posts),
                 profilePosts: updateInPosts(prev.profilePosts),
                 currentPost: updateCurrentPost()

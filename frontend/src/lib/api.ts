@@ -23,6 +23,7 @@ export interface User {
   followingCount?: number;
   blockedCount?: number;
   isReadOnly?: boolean;
+  pinnedPostIds?: number[];
 }
 
 export interface AuthResponse {
@@ -56,9 +57,10 @@ export interface Post {
   likesCount: number;
   isLiked: boolean;
   repliesCount: number;
-  parentId?: number;
+  parentId?: number | null;
   media?: PostMedia[];
   isCensored: boolean;
+  isPinned?: boolean;
 }
 
 const getHeaders = () => {
@@ -72,7 +74,7 @@ const getHeaders = () => {
   return headers;
 };
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   try {
     const response = await fetch(`${API_URL}${path}`, {
       ...options,
@@ -160,12 +162,21 @@ export const api = {
     return request<User>(`/users/${username}`);
   },
 
+  async searchUsers(query: string): Promise<User[]> {
+    return request<User[]>(`/search/users?q=${encodeURIComponent(query)}`);
+  },
+
+  async searchPosts(query: string): Promise<Post[]> {
+    return request<Post[]>(`/search/posts?q=${encodeURIComponent(query)}`);
+  },
+
   async getUserPosts(username: string): Promise<Post[]> {
     return request<Post[]>(`/users/${username}/posts`);
   },
 
   logout() {
     localStorage.removeItem("token");
+
     window.dispatchEvent(new Event('auth-changed'));
   },
 
@@ -269,5 +280,13 @@ export const api = {
 
   async getPost(postId: number): Promise<Post> {
     return request<Post>(`/posts/${postId}`);
+  },
+
+  async pinPost(postId: number): Promise<any> {
+    return request<any>(`/posts/${postId}/pin`, { method: 'POST' });
+  },
+
+  async unpinPost(postId: number): Promise<any> {
+    return request<any>(`/posts/${postId}/unpin`, { method: 'POST' });
   }
 };

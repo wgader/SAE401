@@ -60,7 +60,7 @@ export default function LegalHub() {
       {/* Header */}
       <header className="flex flex-col items-center gap-6 mb-12 text-center max-w-2xl">
         <img src={logo} alt="Sphere Logo" className="h-10 mb-2" />
-        <h1 className="text-4xl font-druk font-black text-primary tracking-tight uppercase leading-none">
+        <h1 className="text-[2.25rem] font-druk font-black text-primary tracking-tight uppercase leading-none">
           Centre Legal
         </h1>
 
@@ -69,7 +69,7 @@ export default function LegalHub() {
           <button
             onClick={() => setActiveTab("cgu")}
             className={cn(
-              "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+              "px-8 py-2.5 rounded-xl text-[0.875rem] font-bold transition-all duration-300",
               activeTab === "cgu" ? "bg-primary text-black shadow-lg" : "text-text-secondary hover:text-text-primary"
             )}
           >
@@ -78,7 +78,7 @@ export default function LegalHub() {
           <button
             onClick={() => setActiveTab("legal")}
             className={cn(
-              "px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+              "px-8 py-2.5 rounded-xl text-[0.875rem] font-bold transition-all duration-300",
               activeTab === "legal" ? "bg-primary text-black shadow-lg" : "text-text-secondary hover:text-text-primary"
             )}
           >
@@ -98,8 +98,8 @@ export default function LegalHub() {
                 <item.icon className="w-6 h-6 text-primary" />
               </div>
               <div className="flex flex-col gap-3">
-                <h2 className="text-xl font-bold text-text-primary">{item.title}</h2>
-                <p className="text-text-secondary leading-relaxed text-base">
+                <h2 className="text-[1.25rem] font-bold text-text-primary">{item.title}</h2>
+                <p className="text-text-secondary leading-relaxed text-[1rem]">
                   {item.text}
                 </p>
               </div>
@@ -108,7 +108,7 @@ export default function LegalHub() {
         </article>
 
         <footer className="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-sm text-text-secondary italic">
+          <p className="text-[0.875rem] text-text-secondary italic">
             Dernière mise à jour : 23 Mars 2026
           </p>
           <Button
@@ -123,7 +123,7 @@ export default function LegalHub() {
       </section>
 
       {/* Decorative Footer */}
-      <footer className="mt-12 text-text-secondary/50 text-xs tracking-widest uppercase">
+      <footer className="mt-12 text-text-secondary/50 text-[0.875rem] tracking-widest uppercase">
         Sphere Digital Experience © 2026
       </footer>
     </main>

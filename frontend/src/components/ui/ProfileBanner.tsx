@@ -31,7 +31,7 @@ export default function ProfileBanner({ banner, avatar, name, isBlocked, avatarB
                         </div>
                     ) : (
                         <img
-                            src={`${avatarBaseUrl}${avatar}`}
+                            src={`${avatarBaseUrl}${avatar || 'default.png'}`}
                             alt={`${name} avatar`}
                             className="w-full h-full object-cover"
                         />

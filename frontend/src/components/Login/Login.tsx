@@ -41,9 +41,9 @@ export default function Login() {
       {/* Header */}
       <header className="flex flex-col items-center gap-6 mb-8">
         <img src={logo} alt="Sphere Logo" className="h-8" />
-        <h1 className="text-2xl font-sf-pro font-bold text-text-primary">Connectez-vous</h1>
+        <h1 className="text-[1.5rem] font-sf-pro font-bold text-text-primary">Connectez-vous</h1>
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-[0.875rem] font-sf-pro animate-in fade-in slide-in-from-top-1">
             {error}
           </div>
         )}
@@ -71,7 +71,7 @@ export default function Login() {
               required
             />
             <div className="flex justify-end">
-              <a href="#" className="text-sm text-primary hover:text-primary-hover font-sf-pro transition">
+              <a href="#" className="text-[0.875rem] text-primary hover:text-primary-hover font-sf-pro transition">
                 Mot de passe oublié ?
               </a>
             </div>
@@ -100,12 +100,12 @@ export default function Login() {
 
       {/* Footer */}
       <footer className="mt-8 flex flex-col items-center gap-4">
-        <p className="font-sf-pro text-text-secondary">
-          Vous n'avez pas de compte ? <Link to="/signup" className="text-primary hover:text-primary-hover font-bold ml-1 transition">Inscrivez-vous</Link>
+        <p className="font-sf-pro text-text-secondary text-[1rem]">
+          Vous n'avez pas de compte ? <Link to="/signup" className="text-primary hover:text-primary-hover font-bold ml-1 transition text-[1rem]">Inscrivez-vous</Link>
         </p>
-        <div className="flex items-center gap-4 text-xs text-text-secondary/70 font-sf-pro">
-          <Link to="/terms" className="hover:text-text-primary transition">Mentions légales</Link>
-          <Link to="/terms" className="hover:text-text-primary transition">Politique de confidentialité</Link>
+        <div className="flex items-center gap-4 text-[0.875rem] text-text-secondary/70 font-sf-pro">
+          <Link to="/terms" className="hover:text-text-primary transition text-[0.875rem]">Mentions légales</Link>
+          <Link to="/terms" className="hover:text-text-primary transition text-[0.875rem]">Politique de confidentialité</Link>
         </div>
       </footer>
     </main>

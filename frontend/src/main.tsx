@@ -14,6 +14,8 @@ import NotFound from './routes/not-found'
 import Profile from './components/Profile/Profile'
 import FollowList from './components/Profile/FollowList'
 import Settings from './components/Settings/Settings'
+import Hashtag from './routes/hashtag'
+import ExploreRoute from './routes/explore'
 
 import { GlobalToast } from './components/ui/GlobalToast';
 
@@ -57,8 +59,20 @@ const router = createBrowserRouter([
         element: <FollowList type="following" />,
       },
       {
+        path: "profile/:username/blocked",
+        element: <FollowList type="blocked" />,
+      },
+      {
         path: "settings",
         element: <Settings />,
+      },
+      {
+        path: "hashtag/:hashtag",
+        element: <Hashtag />,
+      },
+      {
+        path: "explore",
+        element: <ExploreRoute />,
       },
     ],
   },

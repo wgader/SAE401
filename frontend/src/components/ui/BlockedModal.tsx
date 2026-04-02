@@ -51,10 +51,10 @@ export const BlockedModal: React.FC<BlockedModalProps> = ({ message, onClose }) 
                     </motion.div>
 
                     <hgroup className="flex flex-col gap-2 relative z-10">
-                        <h2 className="text-4xl font-druk font-black text-text-primary uppercase tracking-tight">
+                        <h2 className="text-[2.25rem] font-druk font-black text-text-primary uppercase tracking-tight">
                             SIGNAL COUPE
                         </h2>
-                        <p className="text-text-secondary text-base font-medium leading-relaxed">
+                        <p className="text-text-secondary text-[1rem] font-medium leading-relaxed">
                             {message || "Ce compte est suspendu par la modération."}
                         </p>
                     </hgroup>
@@ -65,7 +65,7 @@ export const BlockedModal: React.FC<BlockedModalProps> = ({ message, onClose }) 
                             size="lg" 
                             fullWidth 
                             onClick={handleExit}
-                            className="text-lg tracking-widest"
+                            className="text-[1.125rem] tracking-widest"
                         >
                             DECONNEXION
                         </Button>

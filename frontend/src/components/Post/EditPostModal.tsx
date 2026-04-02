@@ -17,20 +17,20 @@ export default function EditPostModal({ post, onClose }: EditPostModalProps) {
     mediaToRemove.forEach(id => {
       formData.append('removeMedia[]', id.toString());
     });
-    
+
     const updated = await api.updatePost(post.id, formData);
     updatePost(post.id, updated);
     setShowSuccessToast(true);
-    
+
     setTimeout(() => {
       onClose();
     }, 1500);
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center md:items-center p-0 md:p-4 bg-background/60 backdrop-blur-sm md:backdrop-blur-md overflow-hidden hide-scrollbar font-sf-pro">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center md:items-center p-0 md:p-5 bg-background/60 backdrop-blur-sm md:backdrop-blur-md overflow-y-auto hide-scrollbar font-sf-pro">
       <div className="absolute inset-0 -z-10" onClick={onClose} aria-hidden="true" />
-      
+
       <PostComposer
         initialContent={post.content}
         initialMedia={post.media}
@@ -41,11 +41,11 @@ export default function EditPostModal({ post, onClose }: EditPostModalProps) {
         onSubmit={handleSubmit}
       />
 
-      <Toast 
-        isVisible={showSuccessToast} 
-        message="Votre post a bien été modifié" 
-        onClose={() => setShowSuccessToast(false)} 
-        type="success"
+      <Toast
+        isVisible={showSuccessToast}
+        message="Votre post a bien été modifié"
+        onClose={() => setShowSuccessToast(false)}
+        variant="success"
       />
     </div>
   );

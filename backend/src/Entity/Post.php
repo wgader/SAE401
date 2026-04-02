@@ -52,6 +52,9 @@ class Post
     #[ORM\Column(options: ['default' => false])]
     private bool $isCensored = false;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $pinnedAt = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -200,6 +203,17 @@ class Post
     public function setIsCensored(bool $isCensored): static
     {
         $this->isCensored = $isCensored;
+        return $this;
+    }
+
+    public function getPinnedAt(): ?\DateTimeImmutable
+    {
+        return $this->pinnedAt;
+    }
+
+    public function setPinnedAt(?\DateTimeImmutable $pinnedAt): static
+    {
+        $this->pinnedAt = $pinnedAt;
         return $this;
     }
 }

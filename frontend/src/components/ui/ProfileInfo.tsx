@@ -5,16 +5,17 @@ interface ProfileInfoProps {
     profile: User;
     joinedDate: string;
     onShowList?: (type: 'followers' | 'following' | 'blocked') => void;
+    isOwnProfile?: boolean;
 }
 
-export default function ProfileInfo({ profile, joinedDate, onShowList }: ProfileInfoProps) {
+export default function ProfileInfo({ profile, joinedDate, onShowList, isOwnProfile }: ProfileInfoProps) {
     return (
         <section className="mt-2 text-text-primary px-4 md:px-6 flex flex-col gap-3">
             <hgroup className="flex flex-col">
-                <h2 className="text-xl font-extrabold text-text-primary leading-tight m-0">
+                <h2 className="text-[1.25rem] font-extrabold text-text-primary leading-tight m-0">
                     {profile.isBlocked ? 'Compte Suspendu' : profile.name}
                 </h2>
-                <p className="text-text-secondary m-0">@{profile.username}</p>
+                <p className="text-text-secondary text-[0.875rem] m-0">@{profile.username}</p>
             </hgroup>
 
             {profile.isBlocked ? (
@@ -24,11 +25,11 @@ export default function ProfileInfo({ profile, joinedDate, onShowList }: Profile
                         <div className="h-4 w-5/6 bg-text-tertiary rounded-full" />
                         <div className="h-4 w-4/6 bg-text-tertiary rounded-full" />
                     </div>
-                    <p className="text-red-500 font-black text-lg tracking-tight uppercase flex items-center gap-2">
+                    <p className="text-red-500 font-black text-[1.125rem] tracking-tight uppercase flex items-center gap-2">
                         <FiSlash className="w-5 h-5" />
                         Profil Neutralisé par la Sphère
                     </p>
-                    <p className="text-text-secondary text-sm leading-relaxed max-w-sm">
+                    <p className="text-text-secondary text-[0.875rem] leading-relaxed max-w-sm">
                         Ce sujet a été extrait de la Sphère pour avoir dérogé de manière critique aux protocoles de communication.
                         Toutes ses transmissions ont été révoquées.
                     </p>
@@ -36,10 +37,10 @@ export default function ProfileInfo({ profile, joinedDate, onShowList }: Profile
             ) : (
                 <>
                     {profile.bio && (
-                        <p className="text-text-primary text-[15px] whitespace-pre-wrap">{profile.bio}</p>
+                        <p className="text-text-primary text-[0.9375rem] whitespace-pre-wrap">{profile.bio}</p>
                     )}
 
-                    <address className="flex flex-wrap gap-x-4 gap-y-2 text-text-secondary text-[15px] mb-2 not-italic">
+                    <address className="flex flex-wrap gap-x-4 gap-y-2 text-text-secondary text-[0.9375rem] mb-2 not-italic">
                         {profile.location && (
                             <span className="flex items-center gap-1">
                                 <FiMapPin className="w-4 h-4" />
@@ -52,13 +53,15 @@ export default function ProfileInfo({ profile, joinedDate, onShowList }: Profile
                                 {profile.website.replace(/^https?:\/\//, '')}
                             </a>
                         )}
-                        <span className="flex items-center gap-1">
-                            <FiCalendar className="w-4 h-4" />
-                            A rejoint en {joinedDate}
-                        </span>
+                        {joinedDate ? (
+                            <span className="flex items-center gap-1">
+                                <FiCalendar className="w-4 h-4" />
+                                A rejoint la Sphère en {joinedDate}
+                            </span>
+                        ) : null}
                     </address>
 
-                    <ul className="flex gap-4 text-[15px] m-0 p-0 list-none mt-1">
+                    <ul className="flex gap-4 text-[0.9375rem] m-0 p-0 list-none mt-1">
                         <li 
                           className="hover:underline cursor-pointer transition" 
                           onClick={() => onShowList?.('following')}
@@ -71,12 +74,12 @@ export default function ProfileInfo({ profile, joinedDate, onShowList }: Profile
                         >
                             <strong className="text-text-primary">{profile.followersCount ?? 0}</strong> <span className="text-text-secondary">abonnés</span>
                         </li>
-                        {profile.blockedCount !== undefined && profile.blockedCount > 0 && (
+                        {isOwnProfile && (
                             <li 
                               className="hover:underline cursor-pointer transition" 
                               onClick={() => onShowList?.('blocked')}
                             >
-                                <strong className="text-text-primary">{profile.blockedCount}</strong> <span className="text-text-secondary">bloqués</span>
+                                <strong className="text-text-primary">{profile.blockedCount ?? 0}</strong> <span className="text-text-secondary">bloqués</span>
                             </li>
                         )}
                     </ul>

@@ -33,7 +33,7 @@ export default function Dropdown({ options, value, onChange, label, className }:
 
   return (
     <section className={cn("flex flex-col gap-1.5 w-full", className)} ref={dropdownRef as any}>
-      {label && <label className="text-sm font-bold text-text-secondary px-1 uppercase tracking-wider">{label}</label>}
+      {label && <label className="text-[0.875rem] font-bold text-text-secondary px-1 uppercase tracking-wider">{label}</label>}
       <nav className="relative">
         <button
           type="button"
@@ -42,7 +42,7 @@ export default function Dropdown({ options, value, onChange, label, className }:
           aria-expanded={isOpen}
           className="w-full flex items-center justify-between px-4 py-3 bg-background border border-border rounded-xl text-text-primary hover:border-primary/50 transition-colors text-left"
         >
-          <p className="m-0 truncate font-medium">{selectedOption?.label || "Sélectionner..."}</p>
+          <p className="m-0 truncate font-medium text-[1rem]">{selectedOption?.label || "Sélectionner..."}</p>
           <FiChevronDown className={cn("w-5 h-5 transition-transform text-primary", isOpen && "rotate-180")} />
         </button>
 
@@ -62,7 +62,7 @@ export default function Dropdown({ options, value, onChange, label, className }:
                     window.dispatchEvent(new Event('settings-changed'));
                   }}
                   className={cn(
-                    "w-full px-4 py-2.5 text-left rounded-lg transition-colors text-sm",
+                    "w-full px-4 py-2.5 text-left rounded-lg transition-colors text-[0.875rem]",
                     option.value === value 
                       ? "bg-primary/10 text-primary font-bold" 
                       : "text-text-primary hover:bg-surface-hover"

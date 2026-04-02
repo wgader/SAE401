@@ -60,7 +60,7 @@ export function ProfileSkeleton() {
             </section>
 
             <section className="mt-4 border-t border-border">
-                <h3 className="px-4 py-3 font-bold text-transparent animate-shimmer rounded w-20 text-lg border-b border-border m-0 mb-3 mx-4">Posts</h3>
+                <h3 className="px-4 py-3 font-bold text-transparent animate-shimmer rounded w-20 text-[1.125rem] border-b border-border m-0 mb-3 mx-4">Posts</h3>
                 <ul className="flex flex-col list-none m-0 p-0">
                     <TweetSkeleton />
                     <TweetSkeleton />

@@ -38,8 +38,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
                     onClick={(e) => e.stopPropagation()}
                     className="relative bg-background border border-border p-6 md:p-8 rounded-3xl shadow-2xl max-w-sm w-full font-sf-pro"
                 >
-                    <h2 className="text-xl font-black text-text-primary mb-2 uppercase tracking-tight">{title}</h2>
-                    <p className="text-text-secondary text-sm leading-relaxed mb-8">{message}</p>
+                    <h2 className="text-[1.25rem] font-black text-text-primary mb-2 uppercase tracking-tight">{title}</h2>
+                    <p className="text-text-secondary text-[0.875rem] leading-relaxed mb-8">{message}</p>
                     
                     <div className="flex flex-col gap-3">
                         <Button 

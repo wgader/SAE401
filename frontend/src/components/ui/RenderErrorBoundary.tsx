@@ -33,7 +33,7 @@ export class RenderErrorBoundary extends React.Component<Props, State> {
       
       return (
         <div className="p-8 text-center flex flex-col items-center justify-center gap-4 bg-surface/50 rounded-2xl border border-border m-4">
-          <h2 className="text-xl font-bold text-text-primary">Oups ! Quelque chose s'est mal passé.</h2>
+          <h2 className="text-[1.25rem] font-bold text-text-primary">Oups ! Quelque chose s'est mal passé.</h2>
           <p className="text-text-secondary max-w-md">{this.state.error?.message || "Une erreur inattendue est survenue lors du rendu."}</p>
           <button 
             onClick={() => window.location.reload()}

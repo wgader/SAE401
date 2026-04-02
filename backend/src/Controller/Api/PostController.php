@@ -50,8 +50,14 @@ class PostController extends AbstractController
                 'isBlockedByMe' => $user instanceof User ? $user->isBlocking($post->getUser()) : false,
                 'hasBlockedMe' => $user instanceof User ? $post->getUser()->isBlocking($user) : false,
                 'isReadOnly' => (bool) $post->getUser()->isReadOnly(),
+                'pinnedPostIds' => (function($user) {
+                    $pinned = array_filter($user->getPosts()->toArray(), fn($p) => $p->getPinnedAt() !== null);
+                    usort($pinned, fn($a, $b) => $b->getPinnedAt() <=> $a->getPinnedAt());
+                    return array_values(array_map(fn($p) => $p->getId(), $pinned));
+                })($post->getUser()),
             ],
             'likesCount' => $post->getLikes()->count(),
+            'isPinned' => $post->getPinnedAt() !== null,
             'isLiked' => $user ? $post->getLikes()->contains($user) : false,
             'repliesCount' => $post->getReplies()->count(),
             'parentId' => $post->getParent()?->getId(),
@@ -64,8 +70,18 @@ class PostController extends AbstractController
     public function index(Request $request, PostRepository $postRepository): JsonResponse
     {
         $feed = $request->query->get('feed');
+        $hashtag = $request->query->get('hashtag');
         $user = $this->getUser();
-        if ($user instanceof User && $feed === 'following') {
+
+        if ($hashtag) {
+            $posts = $postRepository->createQueryBuilder('p')
+                ->where('p.content LIKE :hashtag')
+                ->andWhere('p.parent IS NULL')
+                ->setParameter('hashtag', '%#' . $hashtag . '%')
+                ->orderBy('p.createdAt', 'DESC')
+                ->getQuery()
+                ->getResult();
+        } elseif ($user instanceof User && $feed === 'following') {
             $following = $user->getFollowing()->toArray();
             if (empty($following)) {
                 $posts = [];
@@ -100,8 +116,14 @@ class PostController extends AbstractController
                     'isBlockedByMe' => $user instanceof User ? $user->isBlocking($author) : false,
                     'hasBlockedMe' => $user instanceof User ? $author->isBlocking($user) : false,
                     'isReadOnly' => (bool) $author->isReadOnly(),
+                    'pinnedPostIds' => (function($user) {
+                        $pinned = array_filter($user->getPosts()->toArray(), fn($p) => $p->getPinnedAt() !== null);
+                        usort($pinned, fn($a, $b) => $b->getPinnedAt() <=> $a->getPinnedAt());
+                        return array_values(array_map(fn($p) => $p->getId(), $pinned));
+                    })($author),
                 ],
                 'likesCount' => $post->getLikes()->count(),
+                'isPinned' => $post->getPinnedAt() !== null,
                 'isLiked' => $user ? $post->getLikes()->contains($user) : false,
                 'repliesCount' => $post->getReplies()->count(),
                 'parentId' => $post->getParent()?->getId(),
@@ -126,11 +148,7 @@ class PostController extends AbstractController
             return $this->json(['message' => 'Non autorisé'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $content = $request->request->get('content');
-        if (!$content) {
-            $data = json_decode($request->getContent(), true);
-            $content = $data['content'] ?? "";
-        }
+        $content = $request->request->get('content', '');
 
         $payload = new CreatePostPayload($content);
         $errors = $validator->validate($payload);
@@ -139,14 +157,17 @@ class PostController extends AbstractController
         }
 
         $mediaData = [];
-        $filesFromRequest = $request->files->all();
-        $files = $filesFromRequest['media'] ?? $request->files->get('media');
+        // Récupération standard et robuste des médias
+        $rawFiles = $request->files->get('media') ?? $request->files->get('media[]') ?? [];
+        $files = is_array($rawFiles) ? $rawFiles : [$rawFiles];
+        // Enlève les valeurs nulles
+        $files = array_filter($files);
 
         if (!$content && empty($files)) {
             return $this->json(['message' => 'Le contenu ne peut pas être vide'], Response::HTTP_BAD_REQUEST);
         }
 
-        if ($files && is_array($files)) {
+        if (!empty($files)) {
             // Respecte la limite de 4 fichiers
             $files = array_slice($files, 0, 4);
             foreach ($files as $file) {
@@ -161,7 +182,7 @@ class PostController extends AbstractController
                         };
                         return $this->json(['message' => $errorMsg], Response::HTTP_BAD_REQUEST);
                     }
-                    
+
                     try {
                         $mimeType = $file->getMimeType();
                         $type = str_contains($mimeType, 'video') ? 'video' : 'image';
@@ -170,7 +191,7 @@ class PostController extends AbstractController
                             $mediaData[] = ['path' => $path, 'type' => $type];
                         }
                     } catch (\Exception $e) {
-                        return $this->json(['message' => "Erreur lors du traitement du fichier \"" . $file->getClientOriginalName() . "\" : " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+                        return $this->json(['message' => "Erreur lors du traitement du fichier : " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
                     }
                 }
             }
@@ -210,7 +231,7 @@ class PostController extends AbstractController
                 'isBlocked' => (bool) $user->isBlocked(),
                 'isBlockedByMe' => false,
                 'hasBlockedMe' => false,
-            'isReadOnly' => (bool) $user->isReadOnly(),
+                'isReadOnly' => (bool) $user->isReadOnly(),
             ],
             'likesCount' => 0,
             'isLiked' => false,
@@ -236,7 +257,7 @@ class PostController extends AbstractController
                 'isLiked' => true,
             ]);
         } catch (\Exception $e) {
-            return $this->json(['message' => 'Erreur lors de l\'ajout du like'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(['message' => "Erreur lors du traitement du fichier : " . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -293,8 +314,14 @@ class PostController extends AbstractController
                     'isBlocked' => (bool) $author->isBlocked(),
                     'isBlockedByMe' => $currentUser instanceof User ? $currentUser->isBlocking($author) : false,
                     'hasBlockedMe' => $currentUser instanceof User ? $author->isBlocking($currentUser) : false,
+                    'pinnedPostIds' => (function($user) {
+                        $pinned = array_filter($user->getPosts()->toArray(), fn($p) => $p->getPinnedAt() !== null);
+                        usort($pinned, fn($a, $b) => $b->getPinnedAt() <=> $a->getPinnedAt());
+                        return array_values(array_map(fn($p) => $p->getId(), $pinned));
+                    })($author),
                 ],
                 'likesCount' => $post->getLikes()->count(),
+                'isPinned' => $post->getPinnedAt() !== null,
                 'isLiked' => $currentUser ? $post->getLikes()->contains($currentUser) : false,
                 'repliesCount' => $post->getReplies()->count(),
                 'parentId' => $post->getParent()?->getId(),
@@ -350,8 +377,11 @@ class PostController extends AbstractController
         $removeMediaIds = $request->request->all('removeMedia') ?? [];
 
         $newMediaData = [];
-        $files = $request->files->get('media'); // Tableau de fichiers
-        if ($files && is_array($files)) {
+        $rawFiles = $request->files->get('media') ?? $request->files->get('media[]') ?? [];
+        $files = is_array($rawFiles) ? $rawFiles : [$rawFiles];
+        $files = array_filter($files);
+
+        if (!empty($files)) {
             // Respecte la limite de 4 médias au total
             $currentCount = $post->getMedia()->count();
             $removedCount = 0;
@@ -361,14 +391,11 @@ class PostController extends AbstractController
                 }
             }
 
-            $filesFromRequest = $request->files->all();
-            $files = $filesFromRequest['media'] ?? $request->files->get('media');
-
             $availableSlots = 4 - ($currentCount - $removedCount);
-            if ($availableSlots > 0 && $files && is_array($files)) {
+            if ($availableSlots > 0) {
                 $filesToAdd = array_slice($files, 0, $availableSlots);
                 foreach ($filesToAdd as $file) {
-                    if ($file instanceof \Symfony\Component\HttpFoundation\File\UploadedFile && $file->isValid()) {
+                    if ($file instanceof UploadedFile && $file->isValid()) {
                         try {
                             $mimeType = $file->getMimeType();
                             $type = str_contains($mimeType, 'video') ? 'video' : 'image';
@@ -406,7 +433,7 @@ class PostController extends AbstractController
                 'isBlocked' => (bool) $user->isBlocked(),
                 'isBlockedByMe' => false,
                 'hasBlockedMe' => false,
-            'isReadOnly' => (bool) $user->isReadOnly(),
+                'isReadOnly' => (bool) $user->isReadOnly(),
             ],
             'likesCount' => $post->getLikes()->count(),
             'isLiked' => $post->getLikes()->contains($user),
@@ -456,6 +483,96 @@ class PostController extends AbstractController
                 'isCensored' => $reply->isCensored(),
             ];
         }, $replies->toArray());
+
+        return $this->json($data);
+    }
+
+    #[Route('/api/posts/{id}/pin', name: 'post_pin', methods: ['POST'])]
+    public function pin(Post $post, EntityManagerInterface $em): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->json(['message' => 'Non autorisé'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($post->getUser() !== $user) {
+            return $this->json(['message' => 'Vous ne pouvez épingler que vos propres posts'], Response::HTTP_FORBIDDEN);
+        }
+
+        $post->setPinnedAt(new \DateTimeImmutable());
+        $em->flush();
+
+        return $this->json([
+            'message' => 'Post épinglé avec succès',
+            'pinnedPostId' => $post->getId()
+        ]);
+    }
+
+    #[Route('/api/posts/{id}/unpin', name: 'post_unpin', methods: ['POST'])]
+    public function unpin(Post $post, EntityManagerInterface $em): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user instanceof User) {
+            return $this->json(['message' => 'Non autorisé'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($post->getPinnedAt() !== null) {
+            $post->setPinnedAt(null);
+            $em->flush();
+        }
+
+        return $this->json(['message' => 'Post désépinglé avec succès']);
+    }
+
+    #[Route('/api/search/posts', name: 'post_search', methods: ['GET'])]
+    public function search(Request $request, PostRepository $postRepository): JsonResponse
+    {
+        $q = $request->query->get('q', '');
+        if (strlen($q) < 1) {
+            return $this->json([]);
+        }
+
+        $posts = $postRepository->searchByContent($q);
+        $user = $this->getUser();
+
+        $data = array_map(function (Post $post) use ($user) {
+            $author = $post->getUser();
+            $media = array_map(function (PostMedia $m) {
+                return [
+                    'id' => $m->getId(),
+                    'url' => $m->getFilePath(),
+                    'type' => $m->getType()
+                ];
+            }, $post->getMedia()->toArray());
+
+            return [
+                'id' => $post->getId(),
+                'content' => $post->getContent(),
+                'createdAt' => $post->getCreatedAt()->format(\DateTime::ATOM),
+                'user' => [
+                    'id' => $author->getId(),
+                    'username' => $author->getUsername(),
+                    'name' => $author->getName(),
+                    'avatar' => $author->getAvatar(),
+                    'isBlocked' => (bool) $author->isBlocked(),
+                    'isBlockedByMe' => $user instanceof User ? $user->isBlocking($author) : false,
+                    'hasBlockedMe' => $user instanceof User ? $author->isBlocking($user) : false,
+                    'isReadOnly' => (bool) $author->isReadOnly(),
+                    'pinnedPostIds' => (function($user) {
+                        $pinned = array_filter($user->getPosts()->toArray(), fn($p) => $p->getPinnedAt() !== null);
+                        usort($pinned, fn($a, $b) => $b->getPinnedAt() <=> $a->getPinnedAt());
+                        return array_values(array_map(fn($p) => $p->getId(), $pinned));
+                    })($author),
+                ],
+                'likesCount' => $post->getLikes()->count(),
+                'isPinned' => $post->getPinnedAt() !== null,
+                'isLiked' => $user instanceof User ? $post->getLikes()->contains($user) : false,
+                'repliesCount' => $post->getReplies()->count(),
+                'parentId' => $post->getParent()?->getId(),
+                'media' => $media,
+                'isCensored' => $post->isCensored(),
+            ];
+        }, $posts);
 
         return $this->json($data);
     }

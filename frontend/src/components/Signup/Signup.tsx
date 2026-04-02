@@ -179,7 +179,7 @@ export default function Signup() {
   };
 
   const renderConstraint = (met: boolean, text: string) => (
-    <li className={cn("flex items-center gap-2 text-xs font-sf-pro transition-colors", met ? "text-primary" : "text-text-secondary")}>
+    <li className={cn("flex items-center gap-2 text-[0.875rem] font-sf-pro transition-colors", met ? "text-primary" : "text-text-secondary")}>
       {met ? <FiCheck className="w-3.5 h-3.5" /> : <FiX className="w-3.5 h-3.5" />} {text}
     </li>
   );
@@ -190,12 +190,12 @@ export default function Signup() {
       <header className="flex flex-col items-center gap-6 mb-8 text-center">
         <img src={logo} alt="Sphere Logo" className="h-8" />
         <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-sf-pro font-black text-text-primary tracking-tight">
+          <h1 className="text-[1.5rem] font-sf-pro font-black text-text-primary tracking-tight">
             {step === 1 && "Créer un compte"}
             {step === 2 && "Photo de profil"}
             {step === 3 && "Vérification"}
           </h1>
-          <p className="text-text-secondary font-sf-pro text-sm">
+          <p className="text-text-secondary font-sf-pro text-[0.875rem]">
             {step === 1 && "Rejoignez la communauté Sphere"}
             {step === 2 && "Personnalisez votre profil"}
             {step === 3 && `Nous avons envoyé un code à ${email}`}
@@ -216,7 +216,7 @@ export default function Signup() {
         </div>
 
         {generalError && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1 w-full max-w-[480px]">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-[0.875rem] font-sf-pro animate-in fade-in slide-in-from-top-1 w-full max-w-[480px]">
             {generalError}
           </div>
         )}
@@ -250,8 +250,8 @@ export default function Signup() {
                 <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                   <div className="flex flex-col gap-1.5">
                     <div className="flex justify-between items-center px-1">
-                      <span className="text-[10px] uppercase font-sf-pro font-bold text-text-secondary tracking-wider">Sécurité</span>
-                      <span className={cn("text-xs font-bold font-sf-pro", metCount <= 2 ? "text-red-500" : metCount <= 4 ? "text-orange-500" : "text-primary")}>
+                      <span className="text-[0.875rem] uppercase font-sf-pro font-bold text-text-secondary tracking-wider">Sécurité</span>
+                      <span className={cn("text-[0.875rem] font-bold font-sf-pro", metCount <= 2 ? "text-red-500" : metCount <= 4 ? "text-orange-500" : "text-primary")}>
                         {getStrengthLabel()}
                       </span>
                     </div>
@@ -264,7 +264,7 @@ export default function Signup() {
                   </div>
 
                   <div className="bg-background/50 rounded-xl p-4 border border-border">
-                    <h3 className="text-sm font-sf-pro font-bold text-text-primary mb-3">Votre mot de passe doit contenir :</h3>
+                    <h3 className="text-[0.875rem] font-sf-pro font-bold text-text-primary mb-3">Votre mot de passe doit contenir :</h3>
                     <ul className="flex flex-col gap-2">
                       {renderConstraint(constraints.length, "Au moins 12 caractères")}
                       {renderConstraint(constraints.uppercase, "Au moins une lettre majuscule (A-Z)")}
@@ -287,8 +287,8 @@ export default function Signup() {
                 <input type="checkbox" className="opacity-0 absolute w-0 h-0" checked={tosAccepted} onChange={(e) => setTosAccepted(e.target.checked)} required />
                 {tosAccepted && <FiCheck className="w-3.5 h-3.5 text-black absolute" />}
               </div>
-              <span className="text-sm font-sf-pro text-text-secondary leading-tight">
-                J'accepte les <Link to="/terms" className="text-primary hover:text-primary-hover transition">conditions d'utilisation</Link>
+              <span className="text-[0.875rem] font-sf-pro text-text-secondary leading-tight">
+                J'accepte les <Link to="/terms" className="text-primary hover:text-primary-hover transition text-[0.875rem]">conditions d'utilisation</Link>
               </span>
             </label>
 
@@ -330,7 +330,7 @@ export default function Signup() {
               </Button>
               <button
                 onClick={() => setStep(1)}
-                className="flex items-center justify-center gap-2 text-text-secondary hover:text-text-primary transition font-sf-pro text-sm font-bold"
+                className="flex items-center justify-center gap-2 text-text-secondary hover:text-text-primary transition font-sf-pro text-[0.875rem] font-bold"
               >
                 <FiArrowLeft className="w-4 h-4" /> Retour aux infos
               </button>
@@ -351,12 +351,12 @@ export default function Signup() {
                 placeholder="000000"
                 value={verificationCode}
                 onChange={(e) => setVerificationCode(e.target.value)}
-                className="text-center text-2xl tracking-[0.5em] font-black"
+                className="text-center text-[1.5rem] tracking-[0.5em] font-black"
                 maxLength={6}
                 required
                 autoFocus
               />
-              <p className="text-center text-xs text-text-secondary font-sf-pro">
+              <p className="text-center text-[0.875rem] text-text-secondary font-sf-pro">
                 {resendSuccess ? (
                   <span className="text-primary font-bold animate-pulse">Nouveau code envoyé !</span>
                 ) : (
@@ -382,7 +382,7 @@ export default function Signup() {
               </Button>
               <button
                 onClick={() => setStep(2)}
-                className="flex items-center justify-center gap-2 text-text-secondary hover:text-text-primary transition font-sf-pro text-sm font-bold"
+                className="flex items-center justify-center gap-2 text-text-secondary hover:text-text-primary transition font-sf-pro text-[0.875rem] font-bold"
               >
                 <FiArrowLeft className="w-4 h-4" /> Modifier la photo
               </button>
@@ -409,8 +409,8 @@ export default function Signup() {
 
       {/* Footer */}
       <footer className="mt-8 flex flex-col items-center gap-4">
-        <p className="font-sf-pro text-text-secondary">
-          Vous avez déjà un compte ? <Link to="/login" className="text-primary hover:text-primary-hover font-bold ml-1 transition">Connectez-vous</Link>
+        <p className="font-sf-pro text-text-secondary text-[1rem]">
+          Vous avez déjà un compte ? <Link to="/login" className="text-primary hover:text-primary-hover font-bold ml-1 transition text-[1rem]">Connectez-vous</Link>
         </p>
       </footer>
     </main>

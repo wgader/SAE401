@@ -95,19 +95,19 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
               >
                 <FiX className="w-5 h-5 text-text-primary" />
               </button>
-              <h1 className="text-xl font-bold m-0 whitespace-nowrap truncate shrink min-w-0">Éditer le profil</h1>
+              <h1 className="text-[1.25rem] font-bold m-0 whitespace-nowrap truncate shrink min-w-0">Éditer le profil</h1>
             </nav>
             <button
               type="submit"
               disabled={isSaving || !name.trim() || bio.length > 160 || name.length > 50 || location.length > 30 || website.length > 100}
-              className="bg-[image:var(--color-linear-gradient)] text-black font-bold font-druk uppercase px-4 py-1.5 rounded-full hover:opacity-90 transition disabled:opacity-50 text-sm shadow-[0_4px_14px_0_rgba(166,253,122,0.39)] shrink-0"
+              className="bg-[image:var(--color-linear-gradient)] text-black font-bold font-druk uppercase px-4 py-1.5 rounded-full hover:opacity-90 transition disabled:opacity-50 text-[0.875rem] shadow-[0_4px_14px_0_rgba(166,253,122,0.39)] shrink-0"
             >
               ENREGISTRER
             </button>
           </header>
 
           <section className="overflow-y-auto w-full flex-1 pb-32 sm:pb-10">
-            {error ? <p className="p-3 bg-red-500/10 text-red-500 text-sm font-semibold m-0">{error}</p> : null}
+            {error ? <p className="p-3 bg-red-500/10 text-red-500 text-[0.875rem] font-semibold m-0">{error}</p> : null}
 
             <figure className="relative h-48 w-full bg-surface-hover flex items-center justify-center group overflow-hidden m-0">
               {bannerPreview ? (
@@ -160,8 +160,8 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
             <fieldset className="px-4 flex flex-col gap-6 mt-4 border-none m-0 p-0">
               <label className="relative flex flex-col border border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary rounded pt-6 pb-2 px-2 transition-all">
                 <header className="absolute top-2 left-2 right-2 flex justify-between px-1">
-                  <p className={`text-xs transition-colors m-0 ${focus === 'name' ? 'text-primary' : 'text-text-secondary'}`}>Nom</p>
-                  {focus === 'name' && <output className="text-xs text-text-secondary m-0">{name.length} / 50</output>}
+                  <p className={`text-[0.875rem] transition-colors m-0 ${focus === 'name' ? 'text-primary' : 'text-text-secondary'}`}>Nom</p>
+                  {focus === 'name' && <output className="text-[0.875rem] text-text-secondary m-0">{name.length} / 50</output>}
                 </header>
                 <input
                   type="text"
@@ -169,7 +169,7 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   onChange={(e) => setName(e.target.value)}
                   onFocus={() => setFocus('name')}
                   onBlur={() => setFocus(null)}
-                  className="bg-transparent text-text-primary px-1 outline-none font-medium text-[15px]"
+                  className="bg-transparent text-text-primary px-1 outline-none font-medium text-[0.9375rem]"
                   maxLength={50}
                   required
                 />
@@ -177,23 +177,23 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
 
               <label className="relative flex flex-col border border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary rounded pt-6 pb-2 px-2 transition-all">
                 <header className="absolute top-2 left-2 right-2 flex justify-between px-1">
-                  <p className={`text-xs transition-colors m-0 ${focus === 'bio' ? 'text-primary' : 'text-text-secondary'}`}>Bio</p>
-                  {focus === 'bio' && <output className="text-xs text-text-secondary m-0">{bio.length} / 160</output>}
+                  <p className={`text-[0.875rem] transition-colors m-0 ${focus === 'bio' ? 'text-primary' : 'text-text-secondary'}`}>Bio</p>
+                  {focus === 'bio' && <output className="text-[0.875rem] text-text-secondary m-0">{bio.length} / 160</output>}
                 </header>
                 <textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   onFocus={() => setFocus('bio')}
                   onBlur={() => setFocus(null)}
-                  className="bg-transparent text-text-primary px-1 outline-none resize-none min-h-20 text-[15px]"
+                  className="bg-transparent text-text-primary px-1 outline-none resize-none min-h-20 text-[0.9375rem]"
                   maxLength={160}
                 />
               </label>
 
               <label className="relative flex flex-col border border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary rounded pt-6 pb-2 px-2 transition-all">
                 <header className="absolute top-2 left-2 right-2 flex justify-between px-1">
-                  <p className={`text-xs transition-colors m-0 ${focus === 'location' ? 'text-primary' : 'text-text-secondary'}`}>Localisation</p>
-                  {focus === 'location' && <output className="text-xs text-text-secondary m-0">{location.length} / 30</output>}
+                  <p className={`text-[0.875rem] transition-colors m-0 ${focus === 'location' ? 'text-primary' : 'text-text-secondary'}`}>Localisation</p>
+                  {focus === 'location' && <output className="text-[0.875rem] text-text-secondary m-0">{location.length} / 30</output>}
                 </header>
                 <input
                   type="text"
@@ -201,15 +201,15 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   onChange={(e) => setLocation(e.target.value)}
                   onFocus={() => setFocus('location')}
                   onBlur={() => setFocus(null)}
-                  className="bg-transparent text-text-primary px-1 outline-none text-[15px]"
+                  className="bg-transparent text-text-primary px-1 outline-none text-[0.9375rem]"
                   maxLength={30}
                 />
               </label>
 
               <label className="relative flex flex-col border border-border focus-within:border-primary focus-within:ring-1 focus-within:ring-primary rounded pt-6 pb-2 px-2 transition-all">
                 <header className="absolute top-2 left-2 right-2 flex justify-between px-1">
-                  <p className={`text-xs transition-colors m-0 ${focus === 'website' ? 'text-primary' : 'text-text-secondary'}`}>Site web</p>
-                  {focus === 'website' && <output className="text-xs text-text-secondary m-0">{website.length} / 100</output>}
+                  <p className={`text-[0.875rem] transition-colors m-0 ${focus === 'website' ? 'text-primary' : 'text-text-secondary'}`}>Site web</p>
+                  {focus === 'website' && <output className="text-[0.875rem] text-text-secondary m-0">{website.length} / 100</output>}
                 </header>
                 <input
                   type="url"
@@ -217,7 +217,7 @@ export default function EditProfile({ user, onClose, onUpdate }: EditProfileProp
                   onChange={(e) => setWebsite(e.target.value)}
                   onFocus={() => setFocus('website')}
                   onBlur={() => setFocus(null)}
-                  className="bg-transparent text-text-primary px-1 outline-none text-[15px]"
+                  className="bg-transparent text-text-primary px-1 outline-none text-[0.9375rem]"
                   maxLength={100}
                 />
               </label>

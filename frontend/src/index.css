@@ -54,6 +54,12 @@
     --color-border: var(--color-border);
     --font-druk: var(--font-druk);
     --font-sf-pro: var(--font-sf-pro);
+    --font-size-xs: 0.875rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
 }
 
 :root {

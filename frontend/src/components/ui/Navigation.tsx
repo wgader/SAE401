@@ -1,4 +1,4 @@
-import { FiHome, FiPlus, FiLogOut, FiUser, FiSettings } from 'react-icons/fi';
+import { FiHome, FiPlus, FiLogOut, FiUser, FiSettings, FiSearch } from 'react-icons/fi';
 import logo from '../../assets/logo_sphere.svg';
 import { MEDIA_URL as BASE_URL } from '../../lib/api';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
@@ -29,7 +29,7 @@ export default function Navigation() {
 
   const getDesktopLinkClass = (path: string) => {
     const isActive = location.pathname.startsWith(path);
-    return `flex items-center gap-3 font-bold text-lg px-4 py-3 rounded-full hover:bg-surface-hover transition font-sf-pro ${isActive ? 'text-primary' : 'text-text-primary'
+    return `flex items-center gap-3 font-bold text-[1.125rem] px-4 py-3 rounded-full hover:bg-surface-hover transition font-sf-pro ${isActive ? 'text-primary' : 'text-text-primary'
       }`;
   };
 
@@ -55,6 +55,13 @@ export default function Navigation() {
           </li>
 
           <li>
+            <Link to="/explore" className={getDesktopLinkClass("/explore")}>
+              <FiSearch className="w-6 h-6" />
+              Explorer
+            </Link>
+          </li>
+
+          <li>
             <Link to={user ? `/profile/${user.username}` : "#"} className={getDesktopLinkClass(user ? `/profile/${user.username}` : "/profile")}>
               <FiUser className="w-6 h-6" />
               Profil
@@ -71,7 +78,7 @@ export default function Navigation() {
           <li>
             <button
               onClick={() => navigate("/post")}
-              className="bg-[image:var(--color-linear-gradient)] text-black font-extrabold text-lg rounded-full py-3.5 mt-4 w-full hover:opacity-90 transition shadow-lg font-druk"
+              className="bg-[image:var(--color-linear-gradient)] text-black font-extrabold text-[1.125rem] rounded-full py-3.5 mt-4 w-full hover:opacity-90 transition shadow-lg font-druk"
             >
               ECRIRE
             </button>
@@ -88,10 +95,10 @@ export default function Navigation() {
                   className="w-10 h-10 rounded-full bg-surface border border-border"
                 />
                 <article className="flex flex-col font-sf-pro text-left overflow-hidden">
-                  <p className="m-0 font-bold text-sm text-text-primary whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
+                  <p className="m-0 font-bold text-[1rem] text-text-primary whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">
                     {user.name}
                   </p>
-                  <p className="m-0 text-text-secondary text-xs mt-0.5">@{user.username}</p>
+                  <p className="m-0 text-text-secondary text-[0.875rem] mt-0.5">@{user.username}</p>
                 </article>
               </div>
             </section>
@@ -99,7 +106,7 @@ export default function Navigation() {
 
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-3 rounded-full text-text-secondary hover:text-text-primary hover:bg-surface-hover transition font-sf-pro font-bold mt-auto"
+            className="flex items-center gap-3 px-4 py-3 rounded-full text-text-secondary hover:text-text-primary hover:bg-surface-hover transition font-sf-pro font-bold mt-auto text-[1rem]"
           >
             <FiLogOut className="w-5 h-5" />
             Déconnexion
@@ -128,13 +135,7 @@ export default function Navigation() {
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
-          <Link
-            to="/settings"
-            className="w-8 h-8 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
-            aria-label="Paramètres"
-          >
-            <FiSettings className="w-5 h-5" />
-          </Link>
+
           <button
             onClick={handleLogout}
             className="w-8 h-8 flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
@@ -149,10 +150,16 @@ export default function Navigation() {
         "md:hidden flex items-center justify-center h-16 w-full fixed bottom-0 left-0 bg-background/90 backdrop-blur-md z-50 border-t border-border pb-1 transition-transform duration-300 ease-in-out",
         !isVisible && "translate-y-full"
       )}>
-        <ul className="flex items-center justify-center gap-8 w-full flex-1">
+        <ul className="flex items-center justify-center gap-4 w-full flex-1 px-4">
           <li>
             <Link to="/home" onClick={handleHomeClick} className={getMobileLinkClass("/home")}>
               <FiHome className="w-6 h-6" />
+            </Link>
+          </li>
+
+          <li>
+            <Link to="/explore" className={getMobileLinkClass("/explore")}>
+              <FiSearch className="w-6 h-6" />
             </Link>
           </li>
           <li>
@@ -165,6 +172,12 @@ export default function Navigation() {
                 <FiPlus className="w-7 h-7 text-background stroke-[3]" />
               </div>
             </button>
+          </li>
+
+          <li>
+            <Link to="/settings" className={getMobileLinkClass("/settings")}>
+              <FiSettings className="w-6 h-6" />
+            </Link>
           </li>
 
           <li>

@@ -34,4 +34,19 @@ class PostRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * @return Post[]
+     */
+    public function searchByContent(string $query): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('LOWER(p.content) LIKE LOWER(:query)')
+            ->andWhere('p.parent IS NULL')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('p.createdAt', 'DESC')
+            ->setMaxResults(50)
+            ->getQuery()
+            ->getResult();
+    }
 }

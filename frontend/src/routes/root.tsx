@@ -1,4 +1,5 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "motion/react";
 import Navigation from "../components/ui/Navigation";
 import { api } from "../lib/api";
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ import { useStore } from "../store/StoreContext";
 
 export default function RootLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setCurrentUser } = useStore();
   const [blockedMessage, setBlockedMessage] = useState<string | null>(null);
 
@@ -43,16 +45,29 @@ export default function RootLayout() {
   return (
     <div className="bg-background min-h-screen w-full text-text-primary flex relative">
       <Navigation />
-      <main className="w-full flex justify-center md:pl-[250px] pt-14 pb-16 md:pt-0 md:pb-0">
-        <Outlet />
+      <main className="w-full flex justify-center md:pl-[250px] pt-14 pb-16 md:pt-0 md:pb-10 overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.key}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="w-full flex justify-center"
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
 
-      {blockedMessage && (
-        <BlockedModal 
-            message={blockedMessage} 
-            onClose={() => setBlockedMessage(null)} 
-        />
-      )}
+      <AnimatePresence>
+        {blockedMessage && (
+          <BlockedModal 
+              message={blockedMessage} 
+              onClose={() => setBlockedMessage(null)} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -53,12 +53,12 @@ export default function ReplyModal({ parentPost, onClose }: ReplyModalProps) {
             </figure>
             <div className="flex-1 min-w-0">
               <hgroup className="flex items-center gap-1">
-                <strong className="text-text-primary text-sm">{parentPost.user.name}</strong>
-                <span className="text-text-secondary text-sm">@{parentPost.user.username}</span>
+                <strong className="text-text-primary text-[0.875rem]">{parentPost.user.name}</strong>
+                <span className="text-text-secondary text-[0.875rem]">@{parentPost.user.username}</span>
               </hgroup>
-              <p className="text-text-primary text-sm mt-1 line-clamp-2">{parentPost.content}</p>
+              <p className="text-text-primary text-[0.875rem] mt-1 line-clamp-2">{parentPost.content}</p>
               <footer className="mt-2">
-                <p className="text-text-secondary text-xs">
+                <p className="text-text-secondary text-[0.875rem]">
                   En réponse à <strong className="text-primary hover:underline">@{parentPost.user.username}</strong>
                 </p>
               </footer>

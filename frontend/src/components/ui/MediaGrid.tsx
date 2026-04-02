@@ -54,7 +54,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
     return (
       <div
         key={index}
-        className="relative group h-full w-full min-h-[12.5rem] overflow-hidden rounded-xl cursor-pointer bg-black/5"
+        className="relative group h-full w-full overflow-hidden rounded-xl cursor-pointer bg-black/5"
         onClick={() => !isEditable && setSelectedMediaIndex(index)}
       >
         <img
@@ -84,15 +84,15 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
   return (
     <div
       className={cn(
-        'grid gap-2 rounded-2xl border border-border/60 bg-surface-hover mt-3 w-full shrink-0 overflow-hidden',
-        count === 1 && 'grid-cols-1 max-h-[25rem]',
-        count === 2 && 'grid-cols-2 max-h-[20rem]',
-        count === 3 && 'grid-cols-2 max-h-[20rem]',
-        count === 4 && 'grid-cols-2 max-h-[20rem]',
+        'grid gap-[0.5rem] rounded-2xl border border-border/60 bg-surface-hover mt-[0.75rem] w-full shrink-0 overflow-hidden',
+        count === 1 && 'grid-cols-1 max-h-[30rem]',
+        count === 2 && 'grid-cols-2 h-[15rem]',
+        count === 3 && 'grid-cols-2 grid-rows-2 h-[20rem]',
+        count === 4 && 'grid-cols-2 grid-rows-2 h-[20rem]',
         className
       )}
     >
-      {count === 1 && renderMedia(media[0], 0)}
+      {count === 1 && <div className="h-full">{renderMedia(media[0], 0)}</div>}
 
       {count === 2 && (
         <>

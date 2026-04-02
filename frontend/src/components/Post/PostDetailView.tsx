@@ -105,12 +105,12 @@ export default function PostDetailView() {
   if (!currentPost) return null;
 
   return (
-    <article className="bg-background pb-20 sm:pb-0 text-left w-full max-w-2xl mx-auto border-x border-border flex flex-col">
+    <article className="w-full max-w-2xl border-x border-border min-h-screen bg-background flex flex-col text-left relative">
       <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-md border-b border-border px-4 py-3 flex items-center gap-4">
         <button onClick={() => navigate(-1)} className="p-2 hover:bg-surface-hover rounded-full transition-colors">
           <FiArrowLeft className="w-5 h-5 text-text-primary" />
         </button>
-        <h1 className="text-xl font-bold font-sf-pro m-0">Post</h1>
+        <h1 className="text-[1.25rem] font-bold font-sf-pro m-0">Post</h1>
       </header>
 
       <main className="flex-1">

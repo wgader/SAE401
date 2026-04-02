@@ -21,7 +21,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       <div className="flex flex-col gap-1.5 w-full">
         <label 
           htmlFor={inputId} 
-          className="text-sm font-sf-pro text-text-secondary pl-1"
+          className="text-[0.875rem] font-sf-pro text-text-secondary pl-1"
         >
           {label}
         </label>
@@ -30,7 +30,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             type={currentType}
             className={cn(
-              "flex h-12 w-full rounded-xl border border-border bg-background px-4 py-2 font-sf-pro text-text-primary ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-text-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
+              "flex h-12 w-full rounded-xl border border-border bg-background px-4 py-2 font-sf-pro text-text-primary text-[1rem] ring-offset-background file:border-0 file:bg-transparent file:text-[0.875rem] file:font-medium placeholder:text-text-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
               isPassword && "pr-12",
               error && "border-red-500 focus-visible:ring-red-500",
               className
@@ -54,7 +54,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <span className="text-xs text-red-500 font-sf-pro pl-1">
+          <span className="text-[0.875rem] text-red-500 font-sf-pro pl-1">
             {error}
           </span>
         )}

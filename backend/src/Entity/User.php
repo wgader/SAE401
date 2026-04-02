@@ -177,7 +177,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __serialize(): array
     {
         $data = (array) $this;
-        $data["\0".self::class."\0password"] = hash('crc32c', $this->password);
+        $data["\0" . self::class . "\0password"] = hash('crc32c', $this->password);
 
         return $data;
     }
@@ -304,6 +304,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?ApiToken $apiToken = null;
 
+    public function getApiToken(): ?ApiToken
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(?ApiToken $apiToken): static
+    {
+        $this->apiToken = $apiToken;
+
+        return $this;
+    }
+
     /**
      * @var Collection<int, Post>
      */
@@ -340,16 +352,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: self::class, mappedBy: 'blockedUsers')]
     private Collection $blockers;
 
-    public function getApiToken(): ?ApiToken
-    {
-        return $this->apiToken;
-    }
-    public function setApiToken(?ApiToken $apiToken): static
-    {
-        $this->apiToken = $apiToken;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Post>

@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../../lib/utils";
-import type { ButtonHTMLAttributes } from "react";
+import { motion, type HTMLMotionProps } from "motion/react";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none font-bold cursor-pointer",
@@ -13,10 +13,10 @@ const buttonVariants = cva(
         danger: "bg-red-600 text-white hover:bg-red-700 font-druk tracking-wide",
       },
       size: {
-        default: "h-11 px-6 py-2",
-        sm: "h-9 px-3",
-        lg: "h-14 px-8 text-lg",
-        icon: "h-10 w-10",
+        default: "h-11 px-6 py-2 text-[1rem]",
+        sm: "h-9 px-3 text-[0.875rem]",
+        lg: "h-14 px-8 text-[1.125rem]",
+        icon: "h-10 w-10 text-[1rem]",
       },
       fullWidth: {
         true: "w-full",
@@ -31,7 +31,7 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
+  extends HTMLMotionProps<"button">,
   VariantProps<typeof buttonVariants> { }
 
 export function Button({
@@ -42,7 +42,10 @@ export function Button({
   ...props
 }: ButtonProps) {
   return (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: "spring", stiffness: 400, damping: 10 }}
       className={cn(buttonVariants({ variant, size, fullWidth, className }))}
       {...props}
     />

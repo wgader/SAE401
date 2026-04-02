@@ -44,12 +44,12 @@ export const ModerationUI: React.FC<ModerationUIProps> = ({
             </div>
             <hgroup>
                 <h4 className={cn(
-                    "font-bold text-base m-0",
+                    "font-bold text-[1rem] m-0",
                     isSuspended ? "text-red-500/90" : "text-orange-500/90"
                 )}>
                     {isSuspended ? "Contenu indisponible" : "Message modéré"}
                 </h4>
-                <p className="text-text-secondary text-sm m-0 mt-1 leading-relaxed max-w-[20rem]">
+                <p className="text-text-secondary text-[0.875rem] m-0 mt-1 leading-relaxed max-w-[20rem]">
                     {description || (isSuspended 
                         ? "Cet utilisateur a été suspendu pour non-respect des règles de la Sphère."
                         : "Ce message enfreint les conditions d’utilisation de la plateforme.")}
