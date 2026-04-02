@@ -104,13 +104,13 @@ export default function Profile() {
             onShowList={() => {}}
           />
 
-          <section className="mt-8 p-12 text-center flex flex-col items-center gap-4">
+          <article className="mt-8 p-12 text-center flex flex-col items-center gap-4">
              <div className="p-4 bg-surface rounded-full">
-                <FiSlash className="w-12 h-12 text-text-tertiary/20" />
+                <FiSlash className="w-12 h-12 text-text-secondary/20" />
              </div>
-             <h3 className="text-[1.25rem] font-bold text-text-primary">Désolé, cette page n'existe pas.</h3>
-             <p className="text-text-secondary text-[0.875rem] max-w-xs mx-auto">Essayez de rechercher autre chose ou vérifiez le lien que vous avez suivi.</p>
-          </section>
+             <h3 className="text-xl font-bold text-text-primary">Désolé, cette page n'existe pas.</h3>
+             <p className="text-text-secondary text-sm max-w-xs mx-auto">Essayez de rechercher autre chose ou vérifiez le lien que vous avez suivi.</p>
+          </article>
         </article>
       </RenderErrorBoundary>
     );
@@ -203,7 +203,7 @@ export default function Profile() {
                              <li>
                                 <button 
                                   onClick={() => { setShowBlockMenu(false); setShowBlockConfirm(true); }}
-                                  className="w-full text-left px-4 py-2.5 hover:bg-red-500/10 transition flex items-center gap-3 text-red-500 font-bold text-[0.875rem]"
+                                  className="w-full text-left px-4 py-2.5 hover:bg-danger/10 transition flex items-center gap-3 text-danger font-bold text-sm"
                                 >
                                    <FiSlash className="w-4 h-4" />
                                    {profile.isBlockedByMe ? `Débloquer @${profile.username}` : `Bloquer @${profile.username}`}
@@ -216,13 +216,13 @@ export default function Profile() {
 
                    {/* Follow/Block Button */}
                    {profile.isBlockedByMe ? (
-                      <Button
+                       <Button
                         variant="danger"
                         size="sm"
                         onMouseEnter={() => setHoverBlocked(true)}
                         onMouseLeave={() => setHoverBlocked(false)}
                         onClick={handleBlockToggle}
-                        className="min-w-[100px] border-none bg-red-600 hover:bg-red-700 text-white font-bold"
+                        className="min-w-[7rem] border-none font-bold"
                       >
                         {hoverBlocked ? 'Débloquer' : 'Bloqué'}
                       </Button>
@@ -254,18 +254,16 @@ export default function Profile() {
             <BlockedProfileView type="suspended" />
           ) : (
             <>
-              {profile.hasBlockedMe && (
-                <div className="bg-red-500/10 border-b border-red-500/20 px-4 py-8 text-center animate-in fade-in duration-300">
-                   <FiSlash className="w-12 h-12 text-red-500/30 mx-auto mb-3" />
-                   <h3 className="text-[1.25rem] font-black text-white uppercase font-druk m-0 leading-none">Accès restreint</h3>
-                   <p className="text-[0.875rem] text-text-secondary mt-2 max-w-xs mx-auto">Cet utilisateur vous a bloqué. Vous pouvez voir ses posts mais les interactions sont limitées.</p>
-                </div>
+               {profile.hasBlockedMe && (
+                <article className="bg-danger/10 border-b border-danger/20 px-4 py-8 text-center animate-in fade-in duration-300">
+                   <FiSlash className="w-12 h-12 text-danger/30 mx-auto mb-3" />
+                   <h2 className="text-xl font-black text-white uppercase font-druk m-0 leading-none">Accès restreint</h2>
+                   <p className="text-sm text-text-secondary mt-2 max-w-xs mx-auto">Cet utilisateur vous a bloqué. Vous pouvez voir ses posts mais les interactions sont limitées.</p>
+                </article>
               )}
-              
               <header className="px-4 py-3 border-b border-border flex items-center justify-between bg-background sticky top-0 z-10">
-                 <h3 className="font-bold text-text-primary text-[1.125rem] m-0">Posts</h3>
-              </header>
-
+                 <h2 className="font-bold text-text-primary text-lg m-0">Posts</h2>
+              </header>      
               {posts.length > 0 ? (
                 <ul className="flex flex-col list-none m-0 p-0">
                   {(() => {
@@ -324,7 +322,7 @@ export default function Profile() {
                   })()}
                 </ul>
               ) : (
-                <p className="p-12 text-center text-text-secondary m-0 text-[1rem]">Aucun post pour le moment.</p>
+                <p className="p-12 text-center text-text-secondary m-0 text-base">Aucun post pour le moment.</p>
               )}
             </>
           )}

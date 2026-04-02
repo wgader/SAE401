@@ -41,16 +41,16 @@ export default function Login() {
       {/* Header */}
       <header className="flex flex-col items-center gap-6 mb-8">
         <img src={logo} alt="Sphere Logo" className="h-8" />
-        <h1 className="text-[1.5rem] font-sf-pro font-bold text-text-primary">Connectez-vous</h1>
+        <h1 className="text-2xl font-sf-pro font-bold text-text-primary">Connectez-vous</h1>
         {error && (
-          <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl text-[0.875rem] font-sf-pro animate-in fade-in slide-in-from-top-1">
+          <p role="alert" className="bg-danger/10 border border-danger/50 text-danger p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1">
             {error}
-          </div>
+          </p>
         )}
       </header>
 
       {/* Main Form Card */}
-      <section className="bg-surface w-full max-w-[440px] rounded-3xl p-8 shadow-xl border border-border/50">
+      <section className="bg-surface w-full max-w-[27.5rem] rounded-3xl p-8 shadow-xl border border-border/50">
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           <Input
             label="Email ou Nom d'utilisateur"
@@ -61,7 +61,7 @@ export default function Login() {
             required
           />
 
-          <div className="flex flex-col gap-2">
+          <section className="flex flex-col gap-2">
             <Input
               label="Mot de passe"
               type="password"
@@ -70,22 +70,22 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <div className="flex justify-end">
-              <a href="#" className="text-[0.875rem] text-primary hover:text-primary-hover font-sf-pro transition">
+            <p className="flex justify-end">
+              <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/10 h-auto py-1 px-2">
                 Mot de passe oublié ?
-              </a>
-            </div>
-          </div>
+              </Button>
+            </p>
+          </section>
 
           <Button type="submit" variant="primary" size="lg" fullWidth className="mt-2 text-black tracking-normal" disabled={isLoading}>
             {isLoading ? "CHARGEMENT..." : "SE CONNECTER"}
           </Button>
         </form>
 
-        <div className="w-full h-px bg-border my-8 rounded-full"></div>
+        <hr className="w-full h-[1px] bg-border my-8 border-none" />
 
         {/* OAuth Buttons */}
-        <div className="flex flex-col gap-4">
+        <nav className="flex flex-col gap-4" aria-label="Connexion via réseaux sociaux">
           <Button variant="outline" fullWidth className="gap-3">
             <FcGoogle className="w-5 h-5" />
             Continuer avec Google
@@ -95,18 +95,18 @@ export default function Login() {
             <FaFacebook className="w-5 h-5 text-[#1877F2]" />
             Continuer avec Facebook
           </Button>
-        </div>
+        </nav>
       </section>
 
       {/* Footer */}
       <footer className="mt-8 flex flex-col items-center gap-4">
-        <p className="font-sf-pro text-text-secondary text-[1rem]">
-          Vous n'avez pas de compte ? <Link to="/signup" className="text-primary hover:text-primary-hover font-bold ml-1 transition text-[1rem]">Inscrivez-vous</Link>
+        <p className="font-sf-pro text-text-secondary text-base">
+          Vous n'avez pas de compte ? <Link to="/signup" className="text-primary hover:text-primary-hover font-bold ml-1 transition text-base">Inscrivez-vous</Link>
         </p>
-        <div className="flex items-center gap-4 text-[0.875rem] text-text-secondary/70 font-sf-pro">
-          <Link to="/terms" className="hover:text-text-primary transition text-[0.875rem]">Mentions légales</Link>
-          <Link to="/terms" className="hover:text-text-primary transition text-[0.875rem]">Politique de confidentialité</Link>
-        </div>
+        <nav className="flex items-center gap-4 text-sm text-text-secondary/70 font-sf-pro" aria-label="Liens légaux">
+          <Link to="/terms" className="hover:text-text-primary transition text-sm">Mentions légales</Link>
+          <Link to="/terms" className="hover:text-text-primary transition text-sm">Politique de confidentialité</Link>
+        </nav>
       </footer>
     </main>
   );

@@ -6,6 +6,7 @@ import { FiX, FiImage, FiBarChart2, FiGlobe } from "react-icons/fi";
 import { useStore } from "../../store/StoreContext";
 import { MediaGrid } from "../ui/MediaGrid";
 import { Button } from "../ui/Button/Button";
+import { IconButton } from "../ui/Button/IconButton";
 import { MentionSuggestions } from "./MentionSuggestions";
 import { useDebounce } from "../../hooks/useDebounce";
 
@@ -267,17 +268,19 @@ export default function PostComposer({
       >
         {!isInline && (
           <header className="flex items-center justify-between px-4 h-14 shrink-0 border-b border-border/50 md:border-none">
-            <button
+            <IconButton
               type="button"
               onClick={onClose}
-              className="p-[0.5rem] hover:bg-surface-hover rounded-full transition text-text-primary focus:outline-none"
+              variant="ghost"
+              size="sm"
+              className="text-text-primary"
               aria-label="Fermer"
             >
-              <FiX className="w-[1.25rem] h-[1.25rem]" />
-            </button>
+              <FiX className="w-5 h-5" />
+            </IconButton>
 
             {title && (
-              <h2 className="text-[1.125rem] font-bold text-text-primary absolute left-1/2 -translate-x-1/2 pointer-events-none">
+              <h2 className="text-lg font-bold text-text-primary absolute left-1/2 -translate-x-1/2 pointer-events-none">
                 {title}
               </h2>
             )}
@@ -288,11 +291,11 @@ export default function PostComposer({
           "flex-1 px-4 py-2 flex gap-3 overflow-y-auto hide-scrollbar",
           isInline && "px-0"
         )}>
-          <figure className="shrink-0 pt-[0.25rem]">
+          <figure className="shrink-0 pt-1">
             <img
               src={currentUser?.avatar ? `${AVATAR_BASE_URL}${currentUser.avatar}` : `${AVATAR_BASE_URL}default.png`}
               alt={`Avatar de ${currentUser?.name || 'utilisateur'}`}
-              className="w-[2.5rem] h-[2.5rem] rounded-full border border-border object-cover bg-surface"
+              className="w-10 h-10 rounded-full border border-border object-cover bg-surface"
             />
           </figure>
 
@@ -304,11 +307,11 @@ export default function PostComposer({
               value={content}
               onChange={handleInputChange}
               placeholder={placeholder}
-              className="w-full bg-transparent border-none text-[0.9375rem] font-sf-pro text-text-primary placeholder:text-text-secondary focus:ring-0 focus:outline-none focus-visible:outline-none resize-none min-h-[7.5rem] p-0 mt-1 hide-scrollbar shadow-none"
+              className="w-full bg-transparent border-none text-base font-sf-pro text-text-primary placeholder:text-text-secondary focus:ring-0 focus:outline-none focus-visible:outline-none resize-none min-h-[7.5rem] p-0 mt-1 hide-scrollbar shadow-none"
             />
 
             {error && (
-              <p role="alert" className="text-[0.875rem] text-red-500 font-sf-pro mt-[0.5rem]">
+              <p role="alert" className="text-sm text-danger font-sf-pro mt-2">
                 {error}
               </p>
             )}
@@ -325,9 +328,9 @@ export default function PostComposer({
         </main>
 
         {!isInline && (
-          <section className="pl-[1rem] pb-[0.5rem] shrink-0">
-            <p className="text-primary text-[0.875rem] font-medium flex items-center gap-[0.5rem] justify-start cursor-default hover:bg-primary/5 w-fit py-[0.25rem] px-[0.5rem] -ml-[0.5rem] rounded-full transition">
-              <FiGlobe className="w-[1rem] h-[1rem]" />
+          <section className="pl-4 pb-2 shrink-0">
+            <p className="text-primary text-sm font-medium flex items-center gap-2 justify-start cursor-default hover:bg-primary/5 w-fit py-1 px-2 -ml-2 rounded-full transition">
+              <FiGlobe className="w-4 h-4" />
               Tout le monde peut répondre
             </p>
           </section>
@@ -337,7 +340,7 @@ export default function PostComposer({
           "px-4 py-3 border-t border-border/50 flex items-center justify-between shrink-0 bg-background",
           isInline && "px-0 pb-0 border-t-0"
         )}>
-          <nav className="flex items-center gap-[0.25rem] text-primary">
+          <nav className="flex items-center gap-1 text-primary">
             <input
               type="file"
               multiple
@@ -346,22 +349,30 @@ export default function PostComposer({
               ref={fileInputRef}
               onChange={handleFileChange}
             />
-            <button
+            <IconButton
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={(existingMedia.length - mediaToRemove.length + mediaFiles.length) >= 4}
-              className="p-[0.5rem] hover:bg-primary/10 rounded-full transition focus:outline-none disabled:opacity-30"
+              variant="soft"
+              size="sm"
               aria-label="Ajouter des médias"
             >
-              <FiImage className="w-[1.25rem] h-[1.25rem]" />
-            </button>
-            <button type="button" className="p-[0.5rem] hover:bg-primary/10 rounded-full transition focus:outline-none" aria-label="Ajouter un sondage"><FiBarChart2 className="w-[1.25rem] h-[1.25rem]" /></button>
+              <FiImage className="w-5 h-5" />
+            </IconButton>
+            <IconButton 
+                type="button" 
+                variant="soft" 
+                size="sm" 
+                aria-label="Ajouter un sondage"
+            >
+                <FiBarChart2 className="w-5 h-5" />
+            </IconButton>
           </nav>
 
-          <section className="flex items-center gap-[0.75rem]">
+          <section className="flex items-center gap-3">
             <small className={cn(
-              "text-[0.875rem] font-medium transition-colors font-sf-pro",
-              isOverLimit ? "text-red-500" : "text-text-secondary"
+              "text-sm font-medium transition-colors font-sf-pro",
+              isOverLimit ? "text-danger" : "text-text-secondary"
             )}>
               {charCount}/280
             </small>
@@ -373,7 +384,7 @@ export default function PostComposer({
                   cx="16" cy="16" r="11" stroke="currentColor" strokeWidth="2" fill="transparent"
                   strokeDasharray={2 * Math.PI * 11}
                   strokeDashoffset={2 * Math.PI * 11 * (1 - percentage / 100)}
-                  className={cn("transition-all duration-300", isOverLimit ? "text-red-500" : "text-primary shadow-[0_0_8px_rgba(166,253,122,0.4)]")}
+                  className={cn("transition-all duration-300", isOverLimit ? "text-danger" : "text-primary shadow-[0_0_8px_rgba(166,253,122,0.4)]")}
                 />
               </svg>
             </div>
@@ -382,7 +393,7 @@ export default function PostComposer({
               onClick={handleAction}
               disabled={(!content.trim() && (existingMedia.length - mediaToRemove.length + mediaFiles.length) === 0) || isOverLimit || isLoading}
               className={cn(
-                "px-[1.5rem] py-[0.5rem] h-auto min-h-0",
+                "px-6 py-2 h-auto min-h-0",
                 (!isOverLimit && (content.trim() || (existingMedia.length - mediaToRemove.length + mediaFiles.length) > 0)) ? "" : "bg-text-primary text-background shadow-none"
               )}
             >

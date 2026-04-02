@@ -45,7 +45,7 @@ export default function RootLayout() {
   return (
     <div className="bg-background min-h-screen w-full text-text-primary flex relative">
       <Navigation />
-      <main className="w-full flex justify-center md:pl-[250px] pt-14 pb-16 md:pt-0 md:pb-10 overflow-hidden">
+      <main className="w-full flex justify-center md:pl-[16rem] pt-14 pb-16 md:pt-0 md:pb-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.key}

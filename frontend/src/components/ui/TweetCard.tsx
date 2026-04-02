@@ -156,10 +156,10 @@ export default function TweetCard({
             aria-label="Tweet card"
         >
             {isPinned && showPinnedIndicator && (
-                <div className="flex items-center gap-3 px-3 mb-1 -mt-1 ml-[2.5rem] sm:ml-[2.5rem]">
+                <header className="flex items-center gap-3 px-3 mb-1 -mt-1 ml-[2.5rem] sm:ml-[2.5rem]">
                     <BsPinFill className="w-3 h-3 text-primary rotate-45" />
-                    <span className="text-[0.8125rem] font-bold text-primary">Post épinglé</span>
-                </div>
+                    <span className="text-xs font-bold text-primary">Post épinglé</span>
+                </header>
             )}
             <article className="flex items-start gap-3 w-full relative text-left">
                 <Link
@@ -179,7 +179,7 @@ export default function TweetCard({
                         <div className="flex items-center gap-2 min-w-0 flex-nowrap overflow-hidden">
                             <Link
                                 to={`/profile/${username}`}
-                                className="text-text-primary truncate text-[0.875rem] sm:text-[1rem] m-0 font-semibold leading-tight hover:underline flex-shrink"
+                                className="text-text-primary truncate text-sm sm:text-base m-0 font-semibold leading-tight hover:underline flex-shrink"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <h3 className="m-0 text-inherit leading-none font-semibold truncate">
@@ -189,14 +189,14 @@ export default function TweetCard({
 
                             <Link
                                 to={`/profile/${username}`}
-                                className="text-text-secondary truncate max-w-[7rem] text-[0.875rem] m-0 hover:underline flex-shrink"
+                                className="text-text-secondary truncate max-w-[7rem] text-sm m-0 hover:underline flex-shrink"
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 @{shortUsername}
                             </Link>
 
                             {formattedDate ? (
-                                <time className="text-text-secondary ml-1 whitespace-nowrap text-[0.875rem] flex-shrink-0" dateTime={timeAgo}>
+                                <time className="text-text-secondary ml-1 whitespace-nowrap text-sm flex-shrink-0" dateTime={timeAgo}>
                                     · {formattedDate}
                                 </time>
                             ) : null}
@@ -224,7 +224,7 @@ export default function TweetCard({
                                                         className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-text-primary hover:bg-surface-hover"
                                                     >
                                                         <FiEdit2 className="w-4 h-4" />
-                                                        <p className="m-0 text-inherit font-bold text-[0.875rem]">Modifier le post</p>
+                                                        <p className="m-0 text-inherit font-bold text-sm">Modifier le post</p>
                                                     </Button>
                                                 </li>
                                                 <li>
@@ -240,7 +240,7 @@ export default function TweetCard({
                                                         className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-text-primary hover:bg-surface-hover"
                                                     >
                                                         <BsPinAngle className={cn("w-4 h-4", isPinned && "fill-current")} />
-                                                        <p className="m-0 text-inherit font-bold text-[0.875rem]">
+                                                        <p className="m-0 text-inherit font-bold text-sm">
                                                             {isPinned ? "Désépingler" : "Épingler"}
                                                         </p>
                                                     </Button>
@@ -255,10 +255,10 @@ export default function TweetCard({
                                                             setShowMenu(false); 
                                                             actionsRef.current?.openDeleteConfirm();
                                                         }}
-                                                        className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-red-500 hover:bg-red-500/10"
+                                                        className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-danger hover:bg-danger/10"
                                                     >
                                                         <FiTrash2 className="w-4 h-4" />
-                                                        <p className="m-0 text-inherit font-bold text-[0.875rem]">Supprimer le post</p>
+                                                        <p className="m-0 text-inherit font-bold text-sm">Supprimer le post</p>
                                                     </Button>
                                                 </li>
                                             </>
@@ -273,10 +273,10 @@ export default function TweetCard({
                                                         setShowMenu(false); 
                                                         actionsRef.current?.openBlockConfirm(storePost?.user?.isBlockedByMe || false);
                                                     }}
-                                                    className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-red-500 hover:bg-red-500/10"
+                                                    className="w-full justify-start gap-3 h-auto py-2.5 px-3 rounded-lg text-danger hover:bg-danger/10"
                                                 >
                                                     <FiSlash className="w-4 h-4" />
-                                                    <p className="m-0 text-inherit font-bold text-[0.875rem]">
+                                                    <p className="m-0 text-inherit font-bold text-sm">
                                                         {storePost?.user?.isBlockedByMe ? `Débloquer @${shortUsername}` : `Bloquer @${shortUsername}`}
                                                     </p>
                                                 </Button>
@@ -294,7 +294,7 @@ export default function TweetCard({
                         <ModerationUI variant="censored" />
                     ) : (
                         <div className="flex flex-col">
-                            <div className="mt-1 text-text-primary text-[0.875rem] sm:text-[1rem] whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
+                            <section className="mt-1 text-text-primary text-sm sm:text-base whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
                                 {(() => {
                                     const lines = content.split('\n');
                                     const LINE_LIMIT = 6;
@@ -328,7 +328,7 @@ export default function TweetCard({
                                         </>
                                     );
                                 })()}
-                            </div>
+                            </section>
 
                             {media && media.length > 0 && (
                                 <MediaGrid
@@ -340,7 +340,7 @@ export default function TweetCard({
                                 />
                             )}
 
-                            <footer className="mt-[0.75rem] flex items-center gap-[3rem] group">
+                            <footer className="mt-3 flex items-center gap-12 group">
                                 <button
                                     disabled={isCensored}
                                     onClick={(e) => {
@@ -367,7 +367,7 @@ export default function TweetCard({
                                         actionsRef.current?.openReply();
                                     }}
                                     className={cn(
-                                        "flex items-center gap-[0.25rem] text-text-secondary transition-colors group/reply focus:outline-none",
+                                        "flex items-center gap-1 text-text-secondary transition-colors group/reply focus:outline-none",
                                         (isCensored || isReadOnly) ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
                                     )}
                                     aria-label="Reply"
@@ -376,7 +376,7 @@ export default function TweetCard({
                                         <FaRegComment className="w-[1.125rem] h-[1.125rem]" />
                                     </div>
                                     {!isCensored && (
-                                        <small className="text-[0.875rem] font-sf-pro min-w-[1rem] text-left">
+                                        <small className="text-sm font-sf-pro min-w-[1rem] text-left">
                                             {repliesCount > 0 ? repliesCount : ""}
                                         </small>
                                     )}
@@ -386,7 +386,7 @@ export default function TweetCard({
                                     disabled={isCensored}
                                     onClick={handleLike}
                                     className={cn(
-                                        "flex items-center gap-[0.25rem] text-text-secondary transition-colors duration-200 focus:outline-none group/like",
+                                        "flex items-center gap-1 text-text-secondary transition-colors duration-200 focus:outline-none group/like",
                                         isLiked ? "text-primary font-bold" : "",
                                         isCensored ? "opacity-50 cursor-not-allowed" : "hover:text-primary"
                                     )}
@@ -425,7 +425,7 @@ export default function TweetCard({
                                         </AnimatePresence>
                                     </div>
                                     {!isCensored && (
-                                        <small className="text-[0.875rem] font-sf-pro min-w-[1rem] text-left">
+                                        <small className="text-sm font-sf-pro min-w-[1rem] text-left">
                                             <AnimatePresence mode="popLayout">
                                                 <motion.span
                                                     key={likesCount}

@@ -52,14 +52,18 @@
     --color-text-primary: var(--color-text-primary);
     --color-text-secondary: var(--color-text-secondary);
     --color-border: var(--color-border);
+    --color-danger: var(--color-danger);
+    --color-warning: var(--color-warning);
+    --color-success: var(--color-success);
     --font-druk: var(--font-druk);
     --font-sf-pro: var(--font-sf-pro);
-    --font-size-xs: 0.875rem;
+    --font-size-xs: 0.8125rem;
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
     --font-size-lg: 1.125rem;
     --font-size-xl: 1.25rem;
     --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
 }
 
 :root {
@@ -72,6 +76,9 @@
     --color-text-primary: #ffffff;
     --color-text-secondary: #b9b9b9;
     --color-border: #333333;
+    --color-danger: #F4212E;
+    --color-warning: #FFAD1F;
+    --color-success: #00BA7C;
     --font-druk: 'Druk', sans-serif;
     --font-sf-pro: 'SF Pro', sans-serif;
 }
@@ -92,6 +99,9 @@ html, body {
     --color-surface: #f7f9f9;
     --color-surface-hover: #eff3f4;
     --color-border: #eff3f4;
+    --color-danger: #F4212E;
+    --color-warning: #FFAD1F;
+    --color-success: #00BA7C;
 }
 
 /* Thème violet */
@@ -102,6 +112,9 @@ html, body {
     --color-surface: #312739;
     --color-surface-hover: #3d3147;
     --color-border: #3d3147;
+    --color-danger: #FF4D4D;
+    --color-warning: #FFB733;
+    --color-success: #52D8A1;
 }
 
 
@@ -135,3 +148,19 @@ button {
     background: linear-gradient(to right, var(--color-surface-hover) 8%, var(--color-border) 18%, var(--color-surface-hover) 33%);
     background-size: 1000px 100%;
 }
+
+.bg-grid-pattern {
+    background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+.bg-video-grad {
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+}
+
+.bg-grid-lines {
+    background-image: linear-gradient(var(--color-border) 1px, transparent 1px), linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+

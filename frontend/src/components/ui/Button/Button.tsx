@@ -10,13 +10,13 @@ const buttonVariants = cva(
         primary: "bg-[image:var(--color-linear-gradient)] text-background hover:opacity-90 shadow-[0_4px_14px_0_rgba(166,253,122,0.39)] font-druk tracking-wide",
         outline: "bg-surface border border-border text-text-primary hover:bg-surface-hover font-sf-pro",
         ghost: "bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface font-sf-pro",
-        danger: "bg-red-600 text-white hover:bg-red-700 font-druk tracking-wide",
+        danger: "bg-danger text-white hover:opacity-90 font-druk tracking-wide",
       },
       size: {
-        default: "h-11 px-6 py-2 text-[1rem]",
-        sm: "h-9 px-3 text-[0.875rem]",
-        lg: "h-14 px-8 text-[1.125rem]",
-        icon: "h-10 w-10 text-[1rem]",
+        default: "h-11 px-6 py-2 text-base",
+        sm: "h-9 px-3 text-sm",
+        lg: "h-14 px-8 text-lg",
+        icon: "h-10 w-10 text-base",
       },
       fullWidth: {
         true: "w-full",

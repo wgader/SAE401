@@ -54,7 +54,7 @@ export const MentionSuggestions: React.FC<MentionSuggestionsProps> = ({
           ))}
         </div>
       ) : users.length > 0 ? (
-        <ul className="m-0 p-0 list-none max-h-[240px] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 hover:scrollbar-thumb-primary/40 scrollbar-track-transparent">
+        <ul className="m-0 p-0 list-none max-h-[15rem] overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 hover:scrollbar-thumb-primary/40 scrollbar-track-transparent">
           {users.map((user) => (
             <li key={user.id} className="list-none">
               <button

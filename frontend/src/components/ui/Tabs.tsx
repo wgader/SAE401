@@ -1,5 +1,6 @@
 import { cn } from '../../lib/utils';
 import { motion } from 'motion/react';
+import { useScrollDirection } from '../../hooks/useScrollDirection';
 
 interface TabItem {
     id: string;
@@ -15,14 +16,18 @@ interface TabsProps {
     top?: string;
 }
 
-export default function Tabs({ items, activeTab, onTabChange, className, sticky = true, top = "0" }: TabsProps) {
+export default function Tabs({ items, activeTab, onTabChange, className, sticky = true, top }: TabsProps) {
+    const { isVisible } = useScrollDirection();
+    const stickyTop = top || (isVisible ? '3.5rem' : '0');
+
     return (
         <nav className={cn(
-            "flex border-b border-border bg-background/50 backdrop-blur-md z-30 transition-all duration-200",
+            "flex border-b border-border bg-background/90 backdrop-blur-md z-30 transition-all duration-300 ease-in-out",
             sticky && "sticky",
+            !isVisible && "max-md:-translate-y-full",
             className
         )}
-        style={sticky ? { top } : {}}
+        style={sticky ? { top: stickyTop } : {}}
         >
             {items.map((item) => (
                 <button

@@ -25,18 +25,11 @@ export default function HomeHeader({ activeFeed, setActiveFeed, onRefresh }: Hom
   return (
     <header
       className={cn(
-        "sticky top-0 md:top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border transition-all duration-300 ease-in-out",
-        !isVisible ? "-translate-y-full" : "translate-y-0",
-        "md:translate-y-0 mobile-tabs-sticky"
+        "sticky z-40 bg-background/95 backdrop-blur-md border-b border-border transition-all duration-300 ease-in-out",
+        !isVisible && "max-md:-translate-y-full",
+        isVisible ? "top-[3.5rem] md:top-0" : "top-0"
       )}
-      style={{ top: isVisible ? '3.5rem' : '-4rem' }}
     >
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        @media (min-width: 768px) {
-          header.mobile-tabs-sticky { top: 0 !important; transform: none !important; }
-        }
-      `}} />
 
       <h1 className="sr-only">Fil d'actualité Sphere</h1>
       <nav className="flex w-full" aria-label="Fils d'actualité">
@@ -45,7 +38,7 @@ export default function HomeHeader({ activeFeed, setActiveFeed, onRefresh }: Hom
           className="flex-1 flex flex-col items-center pt-4 group transition-colors hover:bg-surface-hover/50 h-14"
         >
           <span className={cn(
-            "pb-3 font-bold text-[0.9375rem] transition-colors relative h-full flex items-center",
+            "pb-3 font-bold text-sm transition-colors relative h-full flex items-center",
             activeFeed === 'for-you' ? "text-text-primary" : "text-text-secondary group-hover:text-text-primary"
           )}>
             Pour vous
@@ -63,7 +56,7 @@ export default function HomeHeader({ activeFeed, setActiveFeed, onRefresh }: Hom
           className="flex-1 flex flex-col items-center pt-4 group transition-colors hover:bg-surface-hover/50 h-14"
         >
           <span className={cn(
-            "pb-3 font-bold text-[0.9375rem] transition-colors relative h-full flex items-center",
+            "pb-3 font-bold text-sm transition-colors relative h-full flex items-center",
             activeFeed === 'following' ? "text-text-primary" : "text-text-secondary group-hover:text-text-primary"
           )}>
             Abonné

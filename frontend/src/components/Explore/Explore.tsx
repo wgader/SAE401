@@ -118,7 +118,6 @@ export default function Explore() {
                 items={tabItems}
                 activeTab={activeTab}
                 onTabChange={(id) => setActiveTab(id as any)}
-                top="4.1rem"
               />
 
               <main className="flex-1 overflow-y-auto">

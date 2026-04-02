@@ -47,7 +47,7 @@ export default function Dropdown({ options, value, onChange, label, className }:
         </button>
 
         {isOpen && (
-          <ul 
+          <ul
             role="listbox"
             className="absolute z-50 w-full mt-2 bg-background border border-border rounded-xl shadow-2xl max-h-60 overflow-auto m-0 p-1 list-none animate-in fade-in zoom-in-95 duration-200"
           >
@@ -63,8 +63,8 @@ export default function Dropdown({ options, value, onChange, label, className }:
                   }}
                   className={cn(
                     "w-full px-4 py-2.5 text-left rounded-lg transition-colors text-[0.875rem]",
-                    option.value === value 
-                      ? "bg-primary/10 text-primary font-bold" 
+                    option.value === value
+                      ? "bg-primary/10 text-primary font-bold"
                       : "text-text-primary hover:bg-surface-hover"
                   )}
                 >
