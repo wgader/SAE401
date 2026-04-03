@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
+import { StoreProvider } from './store/StoreContext'
 import './index.css'
 
 import RootLayout from './routes/root'
@@ -92,7 +93,6 @@ const router = createBrowserRouter([
   basename: import.meta.env.BASE_URL
 })
 
-import { StoreProvider } from './store/StoreContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
