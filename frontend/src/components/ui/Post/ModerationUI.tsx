@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiSlash, FiEyeOff } from 'react-icons/fi';
-import { cn } from '../../lib/utils';
+import { cn } from '../../../lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const moderationVariants = cva(
@@ -23,13 +23,13 @@ interface ModerationUIProps extends VariantProps<typeof moderationVariants> {
     description?: string;
 }
 
-export const ModerationUI: React.FC<ModerationUIProps> = ({ 
-    className, 
+export const ModerationUI: React.FC<ModerationUIProps> = ({
+    className,
     variant = "suspended",
     description
 }) => {
     const isSuspended = variant === "suspended";
-    
+
     return (
         <section className={cn(moderationVariants({ variant, className }))}>
             <div className={cn(
@@ -50,7 +50,7 @@ export const ModerationUI: React.FC<ModerationUIProps> = ({
                     {isSuspended ? "Contenu indisponible" : "Message modéré"}
                 </h4>
                 <p className="text-text-secondary text-[0.875rem] m-0 mt-1 leading-relaxed max-w-[20rem]">
-                    {description || (isSuspended 
+                    {description || (isSuspended
                         ? "Cet utilisateur a été suspendu pour non-respect des règles de la Sphère."
                         : "Ce message enfreint les conditions d’utilisation de la plateforme.")}
                 </p>

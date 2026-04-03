@@ -2,20 +2,20 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api, MEDIA_URL as BASE_URL } from '../../lib/api';
 import type { User } from '../../lib/api';
-import TweetCard from '../ui/TweetCard';
+import TweetCard from '../ui/Post/TweetCard';
 import EditProfile from './EditProfile';
-import { ProfileSkeleton } from '../ui/Skeletons';
+import { ProfileSkeleton } from '../ui/Feedback/Skeletons';
 import { Button } from '../ui/Button/Button';
 import { useStore } from '../../store/StoreContext';
-import { RenderErrorBoundary } from '../ui/RenderErrorBoundary';
+import { RenderErrorBoundary } from '../ui/Feedback/RenderErrorBoundary';
 
 // Reusable UI Components
-import ProfileHeader from '../ui/ProfileHeader';
-import ProfileBanner from '../ui/ProfileBanner';
-import ProfileInfo from '../ui/ProfileInfo';
-import BlockedProfileView from '../ui/BlockedProfileView';
+import ProfileHeader from '../ui/Layout/ProfileHeader';
+import ProfileBanner from '../ui/Profile/ProfileBanner';
+import ProfileInfo from '../ui/Profile/ProfileInfo';
+import BlockedProfileView from '../ui/Profile/BlockedProfileView';
 import { FiMoreHorizontal, FiSlash } from 'react-icons/fi';
-import { ConfirmModal } from '../ui/ConfirmModal';
+import { ConfirmModal } from '../ui/Overlay/ConfirmModal';
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 

@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, type Variants } from "motion/react";
 import { useLocation } from "react-router-dom";
-import TweetCard from "../ui/TweetCard";
-import HomeHeader from "../ui/HomeHeader";
-import RefreshLoader from "../ui/RefreshLoader";
-import { TweetSkeleton } from "../ui/Skeletons";
+import TweetCard from "../ui/Post/TweetCard";
+import HomeHeader from "../ui/Layout/HomeHeader";
+import RefreshLoader from "../ui/Feedback/RefreshLoader";
+import { TweetSkeleton } from "../ui/Feedback/Skeletons";
 import { api, MEDIA_URL as BASE_URL } from "../../lib/api";
 import { useStore } from "../../store/StoreContext";
-import { RenderErrorBoundary } from "../ui/RenderErrorBoundary";
-import { Toast } from "../ui/Toast";
+import { RenderErrorBoundary } from "../ui/Feedback/RenderErrorBoundary";
+import { Toast } from "../ui/Feedback/Toast";
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
@@ -101,7 +101,7 @@ export default function Home() {
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
@@ -147,7 +147,7 @@ export default function Home() {
 
       <section className="flex flex-col">
         <RenderErrorBoundary>
-          <motion.ul 
+          <motion.ul
             variants={containerVariants}
             initial="hidden"
             animate="visible"

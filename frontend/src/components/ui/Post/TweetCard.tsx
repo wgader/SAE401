@@ -5,15 +5,15 @@ import { FiMoreHorizontal, FiTrash2, FiSlash, FiEdit2 } from "react-icons/fi";
 import { BsPinFill, BsPinAngle } from "react-icons/bs";
 import { ModerationUI } from "./ModerationUI";
 import { Link, useNavigate } from "react-router-dom";
-import { cn } from "../../lib/utils";
-import { api, MEDIA_URL as BASE_URL } from "../../lib/api";
-import type { PostMedia } from "../../lib/api";
-import { useStore } from "../../store/StoreContext";
-import { MediaGrid } from "./MediaGrid";
+import { cn } from "../../../lib/utils";
+import { api, MEDIA_URL as BASE_URL } from "../../../lib/api";
+import type { PostMedia } from "../../../lib/api";
+import { useStore } from "../../../store/StoreContext";
+import { MediaGrid } from "../Media/MediaGrid";
 import { RichText } from "./RichText";
-import { Button } from "./Button/Button";
-import { PostActions } from "../Post/PostActions";
-import type { PostActionsRef } from "../Post/PostActions";
+import { Button } from "../Button/Button";
+import { PostActions } from "../../Post/PostActions";
+import type { PostActionsRef } from "../../Post/PostActions";
 
 const DEFAULT_AVATAR = `${BASE_URL}/uploads/avatars/default.png`;
 
@@ -176,7 +176,7 @@ export default function TweetCard({
 
                 <section className="flex-1 min-w-0">
                     <header className="flex items-center justify-between gap-2 min-w-0 pr-1">
-                        <div className="flex items-center gap-2 min-w-0 flex-nowrap overflow-hidden">
+                        <hgroup className="flex items-center gap-2 min-w-0 flex-nowrap overflow-hidden">
                             <Link
                                 to={`/profile/${username}`}
                                 className="text-text-primary truncate text-sm sm:text-base m-0 font-semibold leading-tight hover:underline flex-shrink"
@@ -200,9 +200,9 @@ export default function TweetCard({
                                     · {formattedDate}
                                 </time>
                             ) : null}
-                        </div>
+                        </hgroup>
 
-                        <div className="relative flex-shrink-0">
+                        <nav className="relative flex-shrink-0">
                             <button
                                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(!showMenu); }}
                                 className="p-2 rounded-full hover:bg-surface-hover/50 text-text-secondary transition-colors"
@@ -285,7 +285,7 @@ export default function TweetCard({
                                     </menu>
                                 </>
                             )}
-                        </div>
+                        </nav>
                     </header>
 
                     {storePost?.user?.isBlocked ? (
@@ -293,7 +293,7 @@ export default function TweetCard({
                     ) : isCensored ? (
                         <ModerationUI variant="censored" />
                     ) : (
-                        <div className="flex flex-col">
+                        <section className="flex flex-col">
                             <section className="mt-1 text-text-primary text-sm sm:text-base whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
                                 {(() => {
                                     const lines = content.split('\n');
@@ -441,7 +441,7 @@ export default function TweetCard({
                                     )}
                                 </button>
                             </footer>
-                        </div>
+                        </section>
                     )}
                 </section>
             </article>

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { FiChevronDown } from "react-icons/fi";
-import { cn } from "../../lib/utils";
+import { cn } from "../../../lib/utils";
 
 interface DropdownOption {
   label: string;

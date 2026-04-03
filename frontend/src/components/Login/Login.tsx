@@ -43,9 +43,9 @@ export default function Login() {
         <img src={logo} alt="Sphere Logo" className="h-8" />
         <h1 className="text-2xl font-sf-pro font-bold text-text-primary">Connectez-vous</h1>
         {error && (
-          <p role="alert" className="bg-danger/10 border border-danger/50 text-danger p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1">
+          <aside className="bg-danger/10 border border-danger/50 text-danger p-3 rounded-xl text-sm font-sf-pro mb-6 animate-in fade-in slide-in-from-top-1" role="alert">
             {error}
-          </p>
+          </aside>
         )}
       </header>
 

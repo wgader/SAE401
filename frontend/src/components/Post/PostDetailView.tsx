@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api, MEDIA_URL as BASE_URL, type Post } from "../../lib/api";
-import TweetCard from "../ui/TweetCard";
-import ThreadMainPost from "../ui/ThreadMainPost";
+import TweetCard from "../ui/Post/TweetCard";
+import ThreadMainPost from "../ui/Post/ThreadMainPost";
 import PostComposer from "./PostComposer";
 import { FiArrowLeft } from "react-icons/fi";
 import { useStore } from "../../store/StoreContext";

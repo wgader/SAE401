@@ -17,7 +17,7 @@ import Settings from './components/Settings/Settings'
 import Hashtag from './routes/hashtag'
 import ExploreRoute from './routes/explore'
 
-import { GlobalToast } from './components/ui/GlobalToast';
+import { GlobalToast } from './components/ui/Feedback/GlobalToast';
 
 const router = createBrowserRouter([
   {

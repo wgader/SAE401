@@ -1,5 +1,5 @@
 import { FiSlash } from 'react-icons/fi';
-import { MEDIA_URL as BASE_URL } from '../../lib/api';
+import { MEDIA_URL as BASE_URL } from '../../../lib/api';
 
 interface ProfileBannerProps {
     banner?: string | null;

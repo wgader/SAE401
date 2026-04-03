@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { FiSearch, FiX } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
-import { cn } from '../../lib/utils';
-import { MEDIA_URL as BASE_URL, type User } from '../../lib/api';
+import { cn } from '../../../lib/utils';
+import { MEDIA_URL as BASE_URL, type User } from '../../../lib/api';
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
@@ -41,7 +41,7 @@ export default function SearchBar({ value, onChange, onSearch, onClear, suggesti
     };
 
     return (
-        <div className={cn("relative z-40", className)} ref={searchRef}>
+        <aside className={cn("relative z-40", className)} ref={searchRef}>
             <form onSubmit={handleSubmit} className="relative group">
                 <FiSearch className={cn(
                     "absolute left-[1rem] top-1/2 -translate-y-1/2 transition-colors duration-200",
@@ -74,9 +74,9 @@ export default function SearchBar({ value, onChange, onSearch, onClear, suggesti
 
             {/* Suggestions Dropdown */}
             {showSuggestions && (suggestions.length > 0 || value) && (
-                <div className="absolute top-full mt-[0.5rem] w-full bg-background border border-border rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 z-50">
+                <nav className="absolute top-full mt-[0.5rem] w-full bg-background border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-100 z-50">
                     <ul className="list-none m-0 p-0">
-                        <li 
+                        <li
                             onClick={() => {
                                 onSearch(value);
                                 setShowSuggestions(false);
@@ -84,11 +84,11 @@ export default function SearchBar({ value, onChange, onSearch, onClear, suggesti
                             className="px-[1rem] py-[0.75rem] hover:bg-surface-hover cursor-pointer border-b border-border flex items-center gap-[0.75rem] group"
                         >
                             <FiSearch className="text-text-secondary group-hover:text-primary" />
-                            <span className="text-text-primary font-medium italic">Chercher "{value}"</span>
+                            <strong className="text-text-primary font-medium italic">Chercher "{value}"</strong>
                         </li>
-                        
+
                         {suggestions.map(user => (
-                            <li 
+                            <li
                                 key={user.id}
                                 onClick={() => {
                                     navigate(`/profile/${user.username}`);
@@ -96,20 +96,20 @@ export default function SearchBar({ value, onChange, onSearch, onClear, suggesti
                                 }}
                                 className="px-[1rem] py-[0.75rem] hover:bg-surface-hover cursor-pointer flex items-center gap-[0.75rem] transition-colors"
                             >
-                                <img 
-                                    src={user.avatar ? `${AVATAR_BASE_URL}${user.avatar}` : '/default-avatar.png'} 
+                                <img
+                                    src={user.avatar ? `${AVATAR_BASE_URL}${user.avatar}` : '/default-avatar.png'}
                                     alt={user.username}
                                     className="w-[2.5rem] h-[2.5rem] rounded-full border border-border"
                                 />
-                                <div className="flex flex-col min-w-0">
-                                    <span className="font-bold text-text-primary text-[0.9375rem] truncate">{user.name}</span>
-                                    <span className="text-text-secondary text-[0.875rem] truncate">@{user.username}</span>
-                                </div>
+                                <hgroup className="flex flex-col min-w-0">
+                                    <strong className="font-bold text-text-primary text-[0.9375rem] truncate block">{user.name}</strong>
+                                    <p className="text-text-secondary text-[0.875rem] truncate m-0">@{user.username}</p>
+                                </hgroup>
                             </li>
                         ))}
                     </ul>
-                </div>
+                </nav>
             )}
-        </div>
+        </aside>
     );
 }

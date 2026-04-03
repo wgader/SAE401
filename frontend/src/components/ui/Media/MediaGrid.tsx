@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FiX } from 'react-icons/fi';
-import { cn } from '../../lib/utils';
+import { cn } from '../../../lib/utils';
 import { MediaModal } from './MediaModal';
 import { VideoPlayer } from './VideoPlayer';
 
@@ -27,7 +27,8 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
   className
 }) => {
   const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(null);
-  if (media.length === 0) return null;
+  
+  if (!media || media.length === 0) return null;
 
   const count = media.length;
 
@@ -36,7 +37,7 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
 
     if (isVideo) {
       return (
-        <div key={index} className="relative group w-full">
+        <div key={index} className="relative group w-full h-full">
           <VideoPlayer src={item.url} />
           {isEditable && onRemove && (
             <button
@@ -52,9 +53,9 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
     }
 
     return (
-      <div
+      <figure
         key={index}
-        className="relative group h-full w-full overflow-hidden rounded-xl cursor-pointer bg-black/5"
+        className="relative group h-full w-full overflow-hidden rounded-xl cursor-pointer bg-black/5 m-0"
         onClick={() => !isEditable && setSelectedMediaIndex(index)}
       >
         <img
@@ -77,12 +78,12 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
             <FiX className="w-4 h-4" />
           </button>
         )}
-      </div>
+      </figure>
     );
   };
 
   return (
-    <div
+    <section
       className={cn(
         'grid gap-[0.5rem] rounded-2xl border border-border/60 bg-surface-hover mt-[0.75rem] w-full shrink-0 overflow-hidden',
         count === 1 && 'grid-cols-1 max-h-[30rem]',
@@ -126,6 +127,6 @@ export const MediaGrid: React.FC<MediaGridProps> = ({
           onClose={() => setSelectedMediaIndex(null)}
         />
       )}
-    </div>
+    </section>
   );
 };

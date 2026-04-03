@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { api, MEDIA_URL as BASE_URL } from '../../lib/api';
 import type { User } from '../../lib/api';
 import { FiX, FiCamera } from 'react-icons/fi';
-import { Toast } from '../ui/Toast';
+import { Toast } from '../ui/Feedback/Toast';
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 

@@ -4,7 +4,7 @@ import { type PostMedia as PostMediaApi, type User, api, MEDIA_URL } from "../..
 import { cn } from "../../lib/utils";
 import { FiX, FiImage, FiBarChart2, FiGlobe } from "react-icons/fi";
 import { useStore } from "../../store/StoreContext";
-import { MediaGrid } from "../ui/MediaGrid";
+import { MediaGrid } from "../ui/Media/MediaGrid";
 import { Button } from "../ui/Button/Button";
 import { IconButton } from "../ui/Button/IconButton";
 import { MentionSuggestions } from "./MentionSuggestions";

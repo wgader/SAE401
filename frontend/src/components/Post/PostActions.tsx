@@ -1,7 +1,7 @@
 import { useState, useImperativeHandle, forwardRef } from "react";
 import { api } from "../../lib/api";
 import { useStore } from "../../store/StoreContext";
-import { ConfirmModal } from "../ui/ConfirmModal";
+import { ConfirmModal } from "../ui/Overlay/ConfirmModal";
 import EditPostModal from "./EditPostModal";
 import ReplyModal from "./ReplyModal";
 

@@ -1,5 +1,5 @@
 import { FiMapPin, FiLink, FiCalendar, FiSlash } from 'react-icons/fi';
-import type { User } from '../../lib/api';
+import type { User } from '../../../lib/api';
 
 interface ProfileInfoProps {
     profile: User;
@@ -62,22 +62,22 @@ export default function ProfileInfo({ profile, joinedDate, onShowList, isOwnProf
                     </address>
 
                     <ul className="flex gap-4 text-[0.9375rem] m-0 p-0 list-none mt-1">
-                        <li 
-                          className="hover:underline cursor-pointer transition" 
-                          onClick={() => onShowList?.('following')}
+                        <li
+                            className="hover:underline cursor-pointer transition"
+                            onClick={() => onShowList?.('following')}
                         >
                             <strong className="text-text-primary">{profile.followingCount ?? 0}</strong> <span className="text-text-secondary">abonnements</span>
                         </li>
-                        <li 
-                          className="hover:underline cursor-pointer transition" 
-                          onClick={() => onShowList?.('followers')}
+                        <li
+                            className="hover:underline cursor-pointer transition"
+                            onClick={() => onShowList?.('followers')}
                         >
                             <strong className="text-text-primary">{profile.followersCount ?? 0}</strong> <span className="text-text-secondary">abonnés</span>
                         </li>
                         {isOwnProfile && (
-                            <li 
-                              className="hover:underline cursor-pointer transition" 
-                              onClick={() => onShowList?.('blocked')}
+                            <li
+                                className="hover:underline cursor-pointer transition"
+                                onClick={() => onShowList?.('blocked')}
                             >
                                 <strong className="text-text-primary">{profile.blockedCount ?? 0}</strong> <span className="text-text-secondary">bloqués</span>
                             </li>

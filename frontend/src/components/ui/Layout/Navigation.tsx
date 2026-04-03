@@ -1,12 +1,12 @@
 import { FiHome, FiPlus, FiLogOut, FiUser, FiSettings, FiSearch } from 'react-icons/fi';
-import logo from '../../assets/logo_sphere.svg';
-import { MEDIA_URL as BASE_URL } from '../../lib/api';
+import logo from '../../../assets/logo_sphere.svg';
+import { MEDIA_URL as BASE_URL } from '../../../lib/api';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { useScrollDirection } from '../../hooks/useScrollDirection';
-import { cn } from '../../lib/utils';
-import { useStore } from '../../store/StoreContext';
-import { IconButton } from './Button/IconButton';
-import { Button } from './Button/Button';
+import { useScrollDirection } from '../../../hooks/useScrollDirection';
+import { cn } from '../../../lib/utils';
+import { useStore } from '../../../store/StoreContext';
+import { IconButton } from '../Button/IconButton';
+import { Button } from '../Button/Button';
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
@@ -92,21 +92,21 @@ export default function Navigation() {
 
         <footer className="flex flex-col gap-2 mt-auto pb-4">
           {user && (
-            <article className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-surface-hover transition group">
-              <div className="flex items-center gap-3">
+            <section className="flex items-center justify-between px-2 py-3 rounded-xl hover:bg-surface-hover transition group">
+              <section className="flex items-center gap-3">
                 <img
                   src={`${AVATAR_BASE_URL}${user.avatar}`}
-                  alt="Profile"
+                  alt="Avatar Profile"
                   className="w-10 h-10 rounded-full bg-surface border border-border"
                 />
-                <div className="flex flex-col font-sf-pro text-left overflow-hidden">
-                  <p className="m-0 font-bold text-base text-text-primary whitespace-nowrap overflow-hidden text-ellipsis max-w-[7.5rem]">
+                <hgroup className="flex flex-col font-sf-pro text-left overflow-hidden">
+                  <h6 className="m-0 font-bold text-base text-text-primary whitespace-nowrap overflow-hidden text-ellipsis max-w-[7.5rem]">
                     {user.name}
-                  </p>
+                  </h6>
                   <p className="m-0 text-text-secondary text-sm mt-0.5">@{user.username}</p>
-                </div>
-              </div>
-            </article>
+                </hgroup>
+              </section>
+            </section>
           )}
 
           <Button
@@ -137,11 +137,11 @@ export default function Navigation() {
           )}
         </section>
 
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center">
+        <figure className="absolute left-1/2 -translate-x-1/2 flex items-center m-0">
           <img src={logo} alt="Sphere Logo" className="h-6" />
-        </div>
+        </figure>
 
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <nav className="flex items-center gap-2 flex-shrink-0">
 
           <IconButton
             onClick={handleLogout}
@@ -152,7 +152,7 @@ export default function Navigation() {
           >
             <FiLogOut className="w-5 h-5" />
           </IconButton>
-        </div>
+        </nav>
       </header>
 
       <nav className={cn(

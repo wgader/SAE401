@@ -2,7 +2,7 @@ import { api, type Post } from "../../lib/api";
 import { useStore } from "../../store/StoreContext";
 import PostComposer from "./PostComposer";
 import { useState } from "react";
-import { Toast } from "../ui/Toast";
+import { Toast } from "../ui/Feedback/Toast";
 
 interface EditPostModalProps {
   post: Post;

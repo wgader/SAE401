@@ -1,9 +1,9 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import Navigation from "../components/ui/Navigation";
+import Navigation from "../components/ui/Layout/Navigation";
 import { api } from "../lib/api";
 import { useEffect, useState } from "react";
-import { BlockedModal } from "../components/ui/BlockedModal";
+import { BlockedModal } from "../components/ui/Overlay/BlockedModal";
 import { useStore } from "../store/StoreContext";
 
 export default function RootLayout() {

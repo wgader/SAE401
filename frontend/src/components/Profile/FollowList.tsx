@@ -5,8 +5,8 @@ import { Button } from '../ui/Button/Button';
 import { FiArrowLeft, FiSlash } from 'react-icons/fi';
 import { useStore } from '../../store/StoreContext';
 import { cn } from '../../lib/utils';
-import { ConfirmModal } from '../ui/ConfirmModal';
-import UserListItem from '../ui/UserListItem';
+import { ConfirmModal } from '../ui/Overlay/ConfirmModal';
+import UserListItem from '../ui/Profile/UserListItem';
 
 interface FollowListProps {
     type: 'followers' | 'following' | 'blocked';

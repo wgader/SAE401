@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FiPlay, FiPause, FiMaximize, FiVolume2, FiVolumeX, FiSettings, FiExternalLink } from 'react-icons/fi';
-import { cn } from '../../lib/utils';
-import { IconButton } from './Button/IconButton';
+import { cn } from '../../../lib/utils';
+import { IconButton } from '../Button/IconButton';
 
 interface VideoPlayerProps {
   src: string;
@@ -105,9 +105,9 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, className }) => {
   };
 
   return (
-    <div
+    <figure
       ref={containerRef}
-      className={cn('relative w-full bg-black cursor-pointer rounded-xl overflow-hidden select-none flex items-center justify-center min-h-[12.5rem] max-h-[37.5rem]', className)}
+      className={cn('relative w-full bg-black cursor-pointer rounded-xl overflow-hidden select-none flex items-center justify-center min-h-[12.5rem] max-h-[37.5rem] m-0', className)}
       onClick={togglePlay}
       onMouseMove={revealControls}
       onMouseLeave={() => { if (hideTimer.current) clearTimeout(hideTimer.current); setShowControls(false); }}
@@ -130,27 +130,27 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, className }) => {
       />
 
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white text-0.875rem">
+        <aside className="absolute inset-0 flex items-center justify-center bg-black/80 text-white text-0.875rem z-50">
           <p className="m-0">Impossible de charger la vidéo.</p>
-        </div>
+        </aside>
       )}
 
       {/* Controls bar — appears on hover, hides after 2.5s with slide animation */}
       <AnimatePresence>
         {showControls && (
-          <motion.div
+          <motion.nav
             key="controls"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 16 }}
             transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="absolute bottom-0 left-0 right-0 z-20 flex flex-col gap-2 pt-10 pb-3 px-3 bg-video-grad"
+            className="absolute bottom-30 left-0 right-0 z-20 flex flex-col gap-2 pt-10 pb-3 px-3 bg-video-grad"
             onClick={e => e.stopPropagation()}
             onMouseMove={e => e.stopPropagation()}
           >
             {/* Progress bar */}
-            <div className="relative h-1 w-full bg-white/25 rounded-full overflow-hidden">
-              <div
+            <section className="relative h-1 w-full bg-white/25 rounded-full overflow-hidden">
+              <span
                 className="absolute top-0 left-0 h-full bg-white rounded-full pointer-events-none transition-all duration-100"
                 style={{ width: `${progress}%` }}
               />
@@ -163,15 +163,15 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, className }) => {
                 onChange={handleSeek}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
-            </div>
+            </section>
 
             {/* Controls row */}
-            <div className="flex items-center justify-between text-white">
-              <div className="flex items-center gap-1">
-                <IconButton 
-                  onClick={togglePlay} 
-                  variant="ghost" 
-                  size="sm" 
+            <section className="flex items-center justify-between text-white">
+              <section className="flex items-center gap-1">
+                <IconButton
+                  onClick={togglePlay}
+                  variant="ghost"
+                  size="sm"
                   className="text-white hover:bg-white/10"
                 >
                   {isPlaying ? <FiPause className="w-5 h-5" /> : <FiPlay className="w-5 h-5 fill-current" />}
@@ -179,45 +179,45 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, className }) => {
                 <time className="text-white text-xs font-semibold tabular-nums opacity-90 ml-2">
                   {formatTime(videoRef.current?.currentTime || 0)} / {formatTime(duration)}
                 </time>
-              </div>
+              </section>
 
-              <div className="flex items-center gap-1">
-                <IconButton 
-                  onClick={toggleMute} 
-                  variant="ghost" 
-                  size="sm" 
+              <section className="flex items-center gap-1">
+                <IconButton
+                  onClick={toggleMute}
+                  variant="ghost"
+                  size="sm"
                   className="text-white hover:bg-white/10"
                 >
                   {isMuted ? <FiVolumeX className="w-5 h-5" /> : <FiVolume2 className="w-5 h-5" />}
                 </IconButton>
-                <IconButton 
-                  variant="ghost" 
-                  size="sm" 
+                <IconButton
+                  variant="ghost"
+                  size="sm"
                   className="text-white hover:bg-white/10"
                 >
                   <FiSettings className="w-5 h-5" />
                 </IconButton>
-                <IconButton 
-                  onClick={togglePiP} 
-                  variant="ghost" 
-                  size="sm" 
+                <IconButton
+                  onClick={togglePiP}
+                  variant="ghost"
+                  size="sm"
                   className="text-white hover:bg-white/10"
                 >
                   <FiExternalLink className="w-5 h-5" />
                 </IconButton>
-                <IconButton 
-                  onClick={toggleFullscreen} 
-                  variant="ghost" 
-                  size="sm" 
+                <IconButton
+                  onClick={toggleFullscreen}
+                  variant="ghost"
+                  size="sm"
                   className="text-white hover:bg-white/10"
                 >
                   <FiMaximize className="w-5 h-5" />
                 </IconButton>
-              </div>
-            </div>
-          </motion.div>
+              </section>
+            </section>
+          </motion.nav>
         )}
       </AnimatePresence>
-    </div>
+    </figure>
   );
 };

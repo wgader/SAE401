@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { FiCheckCircle, FiAlertCircle, FiInfo, FiAlertTriangle, FiX } from 'react-icons/fi';
-import { cn } from '../../lib/utils';
+import { cn } from '../../../lib/utils';
 
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info';
 
@@ -14,34 +14,34 @@ interface ToastProps {
 }
 
 const variantStyles = {
-    success: {
-        bg: 'bg-emerald-500/90',
-        border: 'border-emerald-400/20',
-        icon: FiCheckCircle
-    },
-    error: {
-        bg: 'bg-rose-500/90',
-        border: 'border-rose-400/20',
-        icon: FiAlertCircle
-    },
-    warning: {
-        bg: 'bg-amber-500/90',
-        border: 'border-amber-400/20',
-        icon: FiAlertTriangle
-    },
-    info: {
-        bg: 'bg-blue-500/90',
-        border: 'border-blue-400/20',
-        icon: FiInfo
-    }
+  success: {
+    bg: 'bg-emerald-500/90',
+    border: 'border-emerald-400/20',
+    icon: FiCheckCircle
+  },
+  error: {
+    bg: 'bg-rose-500/90',
+    border: 'border-rose-400/20',
+    icon: FiAlertCircle
+  },
+  warning: {
+    bg: 'bg-amber-500/90',
+    border: 'border-amber-400/20',
+    icon: FiAlertTriangle
+  },
+  info: {
+    bg: 'bg-blue-500/90',
+    border: 'border-blue-400/20',
+    icon: FiInfo
+  }
 };
 
-export const Toast: React.FC<ToastProps> = ({ 
-  message, 
-  variant = 'success', 
-  isVisible, 
-  onClose, 
-  duration = 3000 
+export const Toast: React.FC<ToastProps> = ({
+  message,
+  variant = 'success',
+  isVisible,
+  onClose,
+  duration = 3000
 }) => {
   useEffect(() => {
     if (isVisible) {
@@ -71,10 +71,10 @@ export const Toast: React.FC<ToastProps> = ({
             Style.border
           )}>
             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                <Icon className="w-5 h-5" />
+              <Icon className="w-5 h-5" />
             </div>
             <span className="font-semibold text-[0.9375rem] flex-1 leading-tight">{message}</span>
-            <button 
+            <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClose(); }}
               className="ml-2 p-1.5 hover:bg-white/20 rounded-xl transition-all duration-200 focus:outline-none"
               aria-label="Fermer"

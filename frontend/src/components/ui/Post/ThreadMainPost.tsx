@@ -3,14 +3,15 @@ import { FaHeart, FaRegHeart, FaRegComment } from "react-icons/fa";
 import { FiMoreHorizontal, FiTrash2, FiEdit2, FiSlash } from "react-icons/fi";
 import { ModerationUI } from "./ModerationUI";
 import { Link, useNavigate } from "react-router-dom";
-import { MEDIA_URL as BASE_URL, api } from "../../lib/api";
-import type { Post } from "../../lib/api";
-import { MediaGrid } from "./MediaGrid";
-import { useStore } from "../../store/StoreContext";
-import { cn } from "../../lib/utils";
-import { Button } from "./Button/Button";
-import EditPostModal from "../Post/EditPostModal";
-import { ConfirmModal } from "./ConfirmModal";
+import { MEDIA_URL as BASE_URL, api } from "../../../lib/api";
+import type { Post } from "../../../lib/api";
+import { MediaGrid } from "../Media/MediaGrid";
+import { useStore } from "../../../store/StoreContext";
+import { cn } from "../../../lib/utils";
+import { Button } from "../Button/Button";
+import { RichText } from "./RichText";
+import EditPostModal from "../../Post/EditPostModal";
+import { ConfirmModal } from "../Overlay/ConfirmModal";
 
 const DEFAULT_AVATAR = `${BASE_URL}/uploads/avatars/default.png`;
 
@@ -179,9 +180,9 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
               <ModerationUI className="mt-2" />
             ) : (
               <>
-                <div className="mt-[0.25rem] text-text-primary text-[0.875rem] sm:text-[1rem] whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
-                  {post.content}
-                </div>
+                <section className="mt-[0.25rem] text-text-primary text-[0.875rem] sm:text-[1.125rem] whitespace-pre-wrap break-words leading-normal text-left overflow-hidden relative">
+                  <RichText text={post.content} />
+                </section>
 
                 {post.media && post.media.length > 0 && (
                   <figure className="mt-[0.75rem]">
@@ -201,7 +202,6 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
           </>
         )}
 
-        {/* The "Added Value" - Expanded Metadata for Thread Detail */}
         <footer className="mt-[0.75rem]">
           <section className="text-text-secondary text-[0.8125rem] sm:text-[0.875rem] font-sf-pro flex gap-[0.25rem] items-center px-[0.125rem] mb-[0.75rem]">
             <time dateTime={post.createdAt}>{formattedTime}</time>
@@ -209,7 +209,6 @@ export default function ThreadMainPost({ post, onReplyClick, onLike, onDelete, i
             <time dateTime={post.createdAt}>{formattedDate}</time>
           </section>
 
-          {/* Action Navigation (Identical to Card Layout) */}
           {!isAuthorBlocked && (
             <nav className="flex items-center gap-[3rem] py-[0.75rem] border-t border-border group">
               <button

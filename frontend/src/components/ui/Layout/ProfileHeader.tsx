@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
-import { IconButton } from './Button/IconButton';
+import { IconButton } from '../Button/IconButton';
 
 interface ProfileHeaderProps {
     name: string;

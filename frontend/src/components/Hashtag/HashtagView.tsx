@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { type Post, request, MEDIA_URL as BASE_URL } from "../../lib/api";
-import TweetCard from "../ui/TweetCard";
+import TweetCard from "../ui/Post/TweetCard";
 import { FiArrowLeft, FiHash } from "react-icons/fi";
-import { TweetSkeleton } from "../ui/Skeletons";
+import { TweetSkeleton } from "../ui/Feedback/Skeletons";
 import { useStore } from "../../store/StoreContext";
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
@@ -43,21 +43,21 @@ export default function HashtagView() {
   return (
     <article className="w-full max-w-2xl border-x border-border min-h-screen bg-background flex flex-col font-sf-pro">
       <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border p-4 flex items-center gap-6">
-        <button 
-          onClick={() => navigate(-1)} 
+        <button
+          onClick={() => navigate(-1)}
           className="text-text-primary hover:bg-surface-hover p-2 rounded-full transition-colors"
           aria-label="Retour"
         >
           <FiArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex flex-col text-left">
-            <h1 className="text-[1.25rem] font-bold text-text-primary m-0 flex items-center gap-1">
-                <FiHash className="text-primary w-5 h-5" />
-                {hashtag}
-            </h1>
-            <p className="text-[0.875rem] text-text-secondary m-0">
-                {posts.length} {posts.length > 1 ? 'posts' : 'post'}
-            </p>
+          <h1 className="text-[1.25rem] font-bold text-text-primary m-0 flex items-center gap-1">
+            <FiHash className="text-primary w-5 h-5" />
+            {hashtag}
+          </h1>
+          <p className="text-[0.875rem] text-text-secondary m-0">
+            {posts.length} {posts.length > 1 ? 'posts' : 'post'}
+          </p>
         </div>
       </header>
 
@@ -69,8 +69,8 @@ export default function HashtagView() {
         ) : posts.length > 0 ? (
           <ul className="flex flex-col m-0 p-0 overflow-hidden divide-y divide-border list-none">
             {posts.map((post) => (
-              <TweetCard 
-                key={post.id} 
+              <TweetCard
+                key={post.id}
                 id={post.id}
                 authorName={post.user.name}
                 username={post.user.username}
@@ -92,11 +92,11 @@ export default function HashtagView() {
         ) : (
           <div className="p-12 text-center flex flex-col items-center gap-4">
             <div className="p-4 bg-surface rounded-full">
-                <FiHash className="w-8 h-8 text-text-secondary" />
+              <FiHash className="w-8 h-8 text-text-secondary" />
             </div>
             <div>
-                <h2 className="text-[1.25rem] font-bold text-text-primary mb-1">Aucun résultat pour #{hashtag}</h2>
-                <p className="text-text-secondary text-[1rem]">Soyez le premier à utiliser ce hashtag !</p>
+              <h2 className="text-[1.25rem] font-bold text-text-primary mb-1">Aucun résultat pour #{hashtag}</h2>
+              <p className="text-text-secondary text-[1rem]">Soyez le premier à utiliser ce hashtag !</p>
             </div>
           </div>
         )}

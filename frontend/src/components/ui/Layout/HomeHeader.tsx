@@ -1,5 +1,5 @@
-import { useScrollDirection } from "../../hooks/useScrollDirection";
-import { cn } from "../../lib/utils";
+import { useScrollDirection } from "../../../hooks/useScrollDirection";
+import { cn } from "../../../lib/utils";
 import { FiRefreshCw } from "react-icons/fi";
 import { useState } from "react";
 import { motion } from "motion/react";

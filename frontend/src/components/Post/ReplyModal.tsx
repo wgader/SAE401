@@ -25,8 +25,8 @@ export default function ReplyModal({ parentPost, onClose }: ReplyModalProps) {
   };
 
   return (
-    <aside 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-[2px]" 
+    <aside
+      className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-[2px]"
       onClick={onClose}
       role="dialog"
       aria-labelledby="reply-modal-title"
@@ -40,8 +40,7 @@ export default function ReplyModal({ parentPost, onClose }: ReplyModalProps) {
           onClose={onClose}
           parentId={parentPost.id}
         />
-        
-        {/* Visual context of the post we're replying to */}
+
         <section className="hidden md:block absolute left-1/2 -translate-x-1/2 bottom-full mb-4 w-full max-w-xl bg-background border border-border rounded-2xl p-4 shadow-xl animate-in slide-in-from-bottom-4 duration-300">
           <header className="flex gap-3">
             <figure className="shrink-0">

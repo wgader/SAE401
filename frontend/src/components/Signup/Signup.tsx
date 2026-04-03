@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
-import { FiX, FiCheck, FiCamera, FiMail, FiArrowRight, FiArrowLeft, FiUpload, FiRotateCcw } from "react-icons/fi";
+import { FiX, FiCheck, FiCamera, FiMail, FiArrowRight, FiArrowLeft, FiUpload } from "react-icons/fi";
 import { Button } from "../ui/Button/Button";
 import { IconButton } from "../ui/Button/IconButton";
 import { Input } from "../ui/Input/Input";
@@ -205,20 +205,21 @@ export default function Signup() {
 
         <nav className="flex gap-2 w-32 mt-2" aria-label="Progression de l'inscription">
           {[1, 2, 3].map((s) => (
-            <div
+            <mark
               key={s}
               className={cn(
                 "h-1 flex-1 rounded-full transition-all duration-500",
                 s <= step ? "bg-primary" : "bg-border"
               )}
+              aria-hidden="true"
             />
           ))}
         </nav>
 
         {generalError && (
-          <div className="bg-danger/10 border border-danger/50 text-danger p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1 w-full max-w-[30rem]">
+          <aside className="bg-danger/10 border border-danger/50 text-danger p-3 rounded-xl text-sm font-sf-pro animate-in fade-in slide-in-from-top-1 w-full max-w-[30rem]" role="alert">
             {generalError}
-          </div>
+          </aside>
         )}
       </header>
 
@@ -249,18 +250,18 @@ export default function Signup() {
               {(isPasswordFocused || password.length > 0) && (
                 <aside className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-300">
                   <header className="flex flex-col gap-1.5">
-                    <div className="flex justify-between items-center px-1">
-                      <span className="text-sm uppercase font-sf-pro font-bold text-text-secondary tracking-wider">Sécurité</span>
-                      <span className={cn("text-sm font-bold font-sf-pro", metCount <= 2 ? "text-danger" : metCount <= 4 ? "text-warning" : "text-primary")}>
+                    <section className="flex justify-between items-center px-1">
+                      <strong className="text-sm uppercase font-sf-pro font-bold text-text-secondary tracking-wider">Sécurité</strong>
+                      <strong className={cn("text-sm font-bold font-sf-pro", metCount <= 2 ? "text-danger" : metCount <= 4 ? "text-warning" : "text-primary")}>
                         {getStrengthLabel()}
-                      </span>
-                    </div>
-                    <div className="h-1 w-full bg-border rounded-full overflow-hidden">
-                      <div
-                        className={cn("h-full transition-all duration-500", getStrengthColor())}
+                      </strong>
+                    </section>
+                    <section className="h-1 w-full bg-border rounded-full overflow-hidden">
+                      <mark
+                        className={cn("h-full block transition-all duration-500", getStrengthColor())}
                         style={{ width: `${strengthPercentage}%` }}
                       />
-                    </div>
+                    </section>
                   </header>
 
                   <section className="bg-background/50 rounded-xl p-4 border border-border">
@@ -280,16 +281,16 @@ export default function Signup() {
             <Input label="Confirmer le mot de passe" type="password" placeholder="••••••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} error={errors.confirmPassword} required />
 
             <label className="flex items-start gap-3 mt-2 cursor-pointer group">
-              <div className={cn(
+              <section className={cn(
                 "flex items-center justify-center w-5 h-5 rounded border bg-background mt-0.5 transition flex-shrink-0 relative",
                 tosAccepted ? "border-primary bg-primary" : "border-border group-hover:border-primary"
               )}>
                 <input type="checkbox" className="opacity-0 absolute w-0 h-0" checked={tosAccepted} onChange={(e) => setTosAccepted(e.target.checked)} required />
                 {tosAccepted && <FiCheck className="w-3.5 h-3.5 text-black absolute" />}
-              </div>
-              <span className="text-sm font-sf-pro text-text-secondary leading-tight">
+              </section>
+              <p className="text-sm font-sf-pro text-text-secondary leading-tight m-0">
                 J'accepte les <Link to="/terms" className="text-primary hover:text-primary-hover transition text-sm">conditions d'utilisation</Link>
-              </span>
+              </p>
             </label>
 
             <Button type="submit" variant="primary" size="lg" fullWidth className="mt-4 text-black font-black" disabled={isLoading}>
@@ -302,7 +303,7 @@ export default function Signup() {
         {step === 2 && (
           <section className="flex flex-col items-center gap-8 animate-in fade-in slide-in-from-right-4 duration-500">
             <figure className="relative group/avatar">
-              <div className="w-32 h-32 rounded-full bg-background border-4 border-border overflow-hidden flex items-center justify-center relative">
+              <section className="w-32 h-32 rounded-full bg-background border-4 border-border overflow-hidden flex items-center justify-center relative">
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
@@ -312,7 +313,7 @@ export default function Signup() {
                   <FiUpload className="text-white w-8 h-8" />
                   <input type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
                 </label>
-              </div>
+              </section>
               {avatarPreview && (
                 <IconButton
                   onClick={() => { setAvatar(null); setAvatarPreview(null); }}

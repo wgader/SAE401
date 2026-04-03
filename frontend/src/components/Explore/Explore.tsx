@@ -3,12 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { FiSearch } from 'react-icons/fi';
 import { api, MEDIA_URL as BASE_URL } from '../../lib/api';
 import type { User, Post } from '../../lib/api';
-import TweetCard from '../ui/TweetCard';
-import UserListItem from '../ui/UserListItem';
-import SearchBar from '../ui/SearchBar';
-import Tabs from '../ui/Tabs';
+import TweetCard from '../ui/Post/TweetCard';
+import UserListItem from '../ui/Profile/UserListItem';
+import SearchBar from '../ui/Layout/SearchBar';
+import Tabs from '../ui/Layout/Tabs';
 import { useStore } from '../../store/StoreContext';
-import { RenderErrorBoundary } from '../ui/RenderErrorBoundary';
+import { RenderErrorBoundary } from '../ui/Feedback/RenderErrorBoundary';
 
 const AVATAR_BASE_URL = `${BASE_URL}/uploads/avatars/`;
 
@@ -92,7 +92,7 @@ export default function Explore() {
         {/* Content Area */}
         <AnimatePresence mode="wait">
           {!isSearching ? (
-            <motion.section 
+            <motion.section
               key="empty"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -107,7 +107,7 @@ export default function Explore() {
               <p className="text-text-secondary max-w-[20rem] text-[1rem]">Recherche des mots-clés, des hashtags ou tes créateurs préférés.</p>
             </motion.section>
           ) : (
-            <motion.div 
+            <motion.div
               key="results"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -127,7 +127,7 @@ export default function Explore() {
                   </div>
                 ) : activeTab === 'tweets' ? (
                   postResults.length > 0 ? (
-                    <motion.ul 
+                    <motion.ul
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="list-none p-0 m-0 divide-y divide-border"
@@ -158,7 +158,7 @@ export default function Explore() {
                   )
                 ) : (
                   userResults.length > 0 ? (
-                    <motion.ul 
+                    <motion.ul
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="list-none p-0 m-0 divide-y divide-border"

@@ -1,6 +1,6 @@
-import { cn } from '../../lib/utils';
+import { cn } from '../../../lib/utils';
 import { motion } from 'motion/react';
-import { useScrollDirection } from '../../hooks/useScrollDirection';
+import { useScrollDirection } from '../../../hooks/useScrollDirection';
 
 interface TabItem {
     id: string;
@@ -27,7 +27,7 @@ export default function Tabs({ items, activeTab, onTabChange, className, sticky 
             !isVisible && "max-md:-translate-y-full",
             className
         )}
-        style={sticky ? { top: stickyTop } : {}}
+            style={sticky ? { top: stickyTop } : {}}
         >
             {items.map((item) => (
                 <button
@@ -40,9 +40,9 @@ export default function Tabs({ items, activeTab, onTabChange, className, sticky 
                 >
                     {item.label}
                     {activeTab === item.id && (
-                        <motion.div 
+                        <motion.mark
                             layoutId="activeTab"
-                            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[3.5rem] h-[0.25rem] rounded-full bg-primary z-10" 
+                            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[3.5rem] h-[0.25rem] rounded-full bg-primary z-10"
                             transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />
                     )}

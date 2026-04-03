@@ -18,22 +18,20 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const currentType = isPassword && showPassword ? "text" : type;
 
     return (
-      <div className="flex flex-col gap-1.5 w-full">
-        <label 
-          htmlFor={inputId} 
-          className="text-[0.875rem] font-sf-pro text-text-secondary pl-1"
-        >
-          {label}
-        </label>
-        <div className="relative flex items-center">
+        <section className={cn("space-y-[0.375rem]", className)}>
+            {label && (
+                <label htmlFor={inputId} className="block text-[0.875rem] font-bold text-text-secondary ml-[0.25rem]">
+                    {label}
+                </label>
+            )}
+            <div className="relative flex items-center">
           <input
             id={inputId}
             type={currentType}
             className={cn(
               "flex h-12 w-full rounded-xl border border-border bg-background px-4 py-2 font-sf-pro text-text-primary text-[1rem] ring-offset-background file:border-0 file:bg-transparent file:text-[0.875rem] file:font-medium placeholder:text-text-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
               isPassword && "pr-12",
-              error && "border-red-500 focus-visible:ring-red-500",
-              className
+              error && "border-red-500 focus-visible:ring-red-500"
             )}
             ref={ref}
             {...props}
@@ -53,12 +51,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             </button>
           )}
         </div>
-        {error && (
-          <span className="text-[0.875rem] text-red-500 font-sf-pro pl-1">
-            {error}
-          </span>
-        )}
-      </div>
+            {error && (
+                <p className="text-danger text-[0.75rem] font-medium ml-[0.25rem] mt-[0.25rem] m-0">
+                    {error}
+                </p>
+            )}
+        </section>
     );
   }
 );

@@ -1,6 +1,5 @@
-import React from "react";
 import { FiLoader } from "react-icons/fi";
-import { cn } from "../../lib/utils";
+import { cn } from "../../../lib/utils";
 
 interface RefreshLoaderProps {
   isRefreshing: boolean;
@@ -28,8 +27,8 @@ export default function RefreshLoader({ isRefreshing, pullDistance }: RefreshLoa
             "w-7 h-7 text-primary",
             isRefreshing ? "animate-spin" : ""
           )}
-          style={{ 
-            transform: !isRefreshing ? `rotate(${pullDistance * 6}deg)` : undefined 
+          style={{
+            transform: !isRefreshing ? `rotate(${pullDistance * 6}deg)` : undefined
           }}
         />
       </article>
